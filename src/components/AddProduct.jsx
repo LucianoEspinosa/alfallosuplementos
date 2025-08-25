@@ -69,9 +69,12 @@ const AddProduct = () => {
                 <label htmlFor="categoria" className="form-label">Categoria:</label>
                     <select className="form-select" id="categoria" name="categoria" value={nuevoProducto.categoria} onChange={handleInputChange}>
                         <option value="">Seleccionar categoría</option>
-                        <option value="hombre">Hombre</option>
-                        <option value="mujer">Mujer</option>
-                        <option value="unisex">Unisex</option>
+                        <option value="proteinas">Proteinas</option>
+                        <option value="creatinas">Creatinas</option>
+                        <option value="magnesio">Magnesio</option>
+                        <option value="ganadordepeso">Ganadores de Peso</option>
+                        <option value="aminoacidos">Aminoacidos</option>
+                        <option value="quemadores">Quemadores</option>
                     </select>
                 </div>
                 <div className="mb-3 col-md-6">

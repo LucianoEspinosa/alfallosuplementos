@@ -1,5 +1,5 @@
 import NavBar from "./NavBar";
-import logo from "./img/logo-texto.png";
+import logo from "./img/logoalfallo.png";
 
 import { Link } from "react-router-dom";
 const Header = () => {
@@ -20,9 +20,3 @@ const Header = () => {
     )
 }
 export default Header;
-{/* <div className="col-3 d-md-none ">
-                        <Link to={"/"} className=""><img src={logo} alt="logo de fragances.net" width={22} /></Link>
-                    </div>
-                    <div className="col-9 col-md-12">
-                        <Link to={"/"} className="text-decoration-none text-black  "><h1 className="text-md-center">FRAGANCES.NET</h1></Link>
-                    </div> */}

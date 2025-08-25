@@ -53,6 +53,7 @@
 //     )
 // }
 // export default CartContextProvider;
+
 import { createContext, useState, useEffect } from "react";
 
 export const CartContext = createContext();
@@ -66,10 +67,22 @@ const CartContextProvider = ({ children }) => {
     }, []);
 
     const addItem = (item, quantity) => {
+        // CALCULAR PRECIO FINAL CORRECTAMENTE
+        const calcularPrecioFinal = (item) => {
+            if (item.descuento > 0) {
+                return Math.round(item.precio - (item.precio * item.descuento) / 100);
+            }
+            return item.precio; // Si no hay descuento, usar precio normal
+        };
+
         if (isInCart(item.id)) {
             let updatedCart = cart.map((prod) => {
                 if (prod.id === item.id) {
-                    return { ...prod, cantidad: prod.cantidad + quantity };
+                    return { 
+                        ...prod, 
+                        cantidad: prod.cantidad + quantity,
+                        precioFinal: calcularPrecioFinal(prod) // ← IMPORTANTE
+                    };
                 }
                 return prod;
             });
@@ -81,8 +94,7 @@ const CartContextProvider = ({ children }) => {
                 {
                     ...item,
                     cantidad: quantity,
-                    precioFinal:
-                        item.precio - (item.precio * item.descuento) / 100,
+                    precioFinal: calcularPrecioFinal(item), // ← CORREGIDO
                 },
             ];
             setCart(updatedCart);
@@ -111,14 +123,26 @@ const CartContextProvider = ({ children }) => {
 
     const precioTotal = () => {
         return cart.reduce(
-            (suma, item) => (suma += item.cantidad * item.precioFinal),
+            (suma, item) => {
+                const precio = item.precioFinal || item.precio || 0;
+                const cantidad = item.cantidad || 0;
+                return suma + (precio * cantidad);
+            },
             0
         );
     };
 
     return (
         <CartContext.Provider
-            value={{ cartTotal, precioTotal, cart, addItem, removeItem, clear }}
+            value={{ 
+                cartTotal, 
+                precioTotal, 
+                cart, 
+                addItem, 
+                removeItem, 
+                clear,
+                isInCart // ← Asegúrate de exportar isInCart si se usa
+            }}
         >
             {children}
         </CartContext.Provider>
