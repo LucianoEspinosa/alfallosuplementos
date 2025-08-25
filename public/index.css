@@ -1065,3 +1065,72 @@ body {
     border: 1px solid rgba(40, 167, 69, 0.2);
     color: #28a745;
 }
+/* ========== FOOTER STYLES ========== */
+.foot {
+    background: var(--bg-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    margin-top: auto;
+}
+
+/* Efectos hover para enlaces */
+.hover-text-white {
+    transition: color 0.3s ease;
+}
+
+.hover-text-white:hover {
+    color: var(--text-primary) !important;
+}
+
+/* Efectos para iconos de redes */
+.footer-icon {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.footer-icon:hover {
+    transform: scale(1.2);
+}
+
+/* Instagram específico */
+.fa-instagram:hover {
+    color: #E1306C !important;
+}
+
+/* WhatsApp específico */
+.fa-whatsapp:hover {
+    color: #25D366 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .foot {
+        text-align: center;
+    }
+    
+    .foot .row > div {
+        margin-bottom: 1.5rem;
+    }
+    
+    .foot .row > div:last-child {
+        margin-bottom: 0;
+    }
+    
+    .foot h5, .foot h6 {
+        font-size: 1rem;
+    }
+}
+
+/* Asegurar contraste */
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Logo styles */
+.foot img {
+    transition: transform 0.3s ease;
+}
+
+.foot img:hover {
+    transform: scale(1.05);
+}

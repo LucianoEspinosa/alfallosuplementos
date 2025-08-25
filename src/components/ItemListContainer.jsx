@@ -224,10 +224,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
             <div className="row text-center mb-4">
                 <div className="col">
                     <h1 className="text-capitalize fw-bold">{getTitulo()}</h1>
-                    <p className="text-muted">
-                        {filteredItems.length} producto(s) encontrado(s)
-                        {items.length > 0 && ` de ${items.length} totales`}
-                    </p>
+                    
                 </div>
             </div>
 
