@@ -1134,3 +1134,108 @@ body {
 .foot img:hover {
     transform: scale(1.05);
 }
+/* ========== ADMINISTRATOR STYLES ========== */
+.table-container {
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-primary);
+    --bs-table-border-color: var(--border-color);
+}
+
+.table th {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    font-weight: 600;
+    padding: 0.75rem;
+}
+
+.table td {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    padding: 0.75rem;
+    vertical-align: middle;
+}
+
+.table tr:hover td {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Botones de acción */
+.btn-action {
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+/* Form controls */
+.form-select, .form-control {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.form-select:focus, .form-control:focus {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+}
+
+.badge.bg-secondary {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: var(--text-primary) !important;
+}
+
+.badge.bg-info {
+    background: rgba(23, 162, 184, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th, 
+    .table td {
+        padding: 0.5rem;
+    }
+    
+    .d-none.d-md-table-cell {
+        display: none !important;
+    }
+}
+
+/* Efectos hover para botones */
+.btn-outline-primary:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white !important;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+    color: var(--bg-secondary) !important;
+}

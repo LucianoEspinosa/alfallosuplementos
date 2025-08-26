@@ -86,18 +86,19 @@ const Administrator = () => {
     };
 
     return (
-        <div className="container py-5">
+        <div className="container py-5" style={{ color: 'var(--text-primary)' }}>
             <div className="row text-center">
-                <h1>Administrador de Fragancias</h1>
+                <h1 style={{ color: 'var(--text-primary)' }}>Administrador de Fragancias</h1>
             </div>
             
             {/* Filtros */}
             <div className="row mt-4">
                 <div className="d-flex justify-content-between align-items-center">
-                    <h2>Lista de Productos</h2>
+                    <h2 style={{ color: 'var(--text-primary)' }}>Lista de Productos</h2>
                     <button 
                         className="btn btn-outline-primary"
                         onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                        style={{ borderColor: 'var(--accent-color)', color: 'var(--accent-color)' }}
                     >
                         <FontAwesomeIcon icon={faFilter} className="me-2" />
                         {mostrarFiltros ? 'Ocultar Filtros' : 'Mostrar Filtros'}
@@ -105,17 +106,27 @@ const Administrator = () => {
                 </div>
                 
                 {mostrarFiltros && (
-                    <div className="card mt-3">
+                    <div className="card mt-3" style={{ 
+                        background: 'var(--bg-card)', 
+                        borderColor: 'var(--border-color)' 
+                    }}>
                         <div className="card-body">
                             <div className="row">
                                 <div className="col-md-5 mb-2">
-                                    <label htmlFor="marca" className="form-label">Filtrar por Marca</label>
+                                    <label htmlFor="marca" className="form-label" style={{ color: 'var(--text-primary)' }}>
+                                        Filtrar por Marca
+                                    </label>
                                     <select 
                                         className="form-select" 
                                         id="marca"
                                         name="marca"
                                         value={filtros.marca}
                                         onChange={handleFiltroChange}
+                                        style={{ 
+                                            background: 'var(--bg-secondary)', 
+                                            color: 'var(--text-primary)',
+                                            borderColor: 'var(--border-color)'
+                                        }}
                                     >
                                         <option value="">Todas las marcas</option>
                                         {marcas.map(marca => (
@@ -124,13 +135,20 @@ const Administrator = () => {
                                     </select>
                                 </div>
                                 <div className="col-md-5 mb-2">
-                                    <label htmlFor="categoria" className="form-label">Filtrar por Categoría</label>
+                                    <label htmlFor="categoria" className="form-label" style={{ color: 'var(--text-primary)' }}>
+                                        Filtrar por Categoría
+                                    </label>
                                     <select 
                                         className="form-select" 
                                         id="categoria"
                                         name="categoria"
                                         value={filtros.categoria}
                                         onChange={handleFiltroChange}
+                                        style={{ 
+                                            background: 'var(--bg-secondary)', 
+                                            color: 'var(--text-primary)',
+                                            borderColor: 'var(--border-color)'
+                                        }}
                                     >
                                         <option value="">Todas las categorías</option>
                                         {categorias.map(categoria => (
@@ -142,6 +160,7 @@ const Administrator = () => {
                                     <button 
                                         className="btn btn-outline-secondary w-100"
                                         onClick={limpiarFiltros}
+                                        style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
                                     >
                                         Limpiar
                                     </button>
@@ -156,7 +175,11 @@ const Administrator = () => {
             {(filtros.marca || filtros.categoria) && (
                 <div className="row mt-3">
                     <div className="col">
-                        <div className="alert alert-info py-2">
+                        <div className="alert alert-info py-2" style={{ 
+                            background: 'rgba(23, 162, 184, 0.2)', 
+                            borderColor: 'var(--border-color)',
+                            color: 'var(--text-primary)'
+                        }}>
                             <small>
                                 Filtros aplicados: 
                                 {filtros.marca && <span className="badge bg-secondary ms-2">Marca: {filtros.marca}</span>}
@@ -171,51 +194,71 @@ const Administrator = () => {
             {/* Tabla de productos */}
             <div className="row justify-content-center px-2 px-md-0 table-container mt-3">
                 <div className="table-responsive">
-                    <table className="table table-sm text-center">
+                    <table className="table table-sm text-center" style={{ 
+                        background: 'var(--bg-card)',
+                        color: 'var(--text-primary)',
+                        borderColor: 'var(--border-color)'
+                    }}>
                         <thead>
-                            <tr>
-                                <th scope="col">
+                            <tr style={{ background: 'var(--bg-secondary)' }}>
+                                <th scope="col" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
                                     <img src={logo} alt="logotipo fragances.net" width={20} />{" "}
                                 </th>
-                                <th scope="col">Producto</th>
-                                <th scope="col" className="d-none d-md-table-cell">Categoría</th>
-                                <th scope="col" className="d-none d-md-table-cell">Cantidad</th>
-                                <th scope="col" className="d-md-none">Cant</th>
-                                <th scope="col">Precio</th>
-                                <th scope="col">Acciones</th>
+                                <th scope="col" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Producto</th>
+                                <th scope="col" className="d-none d-md-table-cell" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Categoría</th>
+                                <th scope="col" className="d-none d-md-table-cell" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Cantidad</th>
+                                <th scope="col" className="d-md-none" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Cant</th>
+                                <th scope="col" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Precio</th>
+                                <th scope="col" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredItems.length > 0 ? (
                                 filteredItems.map((item) => (
-                                    <tr key={item.id}>
-                                        <td>
-                                            <img src={item.img} alt={item.nombre} width={20} />{" "}
+                                    <tr key={item.id} style={{ borderColor: 'var(--border-color)' }}>
+                                        <td style={{ borderColor: 'var(--border-color)' }}>
+                                            <img src={item.img} alt={item.nombre} width={30} style={{ borderRadius: '4px' }} />{" "}
                                         </td>
-                                        <td className="product-name text-start">
+                                        <td className="text-start" style={{ borderColor: 'var(--border-color)' }}>
                                             {item.marca && (
-                                                <span className="brand">{item.marca} </span>
+                                                <span className="brand fw-bold" style={{ color: 'var(--text-primary)' }}>
+                                                    {item.marca}{" "}
+                                                </span>
                                             )}
-                                            {item.nombre} ({item.presentacion})
+                                            <span style={{ color: 'var(--text-secondary)' }}>
+                                                {item.nombre} ({item.presentacion})
+                                            </span>
                                         </td>
-                                        <td className="d-none d-md-table-cell">{item.categoria || 'N/A'}</td>
-                                        <td>{item.stock}</td>
-                                        <td>${item.precio?.toLocaleString()}</td>
-                                        <td className="d-flex justify-content-center gap-2">
-                                            <button className="border-0">
-                                                <Link to={{ pathname: `/edit/${item.id}` }} className="text-success">
-                                                    <FontAwesomeIcon icon={faPencilAlt} />
-                                                </Link>
-                                            </button>
-                                            <button onClick={() => borrarProducto(item.id)} className="text-danger border-0">
-                                                <FontAwesomeIcon icon={faTrashAlt} />
-                                            </button>
+                                        <td className="d-none d-md-table-cell" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
+                                            {item.categoria || 'N/A'}
+                                        </td>
+                                        <td style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>
+                                            {item.stock}
+                                        </td>
+                                        <td style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>
+                                            ${item.precio?.toLocaleString()}
+                                        </td>
+                                        <td style={{ borderColor: 'var(--border-color)' }}>
+                                            <div className="d-flex justify-content-center gap-2">
+                                                <button className="border-0 bg-transparent">
+                                                    <Link to={`/edit/${item.id}`} className="text-success" style={{ fontSize: '1.1rem' }}>
+                                                        <FontAwesomeIcon icon={faPencilAlt} />
+                                                    </Link>
+                                                </button>
+                                                <button 
+                                                    onClick={() => borrarProducto(item.id)} 
+                                                    className="text-danger border-0 bg-transparent"
+                                                    style={{ fontSize: '1.1rem' }}
+                                                >
+                                                    <FontAwesomeIcon icon={faTrashAlt} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7" className="text-center py-4">
+                                    <td colSpan="7" className="text-center py-4" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
                                         {items.length === 0 
                                             ? "No hay productos en la base de datos" 
                                             : "No se encontraron productos con los filtros aplicados"}
@@ -227,7 +270,13 @@ const Administrator = () => {
                 </div>
                 
                 <div className="mt-3">
-                    <Link to="/add-product" className="btn btn-primary">Agregar Producto</Link>
+                    <Link to="/add-product" className="btn btn-primary" style={{ 
+                        background: 'var(--accent-color)', 
+                        borderColor: 'var(--accent-color)',
+                        color: 'white'
+                    }}>
+                        Agregar Producto
+                    </Link>
                 </div>
             </div>
         </div>
