@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { CartContext } from "./context/CartContext";
-import logo from "./img/fragancesnet.png";
+import logo from "./img/alfallonegro.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,7 +13,7 @@ const Table = ({ cart, trush }) => {
             <thead>
                 <tr>
                     <th scope="col">
-                        <img src={logo} alt="logotipo fragances.net" width={20} />{" "}
+                        <img src={logo} alt="logotipo alfallo suplementos" width={30} />{" "}
                     </th>
                     <th scope="col">Producto</th>
                     <th scope="col">Cantidad</th>

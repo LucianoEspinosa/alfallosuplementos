@@ -27,20 +27,20 @@ const NavBar = () => {
                 const db = getFirestore();
                 const productsRef = collection(db, "fragancias");
                 const snapshot = await getDocs(productsRef);
-                
+
                 const allProducts = snapshot.docs.map(doc => doc.data());
-                
+
                 const uniqueCategories = [...new Set(
                     allProducts.map(product => product.categoria).filter(Boolean)
                 )].sort();
-                
+
                 const uniqueBrands = [...new Set(
                     allProducts.map(product => product.marca).filter(Boolean)
                 )].sort();
-                
+
                 setCategories(uniqueCategories);
                 setBrands(uniqueBrands);
-                
+
             } catch (error) {
                 console.error("Error:", error);
             } finally {
@@ -56,20 +56,20 @@ const NavBar = () => {
         setSearchQuery(query);
         if (query.length > 2) {
             const normalizedQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            
+
             const db = getFirestore();
             const productsRef = collection(db, "fragancias");
-            
+
             getDocs(productsRef).then(snapshot => {
                 const results = snapshot.docs
                     .map(doc => ({ id: doc.id, ...doc.data() }))
-                    .filter(product => 
+                    .filter(product =>
                         product.nombre?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery) ||
                         product.marca?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery) ||
                         product.categoria?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery)
                     )
                     .slice(0, 5);
-                
+
                 setSearchResults(results);
                 setShowSearchResults(true);
             });
@@ -80,7 +80,7 @@ const NavBar = () => {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault(); // ← PREVENIR EL COMPORTAMIENTO POR DEFECTO
-        
+
         if (searchQuery.trim()) {
             navigate(`/?search=${encodeURIComponent(searchQuery)}`);
             setSearchQuery("");
@@ -124,7 +124,7 @@ const NavBar = () => {
         <div className="fixed-top cabecera">
             <div className="container">
                 <div className="row navbar navbar-expand-md fs-7 fs-md-5 d-flex align-items-end align-items-md-center">
-                    
+
                     {/* Logo */}
                     <Link to={"/"} className="col-4 col-md-2 d-flex align-items-end text-decoration-none text-black">
                         <img src={logo} className="w-50 logoStyle d-md-none" alt="logo" />
@@ -144,10 +144,10 @@ const NavBar = () => {
                                         onChange={(e) => handleSearch(e.target.value)}
                                         onFocus={() => searchQuery.length > 2 && setShowSearchResults(true)}
                                     />
-                                 
+
                                 </div>
                             </form>
-                            
+
                             {showSearchResults && searchResults.length > 0 && (
                                 <div className="search-results-dropdown">
                                     {searchResults.map(product => (
@@ -169,7 +169,7 @@ const NavBar = () => {
 
                     {/* Iconos móvil */}
                     <div className="col-8 col-md-2 d-flex d-md-none align-items-center justify-content-end gap-2">
-                        
+
                         <CartWidget />
                         <button className="navbar-toggler custom-button" onClick={toggleNav}>
                             {isNavOpen ? <FaTimes /> : <FaBars />}
@@ -178,7 +178,7 @@ const NavBar = () => {
 
                     {/* Menú de navegación */}
                     <div ref={navRef} className={`col-md-3 collapse navbar-collapse flex-column py-0 ${isNavOpen ? 'show' : ''}`}>
-                        
+
                         {/* Search Mobile */}
                         <div className="d-md-none mb-3">
                             <div className="search-container position-relative" ref={searchRef}>
@@ -213,21 +213,21 @@ const NavBar = () => {
                         </div>
 
                         <ul className="navbar-nav mt-2 mt-md-0 w-100 d-flex justify-content-center">
-                            
+
                             {/* Dropdown de Categorías */}
-                            <li className="nav-item dropdown position-relative" 
-                                onMouseEnter={() => !loading && setIsProductsOpen(true)} 
+                            <li className="nav-item dropdown position-relative"
+                                onMouseEnter={() => !loading && setIsProductsOpen(true)}
                                 onMouseLeave={() => setIsProductsOpen(false)}>
                                 <div className="nav-link py-0 py-2 d-flex align-items-center cursor-pointer" onClick={toggleProducts}>
                                     Categorías <FaChevronDown className="ms-1" size={12} />
                                 </div>
-                                
+
                                 {!loading && categories.length > 0 && (
                                     <ul className={`dropdown-menu ${isProductsOpen ? 'show' : ''}`}>
                                         {categories.map((category, index) => (
                                             <li key={index}>
-                                                <Link 
-                                                    className="dropdown-item" 
+                                                <Link
+                                                    className="dropdown-item"
                                                     to={`/category/${encodeURIComponent(category)}`}
                                                     onClick={closeAllMenus}
                                                 >
@@ -240,19 +240,19 @@ const NavBar = () => {
                             </li>
 
                             {/* Dropdown de Marcas */}
-                            <li className="nav-item dropdown position-relative" 
-                                onMouseEnter={() => !loading && setIsBrandsOpen(true)} 
+                            <li className="nav-item dropdown position-relative"
+                                onMouseEnter={() => !loading && setIsBrandsOpen(true)}
                                 onMouseLeave={() => setIsBrandsOpen(false)}>
                                 <div className="nav-link py-0 py-2 d-flex align-items-center cursor-pointer" onClick={toggleBrands}>
                                     Marcas <FaChevronDown className="ms-1" size={12} />
                                 </div>
-                                
+
                                 {!loading && brands.length > 0 && (
                                     <ul className={`dropdown-menu ${isBrandsOpen ? 'show' : ''}`}>
                                         {brands.map((brand, index) => (
                                             <li key={index}>
-                                                <Link 
-                                                    className="dropdown-item" 
+                                                <Link
+                                                    className="dropdown-item"
                                                     to={`/brand/${encodeURIComponent(brand)}`}
                                                     onClick={closeAllMenus}
                                                 >
