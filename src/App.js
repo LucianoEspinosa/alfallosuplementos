@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
 import ItemListContainer from './components/ItemListContainer';
@@ -15,33 +15,50 @@ import AddProduct from './components/AddProduct';
 import EditProduct from './components/EditProduct';
 import UploadProducts from './components/UploadProducts';
 import NormalizadorCategorias from './components/NormalizadorCategorias';
-//import './App.css'; // ✅ Mantener esta importación
+import LoadingScreen from './components/LoadingScreen'; // ✅ Nuevo componente
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simular tiempo de carga de recursos
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500); // 2.5 segundos
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div>
       <CartContextProvider>
         <BrowserRouter>
-          <NavBar />
-          <ScrollToTop />
-          <Routes>
-            <Route path={"/"} element={<ItemListContainer />} />
-            <Route path={'/masvendidos'} element={<ItemListContainer top={true} titulo={"Top en Ventas"} />} />
-            <Route path={'/ofertas'} element={<ItemListContainer oferta={true} titulo={"Aprovecha los descuentos"} />} />
-            <Route path={'/category/:id'} element={<ItemListContainer />} />
-            <Route path={'/brand/:id'} element={<ItemListContainer titulo={"Marcas"} />} />
-            <Route path={'/item/:id'} element={<ItemDetailContainer />} />
-            <Route path={'/cart'} element={<Cart />} />
-            <Route path={'/checkout'} element={<Checkout />} />
-            <Route path={'/thankyou/:orderId'} element={<ThankYou />} />
-            <Route path={'*'} element={<Error404 />} />
-            <Route path={'/admin'} element={<Administrator />} />
-            <Route path="/add-product" element={<AddProduct/>} />
-            <Route path="/edit/:id" element={<EditProduct/>} />
-            <Route path="/upload-products" element={<UploadProducts/>} />
-            <Route path="/normalizar-categorias" element={<NormalizadorCategorias/>} />
-          </Routes>
-          <Footer />
+          {/* Pantalla de carga */}
+          {isLoading && <LoadingScreen />}
+          
+          {/* Contenido principal */}
+          <div style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
+            <NavBar />
+            <ScrollToTop />
+            <Routes>
+              <Route path={"/"} element={<ItemListContainer />} />
+              <Route path={'/masvendidos'} element={<ItemListContainer top={true} titulo={"Top en Ventas"} />} />
+              <Route path={'/ofertas'} element={<ItemListContainer oferta={true} titulo={"Aprovecha los descuentos"} />} />
+              <Route path={'/category/:id'} element={<ItemListContainer />} />
+              <Route path={'/brand/:id'} element={<ItemListContainer titulo={"Marcas"} />} />
+              <Route path={'/item/:id'} element={<ItemDetailContainer />} />
+              <Route path={'/cart'} element={<Cart />} />
+              <Route path={'/checkout'} element={<Checkout />} />
+              <Route path={'/thankyou/:orderId'} element={<ThankYou />} />
+              <Route path={'*'} element={<Error404 />} />
+              <Route path={'/admin'} element={<Administrator />} />
+              <Route path="/add-product" element={<AddProduct/>} />
+              <Route path="/edit/:id" element={<EditProduct/>} />
+              <Route path="/upload-products" element={<UploadProducts/>} />
+              <Route path="/normalizar-categorias" element={<NormalizadorCategorias/>} />
+            </Routes>
+            <Footer />
+          </div>
         </BrowserRouter>
       </CartContextProvider>
     </div>
