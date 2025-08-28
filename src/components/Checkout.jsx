@@ -1,113 +1,203 @@
-/*import { useContext, useState } from "react";
-import { CartContext } from "./context/CartContext";
-import { getFirestore, collection, addDoc, doc, updateDoc } from "firebase/firestore";
-import { Navigate } from "react-router-dom";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import Table from "./Table";
+// import { useContext, useState } from "react";
+// import { CartContext } from "./context/CartContext";
+// import { getFirestore, collection, addDoc, doc, updateDoc } from "firebase/firestore";
+// import { Navigate } from "react-router-dom";
+// import { Formik, Field, Form, ErrorMessage } from "formik";
+// import * as Yup from "yup";
+// import Table from "./Table";
+// import WhatsAppConfirmation from "./WhatsAppConfirmation";
 
-const Checkout = () => {
-  const { cart, clear } = useContext(CartContext);
-  const [orderId, setOrderId] = useState("");
+// const Checkout = () => {
+//   const { cart, precioTotal, clear: clearCart } = useContext(CartContext);
+//   const [orderId, setOrderId] = useState("");
+//   const [completedOrder, setCompletedOrder] = useState(null);
+//   const [showConfirmation, setShowConfirmation] = useState(false);
+//   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initialValues = {
-    nombre: "",
-    email: "",
-    telefono: ""
-  };
+//   const initialValues = {
+//     nombre: "",
+//     email: "",
+//     telefono: ""
+//   };
 
-  const validationSchema = Yup.object().shape({
-    nombre: Yup.string().matches(/^[a-zA-Z\s]*$/, "Ingrese un nombre válido").required("Ingrese un nombre válido"),
-    email: Yup.string().email("Ingrese un correo electrónico válido").required("Ingrese un correo electrónico"),
-    telefono: Yup.string().matches(/^[0-9]*$/, "Ingrese solo números en el teléfono").required("Ingrese un teléfono")
-  });
+//   const validationSchema = Yup.object().shape({
+//     nombre: Yup.string()
+//       .matches(/^[a-zA-Z\s]*$/, "Ingrese un nombre válido")
+//       .required("Ingrese un nombre válido"),
+//     email: Yup.string()
+//       .email("Ingrese un correo electrónico válido")
+//       .required("Ingrese un correo electrónico"),
+//     telefono: Yup.string()
+//       .matches(/^[0-9]*$/, "Ingrese solo números")
+//       .min(10, "Teléfono demasiado corto")
+//       .required("Ingrese un teléfono")
+//   });
 
-  const handleSubmit = (values) => {
-    const buyer = { name: values.nombre, phone: values.telefono, email: values.email };
-    const items = cart.map((item) => ({
-      id: item.id,
-      title: item.marca + " " + item.nombre,
-      price: item.precioFinal,
-      quantity: item.cantidad
-    }));
-    const fecha = new Date();
-    const date = `${fecha.getDate()}-${fecha.getMonth() + 1}-${fecha.getFullYear()} ${fecha.getHours()}:${fecha.getMinutes()}`;
-    const order = { buyer: buyer, items: items, date: date };
+//   const handleSubmit = async (values) => {
+//     setIsSubmitting(true);
 
-    const db = getFirestore();
-    const OrderCollection = collection(db, "orders");
-    addDoc(OrderCollection, order)
-      .then((resultado) => {
-        setOrderId(resultado.id);
-        clear();
-        // Actualizar el stock de los productos en Firestore
-        const productCollection = collection(db, "fragancias");
-        cart.forEach((item) => {
-          const productRef = doc(productCollection, item.id);
-          updateDoc(productRef, { stock: item.stock - item.cantidad })
-            .then(() => {
-              console.log(`Stock actualizado para el producto ${item.id}`);
-            })
-            .catch((error) => {
-              console.log(`Error al actualizar el stock para el producto ${item.id}`, error);
-            });
-        });
-      })
+//     try {
+//       const buyer = { 
+//         name: values.nombre.trim(), 
+//         phone: values.telefono.trim(), 
+//         email: values.email.trim().toLowerCase()
+//       };
 
-      .catch((resultado) => {
-        console.log("Error. No se pudo realizar la compra");
-      });
+//       const items = cart.map((item) => ({
+//         id: item.id,
+//         title: `${item.marca} ${item.nombre}`,
+//         price: item.precioFinal,
+//         quantity: item.cantidad,
+//         presentacion: item.presentacion
+//       }));
 
-  };
+//       const fecha = new Date();
+//       const date = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()} ${fecha.getHours()}:${fecha.getMinutes()}`;
 
+//       const db = getFirestore();
+//       const OrderCollection = collection(db, "orders");
 
+//       const resultado = await addDoc(OrderCollection, { 
+//         buyer, 
+//         items, 
+//         date, 
+//         total: precioTotal(), // ✅ función corregida
+//         status: 'confirmando' 
+//       });
 
+//       const orderData = {
+//         id: resultado.id,
+//         buyer,
+//         items,
+//         date,
+//         total: precioTotal()
+//       };
 
-  return (
-    <div className="container" style={{ minHeight: "60vh" }}>
-      <div className="row my-5">
-        <div className="col-md-5">
-          <h3 className="text-decoration-underline">Carrito de Compras</h3>
-          <Table cart={cart} />
-        </div>
-        <div className="col-md-5 offset-md-1">
-          <h3 className="text-decoration-underline">Checkout</h3>
-          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-            {({ errors, touched }) => (
-              <Form>
-                <div className="mb-3 mt-3">
-                  <label className="form-label">Nombre:</label>
-                  <Field type="text" name="nombre" className={`form-control ${errors.nombre && touched.nombre ? "is-invalid" : ""}`} placeholder="Ingresa tu nombre" />
-                  <ErrorMessage name="nombre" component="div" className="invalid-feedback" />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Email:</label>
-                  <Field type="email" name="email" className={`form-control ${errors.email && touched.email ? "is-invalid" : ""}`} placeholder="Ingresa tu correo electrónico" />
-                  <ErrorMessage name="email" component="div" className="invalid-feedback" />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Teléfono:</label>
-                  <Field type="tel" name="telefono" className={`form-control ${errors.telefono && touched.telefono ? "is-invalid" : ""}`} placeholder="Ingresa tu número de teléfono" />
-                  <ErrorMessage name="telefono" component="div" className="invalid-feedback" />
-                </div>
-                <button className="btn btn-primary" type="submit">
-                  Enviar
-                </button>
-              </Form>
-            )}
-          </Formik>
-        </div>
-      </div>
-      {orderId && <Navigate to={`/thankyou/${orderId}`} />}
-    </div>
-  );
-};
+//       setOrderId(resultado.id);
+//       setCompletedOrder(orderData);
+//       setShowConfirmation(true);
 
-export default Checkout;
-*/
-// Componente Checkout optimizado - WhatsApp PRIMARY
+//       // Actualizar stock en segundo plano
+//       const productCollection = collection(db, "fragancias");
+//       const updatePromises = cart.map(async (item) => {
+//         try {
+//           const productRef = doc(productCollection, item.id);
+//           await updateDoc(productRef, { 
+//             stock: item.stock - item.cantidad 
+//           });
+//         } catch (error) {
+//           console.log("Error actualizando stock:", error);
+//         }
+//       });
 
-import { useContext, useState } from "react";
+//       await Promise.all(updatePromises);
+
+//       // Limpiar carrito
+//       clearCart();
+
+//     } catch (error) {
+//       console.error("Error en la compra:", error);
+//       alert("Error al procesar la compra. Intenta nuevamente.");
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   if (showConfirmation && completedOrder) {
+//     return (
+//       <WhatsAppConfirmation 
+//         order={completedOrder}
+//         onBack={() => setShowConfirmation(false)}
+//       />
+//     );
+//   }
+
+//   return (
+//     <div className="container" style={{ minHeight: "60vh" }}>
+//       <div className="row my-5">
+//         <div className="col-md-5">
+//           <h3 className="text-decoration-underline">Carrito de Compras</h3>
+//           <Table cart={cart} />
+
+//           <div className="mt-4 p-3 bg-dark text-white rounded">
+//             <h5>📱 Confirmación por WhatsApp</h5>
+//             <p className="mb-1">• Recibirás el resumen por WhatsApp</p>
+//             <p className="mb-1">• Respondé para coordinar envío</p>
+//             <p className="mb-0">• Atención personalizada</p>
+//           </div>
+//         </div>
+
+//         <div className="col-md-5 offset-md-1">
+//           <h3 className="text-decoration-underline">Checkout</h3>
+
+//           <Formik 
+//             initialValues={initialValues} 
+//             validationSchema={validationSchema} 
+//             onSubmit={handleSubmit}
+//           >
+//             {({ errors, touched }) => (
+//               <Form>
+//                 <div className="mb-3">
+//                   <label className="form-label">Nombre completo *</label>
+//                   <Field 
+//                     type="text" 
+//                     name="nombre" 
+//                     className={`form-control ${errors.nombre && touched.nombre ? "is-invalid" : ""}`} 
+//                     placeholder="Ej: María González" 
+//                   />
+//                   <ErrorMessage name="nombre" component="div" className="invalid-feedback" />
+//                 </div>
+
+//                 <div className="mb-3">
+//                   <label className="form-label">Email *</label>
+//                   <Field 
+//                     type="email" 
+//                     name="email" 
+//                     className={`form-control ${errors.email && touched.email ? "is-invalid" : ""}`} 
+//                     placeholder="ejemplo@gmail.com" 
+//                   />
+//                   <ErrorMessage name="email" component="div" className="invalid-feedback" />
+//                 </div>
+
+//                 <div className="mb-4">
+//                   <label className="form-label">WhatsApp *</label>
+//                   <Field 
+//                     type="tel" 
+//                     name="telefono" 
+//                     className={`form-control ${errors.telefono && touched.telefono ? "is-invalid" : ""}`} 
+//                     placeholder="11 2345-6789" 
+//                   />
+//                   <ErrorMessage name="telefono" component="div" className="invalid-feedback" />
+//                   <small className="text-muted">Te contactaremos por este número</small>
+//                 </div>
+
+//                 <button 
+//                   className="btn btn-success w-100 py-2" 
+//                   type="submit"
+//                   disabled={isSubmitting}
+//                 >
+//                   {isSubmitting ? 'Procesando...' : '📱 Finalizar Compra por WhatsApp'}
+//                 </button>
+
+//                 <div className="mt-3 text-center">
+//                   <small className="text-muted">
+//                     Al completar aceptás nuestros términos y condiciones
+//                   </small>
+//                 </div>
+//               </Form>
+//             )}
+//           </Formik>
+//         </div>
+//       </div>
+
+//       {orderId && <Navigate to={`/thankyou/${orderId}`} />}
+//     </div>
+//   );
+// };
+
+// export default Checkout;
+
+import { useContext, useState, useEffect } from "react";
 import { CartContext } from "./context/CartContext";
 import { getFirestore, collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { Navigate } from "react-router-dom";
@@ -115,6 +205,7 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Table from "./Table";
 import WhatsAppConfirmation from "./WhatsAppConfirmation";
+import PaymentMethodSelector from "./PaymentMethodSelector";
 
 const Checkout = () => {
   const { cart, precioTotal, clear: clearCart } = useContext(CartContext);
@@ -122,6 +213,21 @@ const Checkout = () => {
   const [completedOrder, setCompletedOrder] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [metodoPago, setMetodoPago] = useState("efectivo");
+  const [totalFinal, setTotalFinal] = useState(0);
+  const [recargo, setRecargo] = useState(0);
+  const [itemsConRecargo, setItemsConRecargo] = useState([]);
+
+  // Inicializar con el total sin recargo
+  useEffect(() => {
+    const total = precioTotal();
+    setTotalFinal(total);
+    setItemsConRecargo(cart.map(item => ({
+      ...item,
+      precioConRecargo: item.precioFinal,
+      precioOriginal: item.precioFinal
+    })));
+  }, [precioTotal, cart]);
 
   const initialValues = {
     nombre: "",
@@ -142,7 +248,35 @@ const Checkout = () => {
       .required("Ingrese un teléfono")
   });
 
+  const handlePaymentMethodChange = (metodo, totalConRecargo, recargoAplicado) => {
+    setMetodoPago(metodo);
+    setTotalFinal(totalConRecargo);
+    setRecargo(recargoAplicado);
+    
+    // ACTUALIZAR ITEMS CON RECARGO
+    const nuevosItems = cart.map(item => {
+      const precioConRecargo = metodo === "transferencia" 
+        ? Math.round(item.precioFinal * 1.075)
+        : item.precioFinal;
+      
+      return {
+        ...item,
+        precioConRecargo: precioConRecargo,
+        precioOriginal: item.precioFinal
+      };
+    });
+    
+    setItemsConRecargo(nuevosItems);
+  };
+
   const handleSubmit = async (values) => {
+    console.log("Iniciando submit...");
+    
+    if (cart.length === 0) {
+      alert("El carrito está vacío");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -152,12 +286,15 @@ const Checkout = () => {
         email: values.email.trim().toLowerCase()
       };
 
-      const items = cart.map((item) => ({
+      // USAR itemsConRecargo EN LUGAR DE cart
+      const items = itemsConRecargo.map((item) => ({
         id: item.id,
         title: `${item.marca} ${item.nombre}`,
-        price: item.precioFinal,
+        price: item.precioConRecargo,
+        priceOriginal: item.precioOriginal,
         quantity: item.cantidad,
-        presentacion: item.presentacion
+        presentacion: item.presentacion,
+        hasSurcharge: metodoPago === "transferencia"
       }));
 
       const fecha = new Date();
@@ -166,27 +303,40 @@ const Checkout = () => {
       const db = getFirestore();
       const OrderCollection = collection(db, "orders");
 
-      const resultado = await addDoc(OrderCollection, { 
+      const orderData = {
         buyer, 
         items, 
         date, 
-        total: precioTotal(), // ✅ función corregida
+        total: totalFinal,
+        payment: {
+          method: metodoPago,
+          subtotal: precioTotal(),
+          surcharge: recargo,
+          total: totalFinal,
+          surcharge_percentage: metodoPago === "transferencia" ? 7.5 : 0,
+          surcharge_applied: metodoPago === "transferencia"
+        },
         status: 'confirmando' 
-      });
+      };
 
-      const orderData = {
+      console.log("Creando orden en Firebase...");
+      const resultado = await addDoc(OrderCollection, orderData);
+      console.log("Orden creada con ID:", resultado.id);
+
+      const completedOrderData = {
         id: resultado.id,
         buyer,
-        items,
-        date,
-        total: precioTotal()
+        items: orderData.items,
+        date: orderData.date,
+        total: orderData.total,
+        payment: orderData.payment
       };
 
       setOrderId(resultado.id);
-      setCompletedOrder(orderData);
+      setCompletedOrder(completedOrderData);
       setShowConfirmation(true);
 
-      // Actualizar stock en segundo plano
+      // Actualizar stock usando el cart original (sin recargo)
       const productCollection = collection(db, "fragancias");
       const updatePromises = cart.map(async (item) => {
         try {
@@ -194,18 +344,17 @@ const Checkout = () => {
           await updateDoc(productRef, { 
             stock: item.stock - item.cantidad 
           });
+          console.log("Stock actualizado para:", item.id);
         } catch (error) {
           console.log("Error actualizando stock:", error);
         }
       });
 
       await Promise.all(updatePromises);
-
-      // Limpiar carrito
       clearCart();
 
     } catch (error) {
-      console.error("Error en la compra:", error);
+      console.error("Error completo en la compra:", error);
       alert("Error al procesar la compra. Intenta nuevamente.");
     } finally {
       setIsSubmitting(false);
@@ -226,7 +375,11 @@ const Checkout = () => {
       <div className="row my-5">
         <div className="col-md-5">
           <h3 className="text-decoration-underline">Carrito de Compras</h3>
-          <Table cart={cart} />
+          <Table 
+            cart={itemsConRecargo} 
+            metodoPago={metodoPago}
+            showOriginalPrice={metodoPago === "transferencia"}
+          />
 
           <div className="mt-4 p-3 bg-dark text-white rounded">
             <h5>📱 Confirmación por WhatsApp</h5>
@@ -237,15 +390,16 @@ const Checkout = () => {
         </div>
 
         <div className="col-md-5 offset-md-1">
-          <h3 className="text-decoration-underline">Checkout</h3>
+          <h3 className="text-decoration-underline mb-4">Checkout</h3>
 
           <Formik 
             initialValues={initialValues} 
             validationSchema={validationSchema} 
             onSubmit={handleSubmit}
           >
-            {({ errors, touched }) => (
+            {({ errors, touched, isSubmitting: formikSubmitting }) => (
               <Form>
+                {/* CAMPOS DEL FORMULARIO */}
                 <div className="mb-3">
                   <label className="form-label">Nombre completo *</label>
                   <Field 
@@ -280,12 +434,60 @@ const Checkout = () => {
                   <small className="text-muted">Te contactaremos por este número</small>
                 </div>
 
+                {/* Selector de método de pago */}
+                <div className="mb-4">
+                  <PaymentMethodSelector 
+                    total={precioTotal()}
+                    onPaymentMethodChange={handlePaymentMethodChange}
+                  />
+                </div>
+
+                {/* Resumen final */}
+                <div className="card mb-4">
+                  <div className="card-body">
+                    <h6 className="card-title">Resumen Final</h6>
+                    <div className="d-flex justify-content-between">
+                      <span>Subtotal:</span>
+                      <span>${precioTotal().toLocaleString('es-AR')}</span>
+                    </div>
+                    
+                    {recargo > 0 && (
+                      <div className="d-flex justify-content-between text-danger">
+                        <span>Recargo por transferencia (7.5%):</span>
+                        <span>+${recargo.toLocaleString('es-AR')}</span>
+                      </div>
+                    )}
+                    
+                    <hr />
+                    
+                    <div className="d-flex justify-content-between fw-bold fs-5">
+                      <span>Total:</span>
+                      <span className="text-success">${totalFinal.toLocaleString('es-AR')}</span>
+                    </div>
+                    
+                    <small className="text-muted">
+                      {metodoPago === 'transferencia' ? 
+                        "Incluye 7.5% de recargo" : 
+                        "Sin recargos adicionales"
+                      }
+                    </small>
+                  </div>
+                </div>
+
+                {/* BOTÓN DE CONFIRMAR - CORREGIDO */}
                 <button 
                   className="btn btn-success w-100 py-2" 
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || cart.length === 0}
                 >
-                  {isSubmitting ? 'Procesando...' : '📱 Finalizar Compra por WhatsApp'}
+                  {isSubmitting ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Procesando...
+                    </>
+                  ) : (
+                    `✅ Confirmar Compra - $${totalFinal.toLocaleString('es-AR')}`
+                  )}
                 </button>
 
                 <div className="mt-3 text-center">
