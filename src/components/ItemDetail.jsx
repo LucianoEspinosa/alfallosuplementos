@@ -515,7 +515,7 @@ const ItemDetail = ({ producto }) => {
                                         </>
                                     ) : (
                                         <>
-                                            <h2 className="text-primary fw-bold mb-2">
+                                            <h2 className="text-success  fs-1 fw-bold mb-2">
                                                 ${precioFinal.toLocaleString('es-AR')}
                                             </h2>
                                             <small className="text-muted">Precio en efectivo</small>
@@ -527,7 +527,7 @@ const ItemDetail = ({ producto }) => {
                                 <div className="border-top pt-3">
                                     <div className="text-center text-md-start">
                                         <div className="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
-                                            <span className="text-primary fw-bold fs-4">
+                                            <span className="text-danger fw-bold fs-4">
                                                 ${precioConTransferencia.toLocaleString('es-AR')}
                                             </span>
                                             <span className="badge bg-info">Transferencia</span>

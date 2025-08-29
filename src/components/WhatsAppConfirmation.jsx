@@ -164,7 +164,7 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
 
                         <button
                             onClick={onBack}
-                            className="btn btn-outline-secondary ms-2"
+                            className="btn btn-outline-secondary m-3 ms-2"
                         >
                             ← Volver
                         </button>
