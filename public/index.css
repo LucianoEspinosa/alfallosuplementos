@@ -211,7 +211,7 @@ body {
 .classPrecio {
   padding: 5px;
   font-weight: 400;
-  color: black !important;
+  
   font-size: 1.3rem;
   font-family: 'League Spartan';
 }
@@ -694,7 +694,7 @@ body {
 .classPrecio {
   padding: 5px 0;
   font-weight: 400;
-  color: black !important;
+  
   font-size: 1.2rem;
   font-family: 'League Spartan';
   margin: 0;
@@ -777,7 +777,7 @@ body {
   }
 
   .classPrecio {
-    font-size: 1rem;
+    font-size: 1.6rem;
   }
 }
 
@@ -1257,7 +1257,7 @@ body {
 
 .badge.bg-secondary {
   background: rgba(255, 255, 255, 0.15) !important;
-  color: var(--text-primary) !important;
+  
 }
 
 .badge.bg-info {
@@ -1651,4 +1651,11 @@ body {
 
 .search-results-dropdown.bg-dark::-webkit-scrollbar-thumb:hover {
   background: #5a6268;
+}
+
+/* ========== FIX PARA BADGE SECONDARY ========== */
+.badge.bg-secondary {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #000000 !important; /* Texto negro para mejor contraste */
+  border: 1px solid #666666 !important;
 }

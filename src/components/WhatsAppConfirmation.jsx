@@ -13,7 +13,7 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
 
             // Agregar presentación si existe
             if (item.presentacion) {
-                itemText += ` (${item.presentacion})`;
+                itemText += ` (${item.presentacion} ${item.saborSeleccionado})`;
             }
 
             itemText += ` x${item.quantity}`;
@@ -24,7 +24,7 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
 
             if (order.payment?.surcharge > 0 && precioOriginal !== precioUnitario) {
                 itemText += ` - $${precioUnitario.toLocaleString('es-AR')} c/u`;
-                itemText += ` (antes $${precioOriginal.toLocaleString('es-AR')})`;
+                // itemText += ` (antes $${precioOriginal.toLocaleString('es-AR')})`;
             } else {
                 itemText += ` - $${precioUnitario.toLocaleString('es-AR')} c/u`;
             }
@@ -40,11 +40,11 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
         message += `*Productos:*%0A${itemsText}%0A%0A`;
 
         // Desglose transparente de precios si hay recargo
-        if (order.payment?.surcharge > 0) {
-            message += `*Desglose de pago:*%0A`;
-            message += `Subtotal: $${order.payment.subtotal.toLocaleString('es-AR')}%0A`;
-            message += `Recargo transferencia (${order.payment.surcharge_percentage}%): +$${order.payment.surcharge.toLocaleString('es-AR')}%0A`;
-        }
+        // if (order.payment?.surcharge > 0) {
+        //     message += `*Desglose de pago:*%0A`;
+        //     message += `Subtotal: $${order.payment.subtotal.toLocaleString('es-AR')}%0A`;
+        //     message += `Recargo transferencia (${order.payment.surcharge_percentage}%): +$${order.payment.surcharge.toLocaleString('es-AR')}%0A`;
+        // }
 
         message += `*Total:* $${order.total.toLocaleString('es-AR')}%0A%0A`;
 
@@ -95,6 +95,7 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
                                                 <div className="fw-medium">
                                                     {item.title}
                                                     {item.presentacion && ` (${item.presentacion})`}
+                                                    {item.saborSeleccionado}
                                                 </div>
                                                 <div className="text-muted small">
                                                     {item.quantity} und ×
@@ -192,3 +193,4 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
 };
 
 export default WhatsAppConfirmation;
+

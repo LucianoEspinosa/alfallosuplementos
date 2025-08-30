@@ -1,3 +1,4 @@
+
 // import { useContext, useEffect, useState } from "react";
 // import ItemCount from "./ItemCount";
 // import { CartContext } from "./context/CartContext";
@@ -21,6 +22,13 @@
 //             }
 //         }
 //     }, [producto]);
+
+//     // Nuevo useEffect para resetear addedToCart cuando cambia el sabor
+//     useEffect(() => {
+//         if (addedToCart) {
+//             setAddedToCart(false);
+//         }
+//     }, [saborSeleccionado]);
 
 //     const onAdd = (quantity) => {
 //         // Para productos con sabores, requerir selección
@@ -192,7 +200,7 @@
 //                                         </>
 //                                     ) : (
 //                                         <>
-//                                             <h2 className="text-primary fw-bold mb-2">
+//                                             <h2 className="text-success  fs-1 fw-bold mb-2">
 //                                                 ${precioFinal.toLocaleString('es-AR')}
 //                                             </h2>
 //                                             <small className="text-muted">Precio en efectivo</small>
@@ -204,7 +212,7 @@
 //                                 <div className="border-top pt-3">
 //                                     <div className="text-center text-md-start">
 //                                         <div className="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
-//                                             <span className="text-primary fw-bold fs-4">
+//                                             <span className="text-danger fw-bold fs-4">
 //                                                 ${precioConTransferencia.toLocaleString('es-AR')}
 //                                             </span>
 //                                             <span className="badge bg-info">Transferencia</span>
@@ -314,6 +322,8 @@
 // };
 
 // export default ItemDetail;
+
+
 import { useContext, useEffect, useState } from "react";
 import ItemCount from "./ItemCount";
 import { CartContext } from "./context/CartContext";
@@ -325,6 +335,7 @@ const ItemDetail = ({ producto }) => {
     const [addedToCart, setAddedToCart] = useState(false);
     const [loading, setLoading] = useState(true);
     const [saborSeleccionado, setSaborSeleccionado] = useState(null);
+    const [showFullDescription, setShowFullDescription] = useState(false);
 
     useEffect(() => {
         if (producto) {
@@ -456,10 +467,51 @@ const ItemDetail = ({ producto }) => {
                                 )}
                             </div>
 
-                            {/* Descripción */}
-                            <p className="text-muted mb-4 flex-grow-1" style={{ lineHeight: '1.6' }}>
-                                {item.descripcion || "Descripción no disponible."}
-                            </p>
+                            {/* Descripción - CON ACORDEÓN PARA MÓVIL */}
+                            <div className="mb-4">
+                                {/* Vista desktop - descripción completa */}
+                                <div className="d-none d-md-block">
+                                    <p className="text-muted" style={{ lineHeight: '1.6' }}>
+                                        {item.descripcion || "Descripción no disponible."}
+                                    </p>
+                                </div>
+
+                                {/* Vista mobile - acordeón */}
+                                <div className="d-md-none">
+                                    {showFullDescription ? (
+                                        <>
+                                            <p className="text-muted" style={{ lineHeight: '1.6' }}>
+                                                {item.descripcion || "Descripción no disponible."}
+                                            </p>
+                                            <button
+                                                type="button"
+                                                className="btn btn-link p-0 text-primary"
+                                                onClick={() => setShowFullDescription(false)}
+                                            >
+                                                <small>Ver menos ↑</small>
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-muted" style={{ lineHeight: '1.6' }}>
+                                                {item.descripcion 
+                                                    ? `${item.descripcion.substring(0, 100)}${item.descripcion.length > 100 ? '...' : ''}`
+                                                    : "Descripción no disponible."
+                                                }
+                                            </p>
+                                            {item.descripcion && item.descripcion.length > 100 && (
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-link p-0 text-primary"
+                                                    onClick={() => setShowFullDescription(true)}
+                                                >
+                                                    <small>Ver más ↓</small>
+                                                </button>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
 
                             {/* SELECTOR DE SABORES */}
                             {item.sabores && item.sabores.length > 0 && (
