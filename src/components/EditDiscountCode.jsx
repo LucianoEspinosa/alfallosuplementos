@@ -1,70 +1,51 @@
-// import { useState } from "react";
+// import { useState, useEffect } from "react";
 
-// const CreateDiscountCode = ({ onSubmit, onCancel }) => {
+// const EditDiscountCode = ({ code, onSubmit, onCancel }) => {
 //     const [formData, setFormData] = useState({
-//         code: "",
-//         discountType: "percentage",
-//         value: 10,
-//         minPurchase: 0,
-//         validUntil: "",
-//         usageLimit: "",
-//         description: ""
+//         code: code.code,
+//         discountType: code.discountType || "percentage",
+//         value: code.value || 10,
+//         minPurchase: code.minPurchase || 0,
+//         validUntil: code.validUntil ? new Date(code.validUntil.seconds * 1000).toISOString().split('T')[0] : "",
+//         usageLimit: code.usageLimit || "",
+//         description: code.description || "",
+//         active: code.active !== undefined ? code.active : true
 //     });
+
+//     useEffect(() => {
+//         setFormData({
+//             code: code.code,
+//             discountType: code.discountType || "percentage",
+//             value: code.value || 10,
+//             minPurchase: code.minPurchase || 0,
+//             validUntil: code.validUntil ? new Date(code.validUntil.seconds * 1000).toISOString().split('T')[0] : "",
+//             usageLimit: code.usageLimit || "",
+//             description: code.description || "",
+//             active: code.active !== undefined ? code.active : true
+//         });
+//     }, [code]);
 
 //     const handleSubmit = async (e) => {
 //         e.preventDefault();
-//         const success = await onSubmit({
-//             ...formData,
+//         await onSubmit({
+//             discountType: formData.discountType,
 //             value: Number(formData.value),
 //             minPurchase: Number(formData.minPurchase),
 //             usageLimit: formData.usageLimit ? Number(formData.usageLimit) : null,
-//             validUntil: formData.validUntil ? new Date(formData.validUntil) : null
+//             validUntil: formData.validUntil ? new Date(formData.validUntil) : null,
+//             description: formData.description,
+//             active: formData.active
 //         });
-        
-//         if (success) {
-//             setFormData({
-//                 code: "",
-//                 discountType: "percentage",
-//                 value: 10,
-//                 minPurchase: 0,
-//                 validUntil: "",
-//                 usageLimit: "",
-//                 description: ""
-//             });
-//         }
 //     };
 
 //     return (
 //         <div className="card shadow">
 //             <div className="card-header bg-white py-3">
-//                 <h5 className="mb-0">Crear Código de Descuento</h5>
+//                 <h5 className="mb-0">Editar Código de Descuento: {code.code}</h5>
 //             </div>
 //             <div className="card-body">
 //                 <form onSubmit={handleSubmit}>
 //                     <div className="row">
-//                         <div className="col-md-6 mb-3">
-//                             <label className="form-label">Código *</label>
-//                             <input
-//                                 type="text"
-//                                 className="form-control"
-//                                 value={formData.code}
-//                                 onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-//                                 required
-//                                 placeholder="Ej: VERANO15"
-//                             />
-//                         </div>
-
-//                         <div className="col-md-6 mb-3">
-//                             <label className="form-label">Tipo de descuento *</label>
-//                             <select
-//                                 className="form-select"
-//                                 value={formData.discountType}
-//                                 onChange={(e) => setFormData({ ...formData, discountType: e.target.value })}
-//                             >
-//                                 <option value="percentage">Porcentaje</option>
-//                             </select>
-//                         </div>
-
 //                         <div className="col-md-6 mb-3">
 //                             <label className="form-label">Valor (%) *</label>
 //                             <input
@@ -124,9 +105,24 @@
 //                             />
 //                         </div>
 
+//                         <div className="col-md-6 mb-3">
+//                             <div className="form-check form-switch">
+//                                 <input
+//                                     className="form-check-input"
+//                                     type="checkbox"
+//                                     id="activeSwitch"
+//                                     checked={formData.active}
+//                                     onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+//                                 />
+//                                 <label className="form-check-label" htmlFor="activeSwitch">
+//                                     Código activo
+//                                 </label>
+//                             </div>
+//                         </div>
+
 //                         <div className="col-12">
 //                             <button type="submit" className="btn btn-primary me-2">
-//                                 Crear Código
+//                                 Guardar Cambios
 //                             </button>
 //                             <button type="button" className="btn btn-secondary" onClick={onCancel}>
 //                                 Cancelar
@@ -139,64 +135,57 @@
 //     );
 // };
 
-// export default CreateDiscountCode;
+// export default EditDiscountCode;
 
-import { useState } from "react";
 
-const CreateDiscountCode = ({ onSubmit, onCancel }) => {
+import { useState, useEffect } from "react";
+
+const EditDiscountCode = ({ code, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
-        code: "",
-        discountType: "percentage",
-        value: 10.0,
-        minPurchase: 0.0,
-        validUntil: "",
-        usageLimit: "",
-        description: ""
+        code: code.code,
+        discountType: code.discountType || "percentage",
+        value: code.value || 10.0,
+        minPurchase: code.minPurchase || 0.0,
+        validUntil: code.validUntil ? new Date(code.validUntil.seconds * 1000).toISOString().split('T')[0] : "",
+        usageLimit: code.usageLimit || "",
+        description: code.description || "",
+        active: code.active !== undefined ? code.active : true
     });
+
+    useEffect(() => {
+        setFormData({
+            code: code.code,
+            discountType: code.discountType || "percentage",
+            value: code.value || 10.0,
+            minPurchase: code.minPurchase || 0.0,
+            validUntil: code.validUntil ? new Date(code.validUntil.seconds * 1000).toISOString().split('T')[0] : "",
+            usageLimit: code.usageLimit || "",
+            description: code.description || "",
+            active: code.active !== undefined ? code.active : true
+        });
+    }, [code]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const success = await onSubmit({
-            ...formData,
+        await onSubmit({
+            discountType: formData.discountType,
             value: parseFloat(formData.value),
             minPurchase: parseFloat(formData.minPurchase),
             usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : null,
-            validUntil: formData.validUntil ? new Date(formData.validUntil) : null
+            validUntil: formData.validUntil ? new Date(formData.validUntil) : null,
+            description: formData.description,
+            active: formData.active
         });
-        
-        if (success) {
-            setFormData({
-                code: "",
-                discountType: "percentage",
-                value: 10.0,
-                minPurchase: 0.0,
-                validUntil: "",
-                usageLimit: "",
-                description: ""
-            });
-        }
     };
 
     return (
         <div className="card shadow">
             <div className="card-header bg-white py-3">
-                <h5 className="mb-0">Crear Código de Descuento</h5>
+                <h5 className="mb-0">Editar Código de Descuento: {code.code}</h5>
             </div>
             <div className="card-body">
                 <form onSubmit={handleSubmit}>
                     <div className="row">
-                        <div className="col-md-6 mb-3">
-                            <label className="form-label">Código *</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={formData.code}
-                                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                                required
-                                placeholder="Ej: VERANO15"
-                            />
-                        </div>
-
                         <div className="col-md-6 mb-3">
                             <label className="form-label">Tipo de descuento *</label>
                             <select
@@ -221,13 +210,7 @@ const CreateDiscountCode = ({ onSubmit, onCancel }) => {
                                 min="0.01"
                                 step="0.01"
                                 required
-                                placeholder={formData.discountType === "percentage" ? "15.5" : "50.99"}
                             />
-                            <div className="form-text">
-                                {formData.discountType === "percentage" 
-                                    ? "Ej: 15.5 para 15.5% de descuento" 
-                                    : "Ej: 50.99 para $50.99 de descuento"}
-                            </div>
                         </div>
 
                         <div className="col-md-6 mb-3">
@@ -277,9 +260,24 @@ const CreateDiscountCode = ({ onSubmit, onCancel }) => {
                             />
                         </div>
 
+                        <div className="col-md-6 mb-3">
+                            <div className="form-check form-switch">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="activeSwitch"
+                                    checked={formData.active}
+                                    onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                                />
+                                <label className="form-check-label" htmlFor="activeSwitch">
+                                    Código activo
+                                </label>
+                            </div>
+                        </div>
+
                         <div className="col-12">
                             <button type="submit" className="btn btn-primary me-2">
-                                Crear Código
+                                Guardar Cambios
                             </button>
                             <button type="button" className="btn btn-secondary" onClick={onCancel}>
                                 Cancelar
@@ -292,4 +290,4 @@ const CreateDiscountCode = ({ onSubmit, onCancel }) => {
     );
 };
 
-export default CreateDiscountCode;
+export default EditDiscountCode;

@@ -18,7 +18,7 @@ import NormalizadorCategorias from './components/NormalizadorCategorias';
 import LoadingScreen from './components/LoadingScreen'; // ✅ Nuevo componente
 import OrdersList from './components/OrdersList';
 import BulkSaborManager from './components/BulkSaborManager';
-import CreateDiscountCode from './components/CreateDiscountCode';
+import DiscountCodeManager from './components/DiscountCodeManager'; // Ajusta la ruta según tu estructura
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -61,7 +61,7 @@ function App() {
               <Route path="/normalizar-categorias" element={<NormalizadorCategorias/>} />
               <Route path="/orders" element={<OrdersList />} />
               <Route path="/sabores" element={<BulkSaborManager />} />
-              <Route path="/descuentos" element={<CreateDiscountCode/>} />
+              <Route path="/discount" element={<DiscountCodeManager />} />
             </Routes>
             <Footer />
           </div>
