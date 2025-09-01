@@ -516,7 +516,7 @@ const ItemDetail = ({ producto }) => {
                             {/* SELECTOR DE SABORES */}
                             {item.sabores && item.sabores.length > 0 && (
                                 <div className="mb-4">
-                                    <h6 className="fw-bold mb-3">🎨 Elegí tu sabor:</h6>
+                                    <h6 className="fw-bold text-light  mb-3">🎨 Elegí tu sabor:</h6>
                                     <div className="d-flex flex-wrap gap-2">
                                         {item.sabores.map((sabor, index) => (
                                             <button

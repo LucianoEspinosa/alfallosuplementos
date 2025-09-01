@@ -99,7 +99,7 @@ const Footer = () => {
                             <div className="d-flex justify-content-center gap-3">
                                 {/* Instagram */}
                                 <a 
-                                    href="https://instagram.com/alfallosuplementos" 
+                                    href="https://www.instagram.com/alfallo.suplementos/" 
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="text-decoration-none"
@@ -122,7 +122,7 @@ const Footer = () => {
 
                                 {/* WhatsApp */}
                                 <a 
-                                    href="https://wa.me/5491123456789" 
+                                    href="https://wa.me/5491167936064" 
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="text-decoration-none"
