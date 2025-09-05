@@ -118,7 +118,6 @@ const Cart = () => {
                 </div>
             </div>
 
-            {/* Vista para móvil */}
             <div className="d-lg-none">
                 {cart.map((item) => {
                     const subtotal = item.precioFinal * item.cantidad;
@@ -143,7 +142,7 @@ const Cart = () => {
                                             <div style={{ fontWeight: '600' }}>
                                                 {item.marca}
                                             </div>
-                                            <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                            <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 'bold' }}>
                                                 {item.nombreCompleto || item.nombre}
                                             </div>
                                         </div>
@@ -159,7 +158,7 @@ const Cart = () => {
                                 
                                 {item.saborSeleccionado && (
                                     <div className="mb-2">
-                                        <span className="badge bg-info text-dark">
+                                        <span className="badge bg-success  te">
                                             🍦 Sabor: {item.saborSeleccionado}
                                         </span>
                                     </div>
@@ -167,19 +166,19 @@ const Cart = () => {
                                 
                                 <div className="d-flex justify-content-between flex-wrap">
                                     <div className="me-3 mb-2">
-                                        <small className="text-muted">Presentación:</small>
-                                        <div><span className="badge bg-secondary">{item.presentacion}</span></div>
+                                        <small className=" ">Presentación:</small>
+                                        <div><span className="badge bg-success">{item.presentacion}</span></div>
                                     </div>
                                     <div className="me-3 mb-2">
-                                        <small className="text-muted">Precio:</small>
+                                        <small className="">Precio:</small>
                                         <div>${item.precioFinal?.toLocaleString('es-AR')}</div>
                                     </div>
                                     <div className="me-3 mb-2">
-                                        <small className="text-muted">Cantidad:</small>
-                                        <div><span className="badge bg-dark">{item.cantidad}</span></div>
+                                        <small className="">Cantidad:</small>
+                                        <div><span className="badge bg-success">{item.cantidad}</span></div>
                                     </div>
                                     <div className="mb-2">
-                                        <small className="text-muted">Subtotal:</small>
+                                        <small className="">Subtotal:</small>
                                         <div style={{ fontWeight: '600' }}>${subtotal.toLocaleString('es-AR')}</div>
                                     </div>
                                 </div>

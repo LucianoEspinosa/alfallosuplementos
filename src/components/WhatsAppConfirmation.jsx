@@ -235,11 +235,11 @@
 //         if (hasDiscount) {
 //             message += `*Desglose de pago:*%0A`;
 //             message += `Subtotal: $${order.payment.subtotal.toLocaleString('es-AR')}%0A`;
-            
+
 //             if (order.payment?.surcharge > 0) {
 //                 message += `Recargo transferencia (${order.payment.surcharge_percentage}%): +$${order.payment.surcharge.toLocaleString('es-AR')}%0A`;
 //             }
-            
+
 //             message += `Descuento (${order.discount.code}): -$${order.discount.amount.toLocaleString('es-AR')}%0A`;
 //         }
 
@@ -305,21 +305,21 @@
 //                                     <span>Subtotal:</span>
 //                                     <span>${order.payment.subtotal.toLocaleString('es-AR')}</span>
 //                                 </div>
-                                
+
 //                                 {tieneRecargo && (
 //                                     <div className="d-flex justify-content-between text-danger">
 //                                         <span>Recargo por transferencia ({order.payment.surcharge_percentage}%):</span>
 //                                         <span>+${order.payment.surcharge.toLocaleString('es-AR')}</span>
 //                                     </div>
 //                                 )}
-                                
+
 //                                 {hasDiscount && (
 //                                     <div className="d-flex justify-content-between text-success">
 //                                         <span>Descuento ({order.discount.code}):</span>
 //                                         <span>-${order.discount.amount.toLocaleString('es-AR')}</span>
 //                                     </div>
 //                                 )}
-                                
+
 //                                 {tieneRecargo && (
 //                                     <div className="small text-muted text-end">
 //                                         Este recargo cubre comisiones bancarias
@@ -387,10 +387,16 @@
 
 // export default WhatsAppConfirmation;
 
-import React from 'react';
+
+import React, { useEffect } from 'react';
 
 const WhatsAppConfirmation = ({ order, onBack }) => {
     const whatsappNumber = '5491167936064';
+
+    // 👇 Cuando se monta el componente, hace scroll al top
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
 
     // Verificar si hay descuento aplicado
     const hasDiscount = order.discount?.applied && order.discount.amount > 0;
@@ -416,7 +422,7 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
 
         // Construir el mensaje completo con el formato solicitado
         let message = `¡Hola! Acabo de realizar mi compra:%0A%0A`;
-        
+
         message += `*N° de Orden:* ${order.id}%0A`;
         message += `*Fecha:* ${order.date}%0A%0A`;
 
@@ -499,14 +505,14 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
                                     <span>Subtotal:</span>
                                     <span>${order.payment.subtotal.toLocaleString('es-AR')}</span>
                                 </div>
-                                
+
                                 {order.payment?.surcharge > 0 && (
                                     <div className="d-flex justify-content-between text-danger">
                                         <span>Recargo por transferencia ({order.payment.surcharge_percentage}%):</span>
                                         <span>+${order.payment.surcharge.toLocaleString('es-AR')}</span>
                                     </div>
                                 )}
-                                
+
                                 {hasDiscount && (
                                     <div className="d-flex justify-content-between text-success">
                                         <span>Descuento ({order.discount.code}):</span>
@@ -538,14 +544,32 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
 
                     {/* Botones de acción */}
                     <div className="mt-4">
-                        <a
+                        {/* <a
                             href={whatsappUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-success btn-lg"
                         >
                             📱 Abrir WhatsApp para Confirmar
+                        </a> */}
+                        <a
+                            href={whatsappUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center gap-2 py-3 shadow-lg whatsapp-button"
+                            style={{ fontSize: "1.2rem", borderRadius: "12px" }}
+                        >
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                                alt="WhatsApp"
+                                width="28"
+                                height="28"
+                            />
+                            <span><strong>Confirmar pedido por WhatsApp</strong></span>
                         </a>
+
+
+
 
                         <button
                             onClick={onBack}
@@ -572,7 +596,7 @@ const WhatsAppConfirmation = ({ order, onBack }) => {
                     </div>
 
                     {/* Información de respaldo */}
-                    <div className="mt-4 p-3 rounded" style={{backgroundColor: '#434344ff'}}>
+                    <div className="mt-4 p-3 rounded" style={{ backgroundColor: '#434344ff' }}>
                         <h6>¿Problemas con el botón?</h6>
                         <p className="mb-1">1. Guardá este número: <strong>11 6793-6064</strong></p>
                         <p className="mb-1">2. Enviá el mensaje manualmente</p>

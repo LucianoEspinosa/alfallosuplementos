@@ -19,6 +19,7 @@ import LoadingScreen from './components/LoadingScreen'; // ✅ Nuevo componente
 import OrdersList from './components/OrdersList';
 import BulkSaborManager from './components/BulkSaborManager';
 import DiscountCodeManager from './components/DiscountCodeManager'; // Ajusta la ruta según tu estructura
+import ExcelManager from './components/ExcelManager.jsx';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -62,6 +63,7 @@ function App() {
               <Route path="/orders" element={<OrdersList />} />
               <Route path="/sabores" element={<BulkSaborManager />} />
               <Route path="/discount" element={<DiscountCodeManager />} />
+              <Route path="/excel" element={<ExcelManager />} />
             </Routes>
             <Footer />
           </div>
