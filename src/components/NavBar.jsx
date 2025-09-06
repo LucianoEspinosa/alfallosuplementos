@@ -160,12 +160,12 @@ const NavBar = () => {
                                     </ul>
                                 )}
                             </li>
-
+{/* 
                             <li className="nav-item">
                                 <Link className="nav-link py-0 py-2" to={"/ofertas"} onClick={closeAllMenus}>
                                     🎯 Ofertas
                                 </Link>
-                            </li>
+                            </li> */}
 
                         </ul>
                     </div>

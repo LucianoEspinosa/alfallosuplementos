@@ -4,6 +4,7 @@ import { useParams, Link, useLocation, useSearchParams } from "react-router-dom"
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import Loading from "./Loading";
 import FilterBar from "./FilterBar";
+import CategoryCards from "./CategoryCards";
 
 const ItemListContainer = ({ top, oferta, titulo }) => {
     const [items, setItems] = useState([]);
@@ -22,6 +23,9 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
         if (!texto) return '';
         return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }, []);
+
+    // Verificar si estamos en la página principal de productos
+    const isHomePage = !id && !searchTerm && location.pathname === "/";
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -116,7 +120,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
         };
 
         fetchProducts();
-    }, [id, top, oferta, normalizarTexto, location.pathname, sortBy, searchTerm]); // ← Agregar searchTerm aquí
+    }, [id, top, oferta, normalizarTexto, location.pathname, sortBy, searchTerm]);
 
     // Handlers para FilterBar
     const handleSortChange = (sortType) => {
@@ -190,7 +194,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
             return decodeURIComponent(id);
         }
         if (titulo) return titulo;
-        return "Productos";
+        return <h2>Productos</h2>;
     };
 
     // Ocultar breadcrumb si hay búsqueda
@@ -221,10 +225,13 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                 </nav>
             )}
 
+            {/* Tarjetas de categorías - Solo en página principal */}
+            {isHomePage && <CategoryCards />}
+
+            {/* Título después de las categorías */}
             <div className="row text-center mb-4">
                 <div className="col">
                     <h1 className="text-capitalize fw-bold">{getTitulo()}</h1>
-                    
                 </div>
             </div>
 

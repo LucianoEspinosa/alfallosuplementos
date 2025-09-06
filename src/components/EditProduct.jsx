@@ -406,7 +406,7 @@ const EditProduct = () => {
                     <input type="number" className="form-control" id="descuento" name="descuento" value={item.descuento || 0} onChange={handleInputChange} />
                 </div>
 
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                     <label htmlFor="categoria" className="form-label">Categoría:</label>
                     <select className="form-select" id="categoria" name="categoria" value={item.categoria} onChange={handleInputChange}>
                         <option value="">Seleccionar categoría</option>
@@ -431,6 +431,37 @@ const EditProduct = () => {
                         <option value="barritas">Barritas proteicas</option>
                         <option value="snacks">Snacks saludables</option>
                         <option value="accesorios">Accesorios</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </div> */}
+
+                <div className="col-md-6">
+                    <label htmlFor="categoria" className="form-label">Categoría:</label>
+                    <select className="form-select" id="categoria" name="categoria" value={item.categoria} onChange={handleInputChange}>
+                        <option value="">Seleccionar categoría</option>
+                        <option value="proteinas">Proteínas</option>
+                        <option value="creatina">Creatina</option>
+                        <option value="aminoacidos">Aminoácidos</option>
+                        <option value="preentreno">Pre-entreno</option>
+                        <option value="intraentreno">Intra-entreno</option>
+                        <option value="postentreno">Post-entreno</option>
+                        <option value="ganadores de masa">Ganadores de masa</option>
+                        <option value="quemadores">Quemadores</option>
+                        <option value="termogenicos">Termogénicos</option>
+                        <option value="magnesio">Magnesio</option>
+                        <option value="glutamina">Glutamina</option>
+                        <option value="vitaminas">Vitaminas</option>
+                        <option value="minerales">Minerales</option>
+                        <option value="omega">Omega 3/6/9</option>
+                        <option value="colageno">Colágeno</option>
+                        <option value="energeticos">Energéticos</option>
+                        <option value="electrolitos">Electrolitos</option>
+                        <option value="carbohidratos">Carbohidratos</option>
+                        <option value="barras proteicas">Barritas proteicas</option>
+                        <option value="snacks">Snacks saludables</option>
+                        <option value="accesorios">Accesorios</option>
+                        <option value="oxido nitrico">Óxido nítrico</option>
+                        <option value="pre-workout">Pre-workout</option>
                         <option value="otros">Otros</option>
                     </select>
                 </div>
