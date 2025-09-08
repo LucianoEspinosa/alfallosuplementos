@@ -1703,3 +1703,28 @@ body {
 .whatsapp-button {
   animation: softPulse 2s infinite ease-in-out;
 }
+
+.breadcrumb {
+
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.breadcrumb-item a {
+  color: #adb5bd; /* Un gris claro para los enlaces inactivos */
+  text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+  color: #ffffff; /* Blanco para los enlaces al pasar el ratón */
+}
+
+.breadcrumb-item.active {
+  color: #f8f9fa; /* Un blanco más brillante para el elemento activo */
+  font-weight: bold;
+}
+
+/* Opcional: separador de breadcrumbs */
+.breadcrumb-item + .breadcrumb-item::before {
+  color: #6c757d; /* Un gris medio para el separador */
+}

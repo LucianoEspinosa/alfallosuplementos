@@ -82,8 +82,8 @@ const NavBar = () => {
 
                     {/* Logo */}
                     <Link to={"/"} className="col-4 col-md-2 d-flex align-items-end text-decoration-none text-black">
-                        <img src={logo} className="w-50 logoStyle d-md-none" alt="logo" />
-                        <img src={logo} className="w-75 logoStyle d-none d-md-block" alt="logo" />
+                        <img src={logo} className="w-50 logoStyle d-md-none" alt="Al Fallo logo" />
+                        <img src={logo} className="w-75 logoStyle d-none d-md-block" alt="Al Fallo logo" />
                     </Link>
 
                     {/* Search Bar Desktop */}

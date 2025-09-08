@@ -11,7 +11,6 @@
 // import barrasproteicasImg from "../components/img/barrasproteicas.png";
 // import ganadordepesoImg from "../components/img/ganadordepeso.png";
 
-
 // const CategoryCards = () => {
 //     const [touchStart, setTouchStart] = useState(0);
 //     const [touchEnd, setTouchEnd] = useState(0);
@@ -96,7 +95,12 @@
 
 //     return (
 //         <div className="category-cards-container mb-5">
-//             <h2 className="text-center mb-4">Categorías Destacadas</h2>
+//             <h2 className="text-center mb-4" style={{ 
+//                 textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+//                 fontWeight: 'bold'
+//             }}>
+//                 Categorías Destacadas
+//             </h2>
             
 //             {/* Versión desktop - Grid */}
 //             <div className="d-none d-md-block">
@@ -121,7 +125,12 @@
 //                                             <div className="w-100 p-3 text-white" style={{
 //                                                 background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, transparent 100%)"
 //                                             }}>
-//                                                 <h5 className="mb-0 text-center">{categoria.nombre}</h5>
+//                                                 <h5 className="mb-0 text-center" style={{
+//                                                     textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+//                                                     fontWeight: '600'
+//                                                 }}>
+//                                                     {categoria.nombre}
+//                                                 </h5>
 //                                             </div>
 //                                         </div>
 //                                     </div>
@@ -167,7 +176,12 @@
 //                                             <div className="w-100 p-2 text-white" style={{
 //                                                 background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, transparent 100%)"
 //                                             }}>
-//                                                 <h6 className="mb-0 text-center">{categoria.nombre}</h6>
+//                                                 <h6 className="mb-0 text-center" style={{
+//                                                     textShadow: '1px 1px 3px rgba(0,0,0,0.8)',
+//                                                     fontWeight: '600'
+//                                                 }}>
+//                                                     {categoria.nombre}
+//                                                 </h6>
 //                                             </div>
 //                                         </div>
 //                                     </div>
@@ -280,14 +294,14 @@ const CategoryCards = () => {
     const handleTouchEnd = () => {
         if (touchStart - touchEnd > 50) {
             // Deslizar a la izquierda - avanzar una tarjeta
-            setCurrentCard((prev) => 
+            setCurrentCard((prev) =>
                 prev === featuredCategories.length - 1 ? 0 : prev + 1
             );
         }
 
         if (touchStart - touchEnd < -50) {
             // Deslizar a la derecha - retroceder una tarjeta
-            setCurrentCard((prev) => 
+            setCurrentCard((prev) =>
                 prev === 0 ? featuredCategories.length - 1 : prev - 1
             );
         }
@@ -295,24 +309,24 @@ const CategoryCards = () => {
 
     return (
         <div className="category-cards-container mb-5">
-            <h2 className="text-center mb-4" style={{ 
+            <h2 className="text-center mb-4" style={{
                 textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
                 fontWeight: 'bold'
             }}>
                 Categorías Destacadas
             </h2>
-            
+
             {/* Versión desktop - Grid */}
             <div className="d-none d-md-block">
                 <div className="row g-4">
                     {featuredCategories.map(categoria => (
                         <div key={categoria.id} className="col-md-3 col-6">
-                            <Link 
-                                to={categoria.link} 
+                            <Link
+                                to={categoria.link}
                                 className="text-decoration-none"
                             >
-                                <div className="category-card h-100">
-                                    <div 
+                                <div className="category-card h-100" role="img" aria-label={`Imagen de la categoría: ${categoria.nombre}`}>
+                                    <div
                                         className="category-image position-relative rounded-3 overflow-hidden"
                                         style={{
                                             height: "200px",
@@ -340,31 +354,30 @@ const CategoryCards = () => {
                     ))}
                 </div>
             </div>
-            
+
             {/* Versión mobile - Carousel con 2 tarjetas visibles */}
             <div className="d-md-none">
-                <div 
+                <div
                     className="category-carousel overflow-hidden position-relative"
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                 >
-                    <div 
+                    <div
                         className="d-flex transition-transform"
-                        style={{ 
+                        style={{
                             transform: `translateX(-${currentCard * 50}%)`,
                             transition: 'transform 0.3s ease'
                         }}
                     >
                         {featuredCategories.map((categoria, index) => (
-                            <div 
-                                key={categoria.id} 
+                            <div
+                                key={categoria.id}
                                 className="flex-shrink-0 w-50 px-2"
                                 style={{ width: '50%' }}
                             >
                                 <Link to={categoria.link} className="text-decoration-none">
-                                    <div 
-                                        className="category-image position-relative rounded-3 overflow-hidden"
+                                    <div className="category-image position-relative rounded-3 overflow-hidden" role="img" aria-label={`Imagen de la categoría: ${categoria.nombre}`}
                                         style={{
                                             height: "150px",
                                             backgroundImage: `url(${categoria.imagen})`,
@@ -389,7 +402,7 @@ const CategoryCards = () => {
                             </div>
                         ))}
                     </div>
-                    
+
                     {/* Indicadores */}
                     <div className="d-flex justify-content-center mt-3">
                         {featuredCategories.map((_, index) => (
