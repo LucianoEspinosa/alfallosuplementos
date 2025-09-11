@@ -4,13 +4,13 @@ import { getFirestore, collection, getDocs, doc, deleteDoc } from "firebase/fire
 import logo from "./img/logoalfallo2.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // IMPORTACIÓN CORREGIDA:
-import { 
-  faTrashAlt, 
-  faPencilAlt, 
-  faFilter, 
-  faListAlt, 
-  faBox,
-  faFileExcel  // ÍCONO NUEVO AÑADIDO
+import {
+    faTrashAlt,
+    faPencilAlt,
+    faFilter,
+    faListAlt,
+    faBox,
+    faFileExcel  // ÍCONO NUEVO AÑADIDO
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 

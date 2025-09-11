@@ -1728,3 +1728,213 @@ body {
 .breadcrumb-item + .breadcrumb-item::before {
   color: #6c757d; /* Un gris medio para el separador */
 }
+
+/* Estilo para el contenedor principal de la barra */
+.filters-bar {
+  background-color: #212529; /* Un gris oscuro, casi negro, para que se integre con tu fondo */
+  color: #f8f9fa; /* Color de texto claro para cualquier texto dentro de la barra */
+  border: none; /* Elimina cualquier borde blanco que pueda tener */
+}
+
+/* Estilo para los botones (Nombre, Todos los precios, 3KG) */
+.filters-bar .dropdown-toggle {
+  background-color: #343a40; /* Un gris un poco más claro para los botones */
+  border-color: #495057; /* Borde más oscuro para darle profundidad */
+  color: #f8f9fa; /* Texto blanco en los botones */
+}
+
+/* Estilo al pasar el cursor sobre los botones */
+.filters-bar .dropdown-toggle:hover {
+  background-color: #495057; /* Un gris un poco más oscuro al pasar el cursor */
+}
+
+/* Estilo para los menús desplegables (lo que se muestra al hacer clic en un botón) */
+.filters-bar .dropdown-menu {
+  background-color: #343a40; /* Fondo oscuro para el menú */
+  border-color: #495057; /* Borde oscuro */
+}
+
+/* Estilo para las opciones dentro del menú */
+.filters-bar .dropdown-menu .dropdown-item {
+  color: #f8f9fa; /* Texto blanco para las opciones */
+}
+
+/* Estilo al pasar el cursor sobre las opciones del menú */
+.filters-bar .dropdown-menu .dropdown-item:hover,
+.filters-bar .dropdown-menu .dropdown-item:focus {
+  background-color: #495057; /* Fondo más oscuro al pasar el cursor */
+  color: #ffffff;
+}
+
+/* Estilos principales del overlay del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Estilos del contenido del modal */
+.modal-content-minimal {
+    background-color: white;
+    padding: 1.8rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 320px;
+    width: 90%;
+    position: relative;
+    color: #333;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+    border: 1px solid #ddd;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estilos de la etiqueta "Producto Recomendado" */
+.recommended-label {
+    position: absolute;
+    top: 182px;
+    right: 50%;
+    transform: translateX(50%);
+    background-color: #ffc107;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.9em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: bounceIn 1s ease-in-out;
+}
+
+.recommended-label p {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estilos del botón de cierre que flota fuera del modal */
+.close-button-outside {
+    position: absolute;
+    top: -35px;
+    right: -15px;
+    background-color: transparent;
+    color: #000;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    transition: color 0.2s ease;
+}
+
+.close-button-outside:hover {
+    color: #6c757d;
+}
+
+/* Estilos de la información del producto */
+.product-info-minimal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.product-image-minimal {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 0.8rem;
+}
+
+.product-details-minimal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Título del producto con la fuente 'Playfair Display SC' */
+.product-title-minimal {
+    font-family: 'Playfair Display SC', serif;
+    font-size: 1.4rem;
+    margin: 0;
+    font-weight: 600;
+    color: #343a40;
+    line-height: 1.3;
+}
+
+/* Precio del producto con la fuente 'League Spartan' */
+.product-price-minimal {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #28a745;
+    margin-bottom: 1.2rem;
+}
+
+.view-product-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.view-product-button:hover {
+    background-color: #218838;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounceIn {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) translateX(50%);
+    }
+    40% {
+        transform: translateY(-5px) translateX(50%);
+    }
+    60% {
+        transform: translateY(-2px) translateX(50%);
+    }
+}
+
+/* Regla para hacer el texto más pequeño en móviles */
+@media (max-width: 480px) {
+    .recommended-label {
+        font-size: 0.7em;
+        padding: 5px 12px;
+    }
+}
+
+
