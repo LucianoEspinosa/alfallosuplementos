@@ -1,0 +1,402 @@
+[
+    {
+        "marca": "Dior",
+        "nombre": "Homme Intense",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.13016.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 45000,
+        "descripcion": "Dior Homme Intense 2011 de Dior es una fragancia de la familia olfativa Almizcle Amaderado Floral para Hombres. Dior Homme Intense 2011 se lanzó en 2011. La Nariz detrás de esta fragrancia es Francois Demachy. La Nota de Salida es lavanda; las Notas de Corazón son iris, almizcle ambreta y pera; las Notas de Fondo son cedro de Virginia y vetiver.",
+        "stock": 10
+    },
+    {
+        "marca": "Carolina Herrera",
+        "nombre": "212 vip",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.12865.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 40000,
+        "descripcion": "212 VIP Men de Carolina Herrera es una fragancia de la familia olfativa Ámbar Amaderada para Hombres. 212 VIP Men se lanzó en 2011. 212 VIP Men fue creada por Emilie Bevierre-Coppermann y Lucas Sieuzac. Las Notas de Salida son maracuyá (fruta de la pasión), lima (limón verde), pimienta y jengibre; las Notas de Corazón son vodka, ginebra, menta y especias; las Notas de Fondo son ámbar, cuero y notas amaderadas.",
+        "stock": 20
+    },
+    {
+        "marca": "Armaf",
+        "nombre": "Club de Nuit Intese",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.34696.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 45000,
+        "descripcion": "Club de Nuit Intense Man de Armaf es una fragancia de la familia olfativa Amaderada Especiada para Hombres. Club de Nuit Intense Man se lanzó en 2015. Las Notas de Salida son limón (lima ácida), piña, bergamota, grosellas negras y manzana; las Notas de Corazón son abedul, jazmín y rosa; las Notas de Fondo son almizcle, ámbar gris, pachulí y vainilla.",
+        "stock": 20
+    },
+    {
+        "marca": "Paco Rabanne",
+        "nombre": "Black Xs",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.514.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 42000,
+        "descripcion": "Black XS de Paco Rabanne es una fragancia de la familia olfativa Ámbar Amaderada para Hombres. Black XS se lanzó en 2005. Black XS fue creada por Olivier Cresp, Rosendo Mateu y Christian Dussoulier. Las Notas de Salida son limón (lima ácida) y salvia; las Notas de Corazón son praliné, canela, bálsamo de Tolú y cardamomo negro; las Notas de Fondo son palo de rosa de Brasil, pachulí y ámbar negro.",
+        "stock": 20
+    },
+    {
+        "marca": "Calvin klein",
+        "nombre": "One",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.276.jpg",
+        "presentacion": "100ml",
+        "categoria": "unisex",
+        "precio": 40000,
+        "descripcion": "CK One de Calvin Klein es una fragancia de la familia olfativa Cítrica Aromática para Hombres y Mujeres. CK One se lanzó en 1994. CK One fue creada por Alberto Morillas y Harry Fremont. Las Notas de Salida son limón (lima ácida), notas verdes, bergamota, piña, mandarina, cardamomo y papaya; las Notas de Corazón son lirio de los valles (muguete), jazmín, violeta, nuez moscada, rosa, raíz de lirio y fresia; las Notas de Fondo son acordes verdes, almizcle, cedro, sándalo, musgo de roble, té verde y ámbar.",
+        "stock": 20
+    },
+    {
+        "marca": "Dior",
+        "nombre": "Homme Cologne",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.72062.jpg",
+        "presentacion": "100ml",
+        "categoria": "unisex",
+        "precio": 41000,
+        "descripcion": "Dior Homme Cologne 2022 de Dior es una fragancia de la familia olfativa Cítrica Aromática para Hombres y Mujeres. Esta fragrancia es nueva. Dior Homme Cologne 2022 se lanzó en 2022. La Nariz detrás de esta fragrancia es Francois Demachy. La Nota de Salida es bergamota de Calabria; la Nota de Corazón es flor del pomelo; la Nota de Fondo es almizcle blanco.",
+        "stock": 20
+    },
+    {
+        "marca": "Givenchy",
+        "nombre": "Gentleman Edp",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.48476.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 45000,
+        "descripcion": "Gentleman Eau de Parfum de Givenchy es una fragancia de la familia olfativa Amaderada Aromática para Hombres. Gentleman Eau de Parfum se lanzó en 2018. Gentleman Eau de Parfum fue creada por Olivier Cresp y Nathalie Lorson. Las Notas de Salida son pimienta negra, lavanda y bergamota; las Notas de Corazón son raíz de lirio, clavos de olor y canela; las Notas de Fondo son vaina de vainilla negra, bálsamo de Tolú, haba tonka, benjuí y pachulí.",
+        "stock": 20
+    },
+    {
+        "marca": "Givenchy",
+        "nombre": "gentleman Edt Intense",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.65051.jpg",
+        "presentacion": "50ml",
+        "categoria": "hombre",
+        "precio": 30000,
+        "descripcion": "Gentleman Eau de Toilette Intense de Givenchy es una fragancia de la familia olfativa Amaderada Aromática para Hombres. Gentleman Eau de Toilette Intense se lanzó en 2021. Gentleman Eau de Toilette Intense fue creada por Nathalie Lorson y Olivier Cresp. Las Notas de Salida son cardamomo, albahaca y bergamota; las Notas de Corazón son iris y ciprés; las Notas de Fondo son cumarina y cedro.",
+        "stock": 20
+    },
+    {
+        "marca": "Tommy Hilfiger",
+        "nombre": "Impact",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.59835.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 45000,
+        "descripcion": "Impact de Tommy Hilfiger es una fragancia de la familia olfativa Aromática Frutal para Hombres. Impact se lanzó en 2020.",
+        "stock": 20
+    },
+    {
+        "marca": "Paco Rabanne",
+        "nombre": "Invictus",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.18471.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 44000,
+        "descripcion": "Invictus de Paco Rabanne es una fragancia de la familia olfativa Amaderada Acuática para Hombres. Invictus se lanzó en 2013. Invictus fue creada por Veronique Nyberg, Anne Flipo, Olivier Polge y Dominique Ropion. Las Notas de Salida son notas marinas, toronja (pomelo) y mandarina; las Notas de Corazón son hoja de laurel y jazmín; las Notas de Fondo son ámbar gris, madera de gaiac, musgo de roble y pachulí.",
+        "stock": 7
+    },
+    {
+        "marca": "Paco Rabanne",
+        "nombre": "One Millon Parfum",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.60035.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 49000,
+        "descripcion": "1 Million Parfum de Paco Rabanne es una fragancia de la familia olfativa Cuero para Hombres. 1 Million Parfum se lanzó en 2020. 1 Million Parfum fue creada por Quentin Bisch y Christophe Raynaud.",
+        "stock": 8
+    },
+    {
+        "marca": "Jean Paul Gaultier",
+        "nombre": "Le Beau Le Parfum",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.72158.jpg",
+        "presentacion": "125ml",
+        "categoria": "hombre",
+        "precio": 47000,
+        "descripcion": "Le Beau Le Parfum de Jean Paul Gaultier es una fragancia de la familia olfativa Ámbar Amaderada para Hombres. Esta fragrancia es nueva. Le Beau Le Parfum se lanzó en 2022. La Nariz detrás de esta fragrancia es Quentin Bisch. Las Notas de Salida son piña, iris, ciprés y jengibre; las Notas de Corazón son coco y notas amaderadas; las Notas de Fondo son haba tonka, sándalo, ámbar y ámbar gris.",
+        "stock": 20
+    },
+    {
+        "marca": "Armani",
+        "nombre": "Aqcua di Gio Profumo",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.29727.jpg",
+        "presentacion": "125ml",
+        "categoria": "hombre",
+        "precio": 50000,
+        "descripcion": "Acqua di Giò Profumo de Giorgio Armani es una fragancia de la familia olfativa Aromática Acuática para Hombres. Acqua di Giò Profumo se lanzó en 2015. La Nariz detrás de esta fragrancia es Alberto Morillas. Las Notas de Salida son notas marinas y bergamota; las Notas de Corazón son romero, salvia y geranio; las Notas de Fondo son incienso y pachulí.",
+        "stock": 15
+    },
+    {
+        "marca": "Montblanc",
+        "nombre": "Starwalker",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.4023.jpg",
+        "presentacion": "75ml",
+        "categoria": "hombre",
+        "precio": 30000,
+        "descripcion": "Starwalker de Montblanc es una fragancia de la familia olfativa Amaderada Especiada para Hombres. Starwalker se lanzó en 2005. La Nariz detrás de esta fragrancia es Michel Almairac. Las Notas de Salida son bambú, bergamota y mandarina; las Notas de Corazón son sándalo, almizcle blanco y cedro; las Notas de Fondo son jengibre, resina de abeto, nuez moscada y ámbar.",
+        "stock": 20
+    },
+    {
+        "marca": "Dior",
+        "nombre": "Sauvage Edp",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.48100.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 44000,
+        "descripcion": "Sauvage Eau de Parfum de Dior es una fragancia de la familia olfativa Ámbar Fougère para Hombres. Sauvage Eau de Parfum se lanzó en 2018. La Nariz detrás de esta fragrancia es Francois Demachy. La Nota de Salida es bergamota; las Notas de Corazón son pimienta de Sichuan, lavanda, anís estrellado y nuez moscada; las Notas de Fondo son ambroxan y vainilla.",
+        "stock": 5
+    },
+    {
+        "marca": "Jean Paul Gaultier",
+        "nombre": "Scandal Pour Homme",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.68074.jpg",
+        "presentacion": "100ml",
+        "categoria": "unisex",
+        "precio": 45000,
+        "descripcion": "Scandal Pour Homme de Jean Paul Gaultier es una fragancia de la familia olfativa Ámbar Amaderada para Hombres. Scandal Pour Homme se lanzó en 2021. Scandal Pour Homme fue creada por Quentin Bisch, Christophe Raynaud y Natalie Gracia-Cetto. Las Notas de Salida son esclarea y mandarina; las Notas de Corazón son caramelo y haba tonka; la Nota de Fondo es vetiver.",
+        "stock": 20
+    },
+    {
+        "marca": "Dolce & Gabbana",
+        "nombre": "Light Blue Forever",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.66556.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 45000,
+        "descripcion": "Light Blue Forever pour Homme de Dolce&Gabbana es una fragancia de la familia olfativa Amaderada Acuática para Hombres. Light Blue Forever pour Homme se lanzó en 2021. La Nariz detrás de esta fragrancia es Shyamala Maisondieu. Las Notas de Salida son toronja (pomelo) y bergamota; las Notas de Corazón son notas ozónicas y hojas de violeta; las Notas de Fondo son aceite de vetiver de Java, almizcle blanco y pachulí.",
+        "stock": 20
+    },
+    {
+        "marca": "Moschino",
+        "nombre": "Toy Boy",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.55858.jpg",
+        "presentacion": "100ml",
+        "categoria": "unisex",
+        "precio": 49000,
+        "descripcion": "Toy Boy de Moschino es una fragancia de la familia olfativa Amaderada Especiada para Hombres. Toy Boy se lanzó en 2019. La Nariz detrás de esta fragrancia es Yann Vasnier. Las Notas de Salida son pimienta rosa, pera, nuez moscada de Indonesia, elemí y bergamota; las Notas de Corazón son rosa, clavo de olor, magnolia y lino; las Notas de Fondo son cachemira, vetiver de Haití, Sylkolide, sándalo y ámbar.",
+        "stock": 20
+    },
+    {
+        "marca": "Yves Saint Laurent",
+        "nombre": "Y Edp",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.50757.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 48000,
+        "descripcion": "Y Eau de Parfum de Yves Saint Laurent es una fragancia de la familia olfativa Aromática Fougère para Hombres. Y Eau de Parfum se lanzó en 2018. La Nariz detrás de esta fragrancia es Dominique Ropion. Las Notas de Salida son manzana, jengibre y bergamota; las Notas de Corazón son salvia, bayas de enebro y geranio; las Notas de Fondo son Amberwood, haba tonka, cedro, vetiver y incienso de olíbano (franquincienso).",
+        "stock": 15
+    },
+    {
+        "marca": "Ralph Lauren",
+        "nombre": "Polo Red Intense",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.29738.jpg",
+        "presentacion": "125ml",
+        "categoria": "hombre",
+        "precio": 45000,
+        "descripcion": "Polo Red Intense de Ralph Lauren es una fragancia de la familia olfativa Amaderada Especiada para Hombres. Polo Red Intense se lanzó en 2015. La Nariz detrás de esta fragrancia es Olivier Gillotin. Las Notas de Salida son arándano, toronja sanguina, limón (lima ácida) y azafrán; las Notas de Corazón son café, jengibre, lavanda y salvia; las Notas de Fondo son ámbar, cuero y cedro rojo japonés.",
+        "stock": 20
+    },
+    {
+        "marca": "Paco Rabanne",
+        "nombre": "UltraViolet",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.521.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 50000,
+        "descripcion": "Ultraviolet de Paco Rabanne es una fragancia de la familia olfativa Ámbar Amaderada para Hombres. Ultraviolet se lanzó en 2001. La Nariz detrás de esta fragrancia es Jacques Cavallier. Las Notas de Salida son menta y ámbar; las Notas de Corazón son vetiver, pimienta y notas especiadas; las Notas de Fondo son musgo de roble y vainilla.",
+        "stock": 20
+    },
+    {
+        "marca": "Paco Rabanne",
+        "nombre": "UltraRed",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.2301.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 40000,
+        "descripcion": "Ultrared Men de Paco Rabanne es una fragancia de la familia olfativa Cítrica Gourmand para Hombres. Ultrared Men se lanzó en 2008. La Nota de Salida es naranja sanguina; las Notas de Corazón son praliné y haba tonka; las Notas de Fondo son vainilla y pachulí.",
+        "stock": 20
+    },
+    {
+        "marca": "Paco Rabanne",
+        "nombre": "Pure XS Night",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.53453.jpg",
+        "presentacion": "100ml",
+        "categoria": "hombre",
+        "precio": 40000,
+        "descripcion": "Pure XS Night de Paco Rabanne es una fragancia de la familia olfativa Ámbar Especiada para Hombres. Pure XS Night se lanzó en 2019. Pure XS Night fue creada por Caroline Dumur, Anne Flipo y Bruno Jovanovic. Las Notas de Salida son ginseng y jengibre; las Notas de Corazón son cacao, vainilla y canela; las Notas de Fondo son caramelo y mirra.",
+        "stock": 9
+    },
+    {
+        "marca": "Chanel",
+        "nombre": "Coco Mademoiselle",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.611.jpg",
+        "presentacion": "100ml",
+        "categoria": "mujer",
+        "precio": 80000,
+        "descripcion": "Coco Mademoiselle de Chanel es una fragancia de la familia olfativa Ámbar Floral para Mujeres. Coco Mademoiselle se lanzó en 2001. La Nariz detrás de esta fragrancia es Jacques Polge. Las Notas de Salida son naranja, mandarina, bergamota y flor de azahar del naranjo; las Notas de Corazón son rosa turca, jazmín, mimosa y ylang-ylang; las Notas de Fondo son pachulí, almizcle blanco, vainilla, vetiver, haba tonka y opopónaco. Este perfume es el ganador del premio FiFi Award Best National Advertising Campaign / TV 2008.",
+        "stock": 20
+    },
+    {
+        "marca": "Dior",
+        "nombre": "J'adore",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.210.jpg",
+        "presentacion": "75ml",
+        "categoria": "mujer",
+        "precio": 95000,
+        "descripcion": "J'adore de Dior es una fragancia de la familia olfativa Floral Frutal para Mujeres. J'adore se lanzó en 1999. La Nariz detrás de esta fragrancia es Calice Becker. Las Notas de Salida son pera, melón, magnolia, durazno (melocotón), mandarina y bergamota; las Notas de Corazón son jazmín, lirio de los valles (muguete), nardos, fresia, rosa, orquídea, ciruela y violeta; las Notas de Fondo son almizcle, vainilla, zarzamora (frambuesa negra) y cedro. Este perfume es el ganador del premio FiFi Award Best National Advertising Campaign / TV 2007.",
+        "stock": 10
+    },
+    {
+        "marca": "Gucci",
+        "nombre": "Bloom",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.44894.jpg",
+        "presentacion": "50ml",
+        "categoria": "mujer",
+        "precio": 70000,
+        "descripcion": "Gucci Bloom de Gucci es una fragancia de la familia olfativa Floral para Mujeres. Gucci Bloom se lanzó en 2017. La Nariz detrás de esta fragrancia es Alberto Morillas. La Nota de Salida es jazmín; la Nota de Corazón es nardos; la Nota de Fondo es Camilla de Rangoon.",
+        "stock": 20
+    },
+    {
+        "marca": "Versace",
+        "nombre": "Bright Crystal",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.632.jpg",
+        "presentacion": "90ml",
+        "categoria": "mujer",
+        "precio": 55000,
+        "descripcion": "Bright Crystal de Versace es una fragancia de la familia olfativa Floral Frutal para Mujeres. Bright Crystal se lanzó en 2006. La Nariz detrás de esta fragrancia es Alberto Morillas. Las Notas de Salida son yuzu, granada y Hielo; las Notas de Corazón son peonía, flor de loto y magnolia; las Notas de Fondo son almizcle, caoba y ámbar.",
+        "stock": 12
+    },
+    {
+        "marca": "Yves Saint Laurent",
+        "nombre": "Black Opium",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.25324.jpg",
+        "presentacion": "90ml",
+        "categoria": "mujer",
+        "precio": 60000,
+        "descripcion": "Black Opium de Yves Saint Laurent es una fragancia de la familia olfativa Ámbar Vainilla para Mujeres. Black Opium se lanzó en 2014. Black Opium fue creada por Nathalie Lorson, Marie Salamagne, Olivier Cresp y Honorine Blanc. Las Notas de Salida son pera, pimienta rosa y flor de azahar del naranjo; las Notas de Corazón son café, jazmín, almendra amarga y regaliz; las Notas de Fondo son vainilla, pachulí, madera de cachemira y cedro.",
+        "stock": 5
+    },
+    {
+        "marca": "Marc Jacobs",
+        "nombre": "Daisy",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.1361.jpg",
+        "presentacion": "50ml",
+        "categoria": "mujer",
+        "precio": 60000,
+        "descripcion": "Daisy de Marc Jacobs es una fragancia de la familia olfativa Almizcle Floral Amaderado para Mujeres. Daisy se lanzó en 2007. La Nariz detrás de esta fragrancia es Alberto Morillas. Las Notas de Salida son hojas de violeta, toronja sanguina y fresa; las Notas de Corazón son violeta, gardenia y jazmín; las Notas de Fondo son almizcle, maderas blancas y vainilla. Este perfume es el ganador de 2 premios: FiFi Award Fragrance Of The Year Women`s Luxe 2008 y FiFi Awards Best Packaging Women`s Prestige 2008.",
+        "stock": 18
+    },
+    {
+        "marca": "Tom Ford",
+        "nombre": "Black Orchid",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.1018.jpg",
+        "presentacion": "100ml",
+        "categoria": "mujer",
+        "precio": 110000,
+        "descripcion": "Black Orchid de Tom Ford es una fragancia de la familia olfativa Ámbar Floral para Mujeres. Black Orchid se lanzó en 2006. Black Orchid fue creada por David Apel y Pierre Negrin. Las Notas de Salida son trufa, gardenia, grosellas negras, ylang-ylang, jazmín, bergamota, mandarina y limón de Amalfi (lima de Amalfi); las Notas de Corazón son orquídea, especias, gardenia, notas afrutadas, ylang-ylang, jazmín y flor de loto; las Notas de Fondo son chocolate mexicano, pachulí, vainilla, incienso, ámbar, sándalo, vetiver y almizcle blanco.",
+        "stock": 3
+    },
+    {
+        "marca": "Guerlain",
+        "nombre": "La Petite Robe Noire",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.14681.jpg",
+        "presentacion": "50ml",
+        "categoria": "mujer",
+        "precio": 65000,
+        "descripcion": "La Petite Robe Noire de Guerlain es una fragancia de la familia olfativa Ámbar Vainilla para Mujeres. La Petite Robe Noire se lanzó en 2012. La Nariz detrás de esta fragrancia es Thierry Wasser. Las Notas de Salida son cereza ácida (guinda), almendra, bayas rojas y bergamota; las Notas de Corazón son regaliz, rosa, té y rosa de Taif; las Notas de Fondo son vainilla, anís, haba tonka, pachulí y iris.",
+        "stock": 6
+    },
+    {
+        "marca": "Estée Lauder",
+        "nombre": "Modern Muse",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.18319.jpg",
+        "presentacion": "100ml",
+        "categoria": "mujer",
+        "precio": 65000,
+        "descripcion": "Modern Muse de Estée Lauder es una fragancia de la familia olfativa Almizcle Floral Amaderado para Mujeres. Modern Muse se lanzó en 2013. Modern Muse fue creada por Harry Fremont y Olivier Cresp. La Nota de Salida es mandarina; las Notas de Corazón son jazmín sambac (sampaguita), jazmín chino, azucena, madreselva, pétalos de flores y nardos; las Notas de Fondo son almizcle, notas amaderadas, pachulí, hojas de pachulí, ámbar y vainilla de Madagascar.",
+        "stock": 9
+    },
+    {
+        "marca": "Givenchy",
+        "nombre": "Very Irresistible",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.33.jpg",
+        "presentacion": "75ml",
+        "categoria": "mujer",
+        "precio": 58000,
+        "descripcion": "Very Irresistible de Givenchy es una fragancia de la familia olfativa Floral Frutal para Mujeres. Very Irresistible se lanzó en 2003. Very Irresistible fue creada por Dominique Ropion, Sophie Labbe y Carlos Benaim. Las Notas de Salida son casia, cedrón (hierba luisa, verbena de olor) y anís estrellado; las Notas de Corazón son rosa, peonía y magnolia; las Notas de Fondo son rosa de Taif, almizcle, vainilla y pachulí.",
+        "stock": 11
+    },
+    {
+        "marca": "Dolce & Gabbana",
+        "nombre": "Light Blue",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.485.jpg",
+        "presentacion": "100ml",
+        "categoria": "mujer",
+        "precio": 60000,
+        "descripcion": "Light Blue de Dolce&Gabbana es una fragancia de la familia olfativa Floral Frutal para Mujeres. Light Blue se lanzó en 2001. La Nariz detrás de esta fragrancia es Olivier Cresp. Las Notas de Salida son limón siciliano (lima siciliana), manzana, cedro y campanilla; las Notas de Corazón son bambú, jazmín y rosa blanca; las Notas de Fondo son cedro, almizcle y ámbar.",
+        "stock": 7
+    },
+    {
+        "marca": "Burberry",
+        "nombre": "My Burberry",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.25836.jpg",
+        "presentacion": "90ml",
+        "categoria": "mujer",
+        "precio": 52000,
+        "descripcion": "My Burberry de Burberry es una fragancia de la familia olfativa Floral para Mujeres. My Burberry se lanzó en 2014. La Nariz detrás de esta fragrancia es Francis Kurkdjian. Las Notas de Salida son guisante de olor, bergamota, mandarina, toronja (pomelo) y limón (lima ácida); las Notas de Corazón son membrillo, fresia, geranio, durazno (melocotón), notas verdes, gardenia y maracuyá (fruta de la pasión); las Notas de Fondo son rosa de Damasco, rosa, pachulí, almizcle, cuero y violeta.",
+        "stock": 14
+    },
+    {
+        "marca": "Prada",
+        "nombre": "Candy",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.12426.jpg",
+        "presentacion": "50ml",
+        "categoria": "mujer",
+        "precio": 65000,
+        "descripcion": "Prada Candy de Prada es una fragancia de la familia olfativa Ámbar Vainilla para Mujeres. Prada Candy se lanzó en 2011. La Nariz detrás de esta fragrancia es Daniela (Roche) Andrier. La Nota de Salida es caramelo; las Notas de Corazón son notas atalcadas y almizcle; las Notas de Fondo son benjuí y vainilla.",
+        "stock": 16
+    },
+    {
+        "marca": "Yves Saint Laurent",
+        "nombre": "Mon Paris",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.38914.jpg",
+        "presentacion": "90ml",
+        "categoria": "mujer",
+        "precio": 95000,
+        "descripcion": "Mon Paris de Yves Saint Laurent es una fragancia de la familia olfativa Chipre Frutal para Mujeres. Mon Paris se lanzó en 2016. Mon Paris fue creada por Olivier Cresp, Harry Fremont y Dora Baghriche. Las Notas de Salida son fresa, frambuesa, pera, naranja, naranja tangerina, bergamota de Calabria y calone; las Notas de Corazón son peonía, jazmín sambac (sampaguita), jazmín chino, datura y flor de azahar del naranjo; las Notas de Fondo son hojas de pachulí de Indonesia, pachulí, almizcle blanco, vainilla, ambroxan, musgo y cedro.",
+        "stock": 4
+    },
+    {
+        "marca": "Jimmy Choo",
+        "nombre": "Jimmy Choo",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.10573.jpg",
+        "presentacion": "100ml",
+        "categoria": "mujer",
+        "precio": 88000,
+        "descripcion": "Jimmy Choo de Jimmy Choo es una fragancia de la familia olfativa Chipre Frutal para Mujeres. Jimmy Choo se lanzó en 2011. La Nariz detrás de esta fragrancia es Olivier Polge. Las Notas de Salida son pera, mandarina y notas verdes; la Nota de Corazón es orquídea; las Notas de Fondo son tófe y pachulí.",
+        "stock": 8
+    },
+    {
+        "marca": "Calvin Klein",
+        "nombre": "Euphoria",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.799.jpg",
+        "presentacion": "50ml",
+        "categoria": "mujer",
+        "precio": 70000,
+        "descripcion": "Euphoria Men de Calvin Klein es una fragancia de la familia olfativa Amaderada Aromática para Hombres. Euphoria Men se lanzó en 2006. Euphoria Men fue creada por Carlos Benaim, Loc Dong y Jean-Marc Chaillan. Las Notas de Salida son jengibre y pimienta; las Notas de Corazón son albahaca negra, salvia y cedro; las Notas de Fondo son ámbar, gamuza, secuoya roja brasileña y pachulí.",
+        "stock": 13
+    },
+    {
+        "marca": "Valentino",
+        "nombre": "Valentina",
+        "img": "https://fraguru.com/mdimg/perfume/375x500.12770.jpg",
+        "presentacion": "80ml",
+        "categoria": "mujer",
+        "precio": 92000,
+        "descripcion": "Valentina de Valentino es una fragancia de la familia olfativa Ámbar Floral para Mujeres. Valentina se lanzó en 2011. Valentina fue creada por Alberto Morillas y Olivier Cresp. Las Notas de Salida son trufa y bergamota; las Notas de Corazón son fresa, jazmín, nardos y flor del naranjo africano; las Notas de Fondo son vainilla, ámbar y cedro de Virginia.",
+        "stock": 6
+    }
+]

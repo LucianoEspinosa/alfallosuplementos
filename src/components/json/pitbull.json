@@ -1,0 +1,69 @@
+{
+    "suplementos": [
+        {
+            "categoria": "proteínas",
+            "descripcion": "Proteína Whey sabor chocolate, 24g de proteína por porción",
+            "descuento": 0,
+            "img": "https://ejemplo.com/ruta-imagen-whey-chocolate.jpg",
+            "marca": "Nueva Marca",
+            "nombre": "WHEY PROTEIN 2LBS CHOCOLATE",
+            "precio": 31658,
+            "precio_costo": 23450,
+            "ganancia": 1.35,
+            "presentacion": "2LBS",
+            "stock": 15
+        },
+        {
+            "categoria": "proteínas",
+            "descripcion": "Proteína Whey sabor vainilla, 24g de proteína por porción",
+            "descuento": 0,
+            "img": "https://ejemplo.com/ruta-imagen-whey-vainilla.jpg",
+            "marca": "Nueva Marca",
+            "nombre": "WHEY PROTEIN 2LBS VAINILLA",
+            "precio": 31658,
+            "precio_costo": 23450,
+            "ganancia": 1.35,
+            "presentacion": "2LBS",
+            "stock": 15
+        },
+        {
+            "categoria": "creatina",
+            "descripcion": "Creatina micronizada de alta pureza",
+            "descuento": 0,
+            "img": "https://ejemplo.com/ruta-imagen-creatina.jpg",
+            "marca": "Nueva Marca",
+            "nombre": "CREATINE MICRONIZED 300GRS",
+            "precio": 21263,
+            "precio_costo": 15750,
+            "ganancia": 1.35,
+            "presentacion": "300g",
+            "stock": 20
+        },
+        {
+            "categoria": "minerales",
+            "descripcion": "Citrato de magnesio en polvo para mejor absorción",
+            "descuento": 0,
+            "img": "https://ejemplo.com/ruta-imagen-citrato-magnesio.jpg",
+            "marca": "Nueva Marca",
+            "nombre": "CITRATO DE MAGNESIO 300GRS",
+            "precio": 14108,
+            "precio_costo": 10450,
+            "ganancia": 1.35,
+            "presentacion": "300g",
+            "stock": 12
+        },
+        {
+            "categoria": "minerales",
+            "descripcion": "Bisglicinato de magnesio, forma altamente biodisponible",
+            "descuento": 0,
+            "img": "https://ejemplo.com/ruta-imagen-bisglicinato.jpg",
+            "marca": "Nueva Marca",
+            "nombre": "BISGLICINATO DE MAGNESIO 120CAPS",
+            "precio": 15255,
+            "precio_costo": 11300,
+            "ganancia": 1.35,
+            "presentacion": "120 cápsulas",
+            "stock": 18
+        }
+    ]
+}

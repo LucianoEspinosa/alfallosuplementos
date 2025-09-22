@@ -1,0 +1,253 @@
+{"ejercicios":{
+  "espalda": [
+    {
+      "nombre": "Dominadas",
+      "descripcion": "Ejercicio de tracción en barra para trabajar la espalda y los bíceps.",
+      "imagen": "https://ejemplo.com/dominadas.jpg",
+      "video": "https://youtube.com/ejemplo_dominadas"
+    },
+    {
+      "nombre": "Remo con barra",
+      "descripcion": "Remo inclinado con barra para desarrollar la musculatura de la espalda media.",
+      "imagen": "https://ejemplo.com/remo_barra.jpg",
+      "video": "https://youtube.com/ejemplo_remo_barra"
+    },
+    {
+      "nombre": "Pull-over con mancuerna",
+      "descripcion": "Ejercicio para trabajar la espalda y el pecho en banco plano.",
+      "imagen": "https://ejemplo.com/pull_over.jpg",
+      "video": "https://youtube.com/ejemplo_pull_over"
+    },
+    {
+      "nombre": "Jalón al pecho",
+      "descripcion": "Ejercicio en polea para trabajar la espalda alta.",
+      "imagen": "https://ejemplo.com/jalon_pecho.jpg",
+      "video": "https://youtube.com/ejemplo_jalon_pecho"
+    },
+    {
+      "nombre": "Remo en polea baja",
+      "descripcion": "Ejercicio para trabajar la parte media y baja de la espalda.",
+      "imagen": "https://ejemplo.com/remo_polea.jpg",
+      "video": "https://youtube.com/ejemplo_remo_polea"
+    },
+    {
+      "nombre": "Peso muerto",
+      "descripcion": "Ejercicio compuesto que trabaja toda la espalda y piernas.",
+      "imagen": "https://ejemplo.com/peso_muerto.jpg",
+      "video": "https://youtube.com/ejemplo_peso_muerto"
+    },
+    {
+      "nombre": "Remo con mancuernas",
+      "descripcion": "Remo unilateral para fortalecer la espalda.",
+      "imagen": "https://ejemplo.com/remo_mancuerna.jpg",
+      "video": "https://youtube.com/ejemplo_remo_mancuerna"
+    },
+    {
+      "nombre": "Jalón tras nuca",
+      "descripcion": "Variante del jalón para enfocarse en la parte superior de la espalda.",
+      "imagen": "https://ejemplo.com/jalon_nuca.jpg",
+      "video": "https://youtube.com/ejemplo_jalon_nuca"
+    },
+    {
+      "nombre": "Remo con agarre cerrado",
+      "descripcion": "Ejercicio en polea para enfatizar la parte central de la espalda.",
+      "imagen": "https://ejemplo.com/remo_cerrado.jpg",
+      "video": "https://youtube.com/ejemplo_remo_cerrado"
+    },
+    {
+      "nombre": "Dominadas supinas",
+      "descripcion": "Variante de dominadas que enfatiza el bíceps y la espalda.",
+      "imagen": "https://ejemplo.com/dominadas_supinas.jpg",
+      "video": "https://youtube.com/ejemplo_dominadas_supinas"
+    },
+    {
+      "nombre": "Pull-over en polea alta",
+      "descripcion": "Ejercicio de aislamiento para la espalda.",
+      "imagen": "https://ejemplo.com/pull_over_polea.jpg",
+      "video": "https://youtube.com/ejemplo_pull_over_polea"
+    },
+    {
+      "nombre": "Remo Pendlay",
+      "descripcion": "Ejercicio para desarrollar potencia y fuerza en la espalda media.",
+      "imagen": "https://ejemplo.com/remo_pendlay.jpg",
+      "video": "https://youtube.com/ejemplo_remo_pendlay"
+    }
+  ],
+  "pecho": [
+    {
+      "nombre": "Press de banca",
+      "descripcion": "Ejercicio compuesto para el desarrollo del pectoral, hombros y tríceps.",
+      "imagen": "https://ejemplo.com/press_banca.jpg",
+      "video": "https://youtube.com/ejemplo_press_banca"
+    },
+    {
+      "nombre": "Aperturas con mancuernas",
+      "descripcion": "Ejercicio de aislamiento para trabajar la parte media del pectoral.",
+      "imagen": "https://ejemplo.com/aperturas.jpg",
+      "video": "https://youtube.com/ejemplo_aperturas"
+    },
+    {
+      "nombre": "Fondos en paralelas",
+      "descripcion": "Ejercicio para desarrollar la parte inferior del pectoral y tríceps.",
+      "imagen": "https://ejemplo.com/fondos.jpg",
+      "video": "https://youtube.com/ejemplo_fondos"
+    },
+    {
+      "nombre": "Press inclinado con barra",
+      "descripcion": "Ejercicio para trabajar la parte superior del pectoral.",
+      "imagen": "https://ejemplo.com/press_inclinado.jpg",
+      "video": "https://youtube.com/ejemplo_press_inclinado"
+    },
+    {
+      "nombre": "Press declinado",
+      "descripcion": "Ejercicio para trabajar la parte inferior del pectoral.",
+      "imagen": "https://ejemplo.com/press_declinado.jpg",
+      "video": "https://youtube.com/ejemplo_press_declinado"
+    },
+    {
+      "nombre": "Cruces en polea",
+      "descripcion": "Ejercicio para definir el pectoral.",
+      "imagen": "https://ejemplo.com/cruces_polea.jpg",
+      "video": "https://youtube.com/ejemplo_cruces_polea"
+    },
+    {
+      "nombre": "Press con mancuernas",
+      "descripcion": "Variante del press de banca con mayor rango de movimiento.",
+      "imagen": "https://ejemplo.com/press_mancuernas.jpg",
+      "video": "https://youtube.com/ejemplo_press_mancuernas"
+    },
+    {
+      "nombre": "Flexiones de brazos",
+      "descripcion": "Ejercicio básico con peso corporal para el desarrollo del pecho.",
+      "imagen": "https://ejemplo.com/flexiones.jpg",
+      "video": "https://youtube.com/ejemplo_flexiones"
+    },
+    {
+      "nombre": "Press con agarre cerrado",
+      "descripcion": "Ejercicio para trabajar más los tríceps junto con el pectoral.",
+      "imagen": "https://ejemplo.com/press_cerrado.jpg",
+      "video": "https://youtube.com/ejemplo_press_cerrado"
+    },
+    {
+      "nombre": "Aperturas en polea baja",
+      "descripcion": "Ejercicio de aislamiento para la parte inferior del pectoral.",
+      "imagen": "https://ejemplo.com/aperturas_polea.jpg",
+      "video": "https://youtube.com/ejemplo_aperturas_polea"
+    }
+  ],
+  "piernas": [
+    {
+      "nombre": "Sentadilla con barra",
+      "descripcion": "Ejercicio compuesto para fortalecer piernas y glúteos.",
+      "imagen": "https://ejemplo.com/sentadilla_barra.jpg",
+      "video": "https://youtube.com/ejemplo_sentadilla_barra"
+    },
+    {
+      "nombre": "Prensa de piernas",
+      "descripcion": "Ejercicio en máquina para trabajar cuádriceps y glúteos.",
+      "imagen": "https://ejemplo.com/prensa_piernas.jpg",
+      "video": "https://youtube.com/ejemplo_prensa_piernas"
+    },
+    {
+      "nombre": "Zancadas con mancuernas",
+      "descripcion": "Ejercicio unilateral para fortalecer piernas y glúteos.",
+      "imagen": "https://ejemplo.com/zancadas.jpg",
+      "video": "https://youtube.com/ejemplo_zancadas"
+    },
+    {
+      "nombre": "Peso muerto rumano",
+      "descripcion": "Ejercicio para trabajar isquiotibiales y glúteos.",
+      "imagen": "https://ejemplo.com/peso_muerto_rumano.jpg",
+      "video": "https://youtube.com/ejemplo_peso_muerto_rumano"
+    },
+    {
+      "nombre": "Extensión de piernas",
+      "descripcion": "Ejercicio de aislamiento para los cuádriceps.",
+      "imagen": "https://ejemplo.com/extension_piernas.jpg",
+      "video": "https://youtube.com/ejemplo_extension_piernas"
+    }
+  ],
+  "hombros": [
+    {
+      "nombre": "Press militar",
+      "descripcion": "Ejercicio compuesto para el desarrollo del deltoides.",
+      "imagen": "https://ejemplo.com/press_militar.jpg",
+      "video": "https://youtube.com/ejemplo_press_militar"
+    },
+    {
+      "nombre": "Elevaciones laterales",
+      "descripcion": "Ejercicio de aislamiento para los deltoides laterales.",
+      "imagen": "https://ejemplo.com/elevaciones_laterales.jpg",
+      "video": "https://youtube.com/ejemplo_elevaciones_laterales"
+    },
+    {
+      "nombre": "Pájaros con mancuernas",
+      "descripcion": "Ejercicio para trabajar el deltoides posterior.",
+      "imagen": "https://ejemplo.com/pajaros.jpg",
+      "video": "https://youtube.com/ejemplo_pajaros"
+    }
+  ],
+  "biceps": [
+    {
+      "nombre": "Curl con barra",
+      "descripcion": "Ejercicio básico para el desarrollo del bíceps.",
+      "imagen": "https://ejemplo.com/curl_barra.jpg",
+      "video": "https://youtube.com/ejemplo_curl_barra"
+    },
+    {
+      "nombre": "Curl con mancuernas",
+      "descripcion": "Ejercicio unilateral para trabajar el bíceps.",
+      "imagen": "https://ejemplo.com/curl_mancuernas.jpg",
+      "video": "https://youtube.com/ejemplo_curl_mancuernas"
+    }
+  ],
+  "triceps": [
+    {
+      "nombre": "Fondos en paralelas",
+      "descripcion": "Ejercicio compuesto para trabajar tríceps y pectorales.",
+      "imagen": "https://ejemplo.com/fondos_triceps.jpg",
+      "video": "https://youtube.com/ejemplo_fondos_triceps"
+    },
+    {
+      "nombre": "Extensiones de tríceps en polea",
+      "descripcion": "Ejercicio de aislamiento para el tríceps.",
+      "imagen": "https://ejemplo.com/extensiones_triceps.jpg",
+      "video": "https://youtube.com/ejemplo_extensiones_triceps"
+    }
+  ],
+  "antebrazos": [
+    {
+      "nombre": "Curl de muñeca",
+      "descripcion": "Ejercicio para fortalecer los antebrazos.",
+      "imagen": "https://ejemplo.com/curl_muneca.jpg",
+      "video": "https://youtube.com/ejemplo_curl_muneca"
+    },
+    {
+      "nombre": "Curl invertido",
+      "descripcion": "Ejercicio para trabajar la parte superior del antebrazo.",
+      "imagen": "https://ejemplo.com/curl_invertido.jpg",
+      "video": "https://youtube.com/ejemplo_curl_invertido"
+    }
+  ],
+  "zona media": [
+    {
+      "nombre": "Crunch abdominal",
+      "descripcion": "Ejercicio básico para trabajar la zona media.",
+      "imagen": "https://ejemplo.com/crunch.jpg",
+      "video": "https://youtube.com/ejemplo_crunch"
+    },
+    {
+      "nombre": "Plank",
+      "descripcion": "Ejercicio isométrico para fortalecer el core.",
+      "imagen": "https://ejemplo.com/plank.jpg",
+      "video": "https://youtube.com/ejemplo_plank"
+    },
+    {
+      "nombre": "Elevaciones de piernas",
+      "descripcion": "Ejercicio para trabajar la parte baja del abdomen.",
+      "imagen": "https://ejemplo.com/elevaciones_piernas.jpg",
+      "video": "https://youtube.com/ejemplo_elevaciones_piernas"
+    }
+  ]
+}
+}

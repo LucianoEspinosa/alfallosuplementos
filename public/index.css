@@ -1,0 +1,1940 @@
+/* ========== IMPORTACIÓN DE FUENTES ========== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display+SC:wght@400;700&family=League+Spartan:wght@300;400;700&display=swap');
+
+/* ========== APLICAR FUENTES ========== */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
+  /* ... resto de tus estilos ... */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand,
+.card-title,
+.item-title {
+  font-family: 'Playfair Display SC', serif !important;
+}
+
+.classPrecio,
+.price-container,
+.final-price {
+  font-family: 'League Spartan', sans-serif !important;
+}
+
+/* Mantener consistencia en botones y inputs */
+button,
+input,
+textarea,
+select {
+  font-family: 'Inter', sans-serif !important;
+}
+
+
+/* ========== TEMA OSCURO - ESTILOS GENERALES ========== */
+:root {
+  --bg-primary: #121212;
+  --bg-secondary: #000000;
+  --bg-card: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --accent-color: #007bff;
+  --border-color: #333333;
+}
+
+body {
+  padding-top: 68px;
+  margin: 0;
+  font-family: 'Playfair Display SC', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+@media (min-width: 576px) {
+  body {
+    padding-top: 112px;
+  }
+}
+
+/* ========== NAVBAR NEGRO INTENSO ========== */
+.cabecera {
+  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.5) !important;
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid #222222 !important;
+}
+
+.navbar-nav .nav-link {
+  color: var(--text-primary) !important;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--accent-color) !important;
+}
+
+/* ========== SEARCH BAR SOBRE NEGRO ========== */
+.search-container {
+  position: relative;
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #000000 !important;
+  border: 1px solid #222222 !important;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.search-result-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #222222 !important;
+  color: var(--text-primary) !important;
+  transition: background 0.2s;
+}
+
+.search-result-item:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-input {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid #333333 !important;
+  backdrop-filter: blur(10px);
+  color: var(--text-primary) !important;
+  border-radius: 18px !important;
+  padding: 0.25rem 0.8rem !important;
+  height: 34px !important;
+  font-size: 0.8rem !important;
+  transition: all 0.2s ease;
+  margin-right: 0.3rem !important;
+}
+
+.search-input::placeholder {
+  color: #888888 !important;
+  font-size: 0.8rem !important;
+}
+
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.search-input+.btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid #333333 !important;
+  backdrop-filter: blur(8px);
+  border-radius: 18px !important;
+  padding: 0.25rem 0.6rem !important;
+  height: 34px !important;
+  font-size: 0.8rem !important;
+  color: var(--text-primary) !important;
+}
+
+.search-input+.btn:hover {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+/* ========== DROPDOWN NEGRO ========== */
+.dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid #222222 !important;
+  background-color: #000000 !important;
+}
+
+.dropdown-item {
+  padding: 8px 16px;
+  transition: background-color 0.2s;
+  color: var(--text-primary) !important;
+}
+
+.dropdown-item:hover {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+}
+
+/* ========== FOOTER NEGRO ========== */
+.foot {
+  box-shadow: 0px 7px 9px 0px rgba(0, 0, 0, 0.1) inset;
+  background-color: #000000 !important;
+  border-top: 1px solid #222222 !important;
+}
+
+/* ========== CARD STYLES - MANTENIENDO FONDO BLANCO ========== */
+.tarjeta {
+  width: 150px;
+  overflow: hidden;
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  margin: 30px;
+  padding-bottom: 10px;
+  background-color: white !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-color);
+}
+
+.tarjeta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.estiloPresentacion {
+  background-color: rgb(238, 238, 238);
+  border-radius: 50%;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  color: black;
+}
+
+.classPrecio {
+  padding: 5px;
+  font-weight: 400;
+  
+  font-size: 1.3rem;
+  font-family: 'League Spartan';
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: black !important;
+}
+
+.card-text {
+  font-size: 1rem;
+  font-weight: 300;
+  color: grey !important;
+}
+
+.card-presentacion {
+  font-size: 0.5rem;
+  color: black !important;
+}
+
+@media (min-width: 576px) {
+  .tarjeta {
+    width: 230px;
+  }
+
+  .estiloPresentacion {
+    width: 48px;
+    height: 48px;
+  }
+
+  .classPrecio {
+    font-size: 1rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-text {
+    font-size: 1.2rem;
+  }
+
+  .card-presentacion {
+    font-size: 0.8rem;
+  }
+}
+
+.alto {
+  min-height: calc(100vh - 280px);
+  background-color: var(--bg-primary) !important;
+}
+
+.descuento {
+  text-decoration: line-through;
+  color: #888 !important;
+}
+
+.descuento-percent {
+  font-size: 16px;
+  margin-top: 10px;
+  color: #ff4444 !important;
+}
+
+.vaciar {
+  cursor: pointer;
+}
+
+.fontImput {
+  font-family: 'League Spartan';
+}
+
+.custom-button {
+  border: none;
+  outline: none;
+}
+
+.custom-button:hover,
+.custom-button:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.fondo {
+  background-color: #1a1a1a !important;
+}
+
+.logoStyle {
+  max-width: 50px;
+  filter: brightness(0.9);
+}
+
+@media (min-width: 765px) {
+  .logoStyle {
+    max-width: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .brand {
+    display: none;
+  }
+}
+
+/* ========== WHATSAPP STYLES ========== */
+.whatsapp-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.whatsapp-icon:hover {
+  background-color: #128c7e;
+  transform: scale(1.1);
+}
+
+/* ========== UTILITY STYLES ========== */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+.text-muted {
+  color: var(--text-secondary) !important;
+}
+
+/* ========== RESPONSIVE STYLES ========== */
+@media (max-width: 768px) {
+  .search-container {
+    margin: 0 10px;
+  }
+
+  .search-results-dropdown {
+    left: 10px;
+    right: 10px;
+  }
+
+  .search-input {
+    font-size: 16px;
+  }
+
+  .navbar-nav {
+    gap: 0.5rem;
+  }
+
+  .nav-link {
+    padding: 12px 0;
+    font-size: 16px;
+  }
+
+  .dropdown-menu {
+    position: static;
+    float: none;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .tarjeta {
+    margin: 15px;
+    width: 140px;
+  }
+}
+
+/* ========== SCROLLBAR PERSONALIZADO ========== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* ========== TRANSICIONES SUAVES ========== */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ========== ICONOS VISIBLES SOBRE FONDO NEGRO ========== */
+
+/* Botón hamburguesa (navbar toggler) */
+.navbar-toggler {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 5px !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+}
+
+.navbar-toggler:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Icono del carrito - Asegurar que sea visible */
+.cart-icon {
+  color: #ffffff !important;
+  font-size: 1.3rem !important;
+  filter: brightness(1.2);
+  transition: all 0.3s ease;
+}
+
+.cart-icon:hover {
+  color: var(--accent-color) !important;
+  transform: scale(1.1);
+}
+
+/* Badge del carrito (contador) */
+.cart-badge {
+  background-color: var(--accent-color) !important;
+  color: #000000 !important;
+  font-weight: bold;
+  font-size: 0.7rem;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Contenedor del carrito */
+.cart-widget-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+/* ========== MEJORAS PARA MÓVIL ========== */
+@media (max-width: 991px) {
+
+  /* Navbar toggler más visible en móvil */
+  .navbar-toggler {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    padding: 0.3rem 0.6rem !important;
+  }
+
+  /* Icono del carrito más grande en móvil */
+  .cart-icon {
+    font-size: 1.5rem !important;
+    margin-right: 1rem;
+  }
+
+  /* Ajustes para los elementos del navbar en móvil */
+  .navbar-nav {
+    background: rgba(0, 0, 0, 0.9) !important;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+    margin-top: 0.5rem;
+  }
+
+  .nav-link {
+    padding: 0.8rem 0 !important;
+    border-bottom: 1px solid #333 !important;
+  }
+
+  .nav-link:last-child {
+    border-bottom: none !important;
+  }
+}
+
+/* ========== EFECTOS ESPECIALES PARA ICONOS ========== */
+.cart-widget-container {
+  transition: transform 0.3s ease;
+}
+
+.cart-widget-container:hover {
+  transform: translateY(-1px);
+}
+
+/* ========== GARANTIZAR VISIBILIDAD ========== */
+/* Si aún no se ven, forzar colores */
+.fa-shopping-cart:before {
+  color: #ffffff !important;
+}
+
+/* Para FontAwesome icons */
+[class*="fa-"] {
+  color: #ffffff !important;
+}
+
+/* Para cualquier icono dentro del navbar */
+.navbar .bi,
+.navbar .fa,
+.navbar svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* ========== BOTÓN WHATSAPP VISIBLE ========== */
+.whatsapp-icon {
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4) !important;
+}
+
+/* ========== LOGO VISIBLE SOBRE NEGRO ========== */
+.logoStyle {
+  filter: brightness(1.1) contrast(1.2);
+  transition: filter 0.3s ease;
+}
+
+.logoStyle:hover {
+  filter: brightness(1.3) contrast(1.3);
+}
+
+/* ========== ICONO DE CARRITO SVG ========== */
+.iconoCarrito {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  filter: brightness(0) invert(1);
+  /* ✅ Esto convierte el SVG a blanco */
+}
+
+.iconoCarrito:hover {
+  transform: scale(1.1);
+  filter: brightness(0) invert(0.8) sepia(1) saturate(5) hue-rotate(200deg);
+  /* Azul al hover */
+}
+
+/* Badge del carrito */
+
+
+.iconoCarrito:hover .badge {
+  transform: scale(1.1);
+  box-shadow: 0 3px 12px rgba(0, 123, 255, 0.6);
+}
+
+/* ========== VERSIÓN ALTERNATIVA SI EL FILTER NO FUNCIONA ========== */
+/* Si el filter no funciona, usa esta opción: */
+.iconoCarrito img {
+  filter: brightness(100);
+  /* Convierte negro a blanco */
+}
+
+/* O esta otra opción: */
+.iconoCarrito svg path {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* ========== PARA MÓVIL ========== */
+@media (max-width: 991px) {
+  .iconoCarrito {
+    margin-right: 1rem;
+  }
+
+  .iconoCarrito img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+
+}
+
+/* ========== ESTILOS PARA TARJETAS UNIFORMES ========== */
+.tarjeta {
+  width: 100%;
+  max-width: 250px;
+  min-height: 380px;
+  overflow: hidden;
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  margin: 15px;
+  padding: 15px 10px;
+  background-color: white !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.tarjeta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.image-container {
+  height: 150px !important;
+  min-height: 150px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.product-image {
+  max-height: 130px;
+  max-width: 100%;
+  object-fit: contain;
+  width: auto;
+  height: auto;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: black !important;
+  margin-bottom: 5px;
+  line-height: 1.2;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: grey !important;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  min-height: 2.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.estiloPresentacion {
+  background-color: rgb(238, 238, 238);
+  border-radius: 50%;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  color: black;
+  margin: 8px 0;
+}
+
+.card-presentacion {
+  font-size: 0.7rem;
+  color: black !important;
+  font-weight: 500;
+}
+
+.classPrecio {
+  padding: 5px 0;
+  font-weight: 400;
+  
+  font-size: 1.2rem;
+  font-family: 'League Spartan';
+  margin: 0;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (min-width: 576px) {
+  .tarjeta {
+    max-width: 230px;
+    min-height: 400px;
+    margin: 20px;
+    padding: 20px 15px;
+  }
+
+  .image-container {
+    height: 160px !important;
+    min-height: 160px;
+  }
+
+  .product-image {
+    max-height: 140px;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .card-text {
+    font-size: 1rem;
+  }
+
+  .estiloPresentacion {
+    width: 48px;
+    height: 48px;
+  }
+
+  .card-presentacion {
+    font-size: 0.8rem;
+  }
+
+  .classPrecio {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .tarjeta {
+    max-width: 160px;
+    min-height: 320px;
+    margin: 10px;
+    padding: 12px 8px;
+  }
+
+  .image-container {
+    height: 120px !important;
+    min-height: 120px;
+    padding: 8px;
+  }
+
+  .product-image {
+    max-height: 100px;
+  }
+
+  .card-title {
+    font-size: 0.9rem;
+  }
+
+  .card-text {
+    font-size: 0.8rem;
+    min-height: 2rem;
+  }
+
+  .estiloPresentacion {
+    width: 35px;
+    height: 35px;
+  }
+
+  .card-presentacion {
+    font-size: 0.6rem;
+  }
+
+  .classPrecio {
+    font-size: 1.6rem;
+  }
+}
+
+/* ========== MEJORAS PARA PRECIOS CON DESCUENTO ========== */
+.text-decoration-line-through {
+  font-size: 0.9em !important;
+}
+
+.text-danger {
+  font-size: 0.9em !important;
+  font-weight: 600;
+}
+
+.text-success {
+  font-weight: 700 !important;
+}
+
+/* ========== ALINEACIÓN CONSISTENTE ========== */
+.d-flex.flex-column.align-items-center {
+  gap: 5px;
+}
+
+/* ========== CART STYLES ========== */
+.cart-table {
+  width: 100%;
+}
+
+.cart-table th {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  font-weight: 600;
+  padding: 1rem;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.cart-table td {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  padding: 1rem;
+  vertical-align: middle;
+  transition: background-color 0.3s ease;
+}
+
+.cart-table tr:hover td {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.cart-table .btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.cart-table .btn-sm:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* Badges */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.6em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cart-table {
+    font-size: 0.8rem;
+  }
+
+  .cart-table th,
+  .cart-table td {
+    padding: 0.5rem;
+  }
+
+  .cart-table th {
+    font-size: 0.7rem;
+  }
+
+  .cart-table .btn-group .btn {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  /* Stack buttons on mobile */
+  .d-flex.gap-2 {
+    flex-wrap: wrap;
+  }
+
+  .d-flex.gap-2 .btn {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Empty cart styles */
+.empty-cart {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.empty-cart .alert {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+/* Button enhancements */
+.btn-success {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background: linear-gradient(45deg, #20c997, #28a745);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+  background: #dc3545;
+  border-color: #dc3545;
+  transform: translateY(-2px);
+}
+
+/* ========== BOTÓN DE ELIMINAR MEJORADO ========== */
+.btn-link.text-danger {
+  color: #dc3545 !important;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.btn-link.text-danger:hover {
+  opacity: 1;
+  transform: scale(1.2);
+  color: #ff0000 !important;
+}
+
+/* Efecto de hover suave en filas */
+.cart-table tr {
+  transition: background-color 0.3s ease;
+}
+
+.cart-table tr:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.cart-table tr:hover .btn-link.text-danger {
+  opacity: 1;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .btn-link.text-danger {
+    font-size: 1.4rem !important;
+    padding: 0.3rem;
+  }
+
+  /* Ocultar algunos elementos en móviles */
+  .cart-table th:nth-child(2),
+  .cart-table td:nth-child(2) {
+    display: none;
+  }
+}
+
+/* Mejora visual para los badges */
+.badge.bg-dark {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  font-size: 0.8rem;
+  padding: 0.4em 0.7em;
+  border: 1px solid var(--border-color);
+}
+
+.badge.bg-secondary {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color);
+}
+
+/* ========== ITEM DETAIL STYLES ========== */
+.item-detail-card {
+  background: var(--bg-card) !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.item-detail-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.item-detail-image {
+  max-height: 400px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f8f9fa;
+  padding: 20px;
+}
+
+.item-title {
+  font-family: 'Playfair Display SC', serif;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.item-description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.price-container {
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.original-price {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  font-size: 1.2rem;
+}
+
+.discount-badge {
+  font-size: 0.9rem;
+  padding: 0.5em 1em;
+  border-radius: 20px;
+}
+
+.final-price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.stock-info {
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Botones de acción */
+.action-buttons {
+  margin-top: 2rem;
+}
+
+.btn-add-to-cart {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  border: none;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-add-to-cart:hover {
+  background: linear-gradient(45deg, #20c997, #28a745);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .item-detail-image {
+    max-height: 300px;
+    padding: 15px;
+  }
+
+  .item-title {
+    font-size: 1.5rem;
+  }
+
+  .final-price {
+    font-size: 1.5rem;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Badges mejorados */
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.badge.bg-secondary {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--border-color);
+}
+
+/* Breadcrumb personalizado */
+.breadcrumb {
+  background: transparent;
+  padding: 0;
+}
+
+.breadcrumb-item a {
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+/* Alertas */
+.alert-success {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+  color: #28a745;
+}
+
+/* ========== FOOTER STYLES ========== */
+.foot {
+  background: var(--bg-secondary) !important;
+  border-top: 1px solid var(--border-color) !important;
+  margin-top: auto;
+}
+
+/* Efectos hover para enlaces */
+.hover-text-white {
+  transition: color 0.3s ease;
+}
+
+.hover-text-white:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Efectos para iconos de redes */
+.footer-icon {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.footer-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Instagram específico */
+.fa-instagram:hover {
+  color: #E1306C !important;
+}
+
+/* WhatsApp específico */
+.fa-whatsapp:hover {
+  color: #25D366 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .foot {
+    text-align: center;
+  }
+
+  .foot .row>div {
+    margin-bottom: 1.5rem;
+  }
+
+  .foot .row>div:last-child {
+    margin-bottom: 0;
+  }
+
+  .foot h5,
+  .foot h6 {
+    font-size: 1rem;
+  }
+}
+
+/* Asegurar contraste */
+.text-muted {
+  color: var(--text-secondary) !important;
+}
+
+/* Logo styles */
+.foot img {
+  transition: transform 0.3s ease;
+}
+
+.foot img:hover {
+  transform: scale(1.05);
+}
+
+/* ========== ADMINISTRATOR STYLES ========== */
+.table-container {
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text-primary);
+  --bs-table-border-color: var(--border-color);
+}
+
+.table th {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  font-weight: 600;
+  padding: 0.75rem;
+}
+
+.table td {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+.table tr:hover td {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Botones de acción */
+.btn-action {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.btn-action:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+/* Form controls */
+.form-select,
+.form-control {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.form-select:focus,
+.form-control:focus {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+}
+
+.badge.bg-secondary {
+  background: rgba(255, 255, 255, 0.15) !important;
+  
+}
+
+.badge.bg-info {
+  background: rgba(23, 162, 184, 0.2) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.8rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem;
+  }
+
+  .d-none.d-md-table-cell {
+    display: none !important;
+  }
+}
+
+/* Efectos hover para botones */
+.btn-outline-primary:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white !important;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--text-secondary);
+  border-color: var(--text-secondary);
+  color: var(--bg-secondary) !important;
+}
+
+/* ========== LOADING SCREEN ANIMATIONS ========== */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-screen {
+  animation: fadeOut 0.5s ease-out forwards;
+  animation-delay: 2.5s;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Efecto de desvanecimiento al final */
+.loading-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4));
+  opacity: 0;
+  animation: gradientShift 2s infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% {
+    opacity: 0.3;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* ========== ENHANCED SEARCH STYLES ========== */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #000000;
+  border: 1px solid #333;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.search-result-header {
+  padding: 10px 15px;
+  background: #111;
+  color: #007bff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 1px solid #222;
+}
+
+.search-result-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #222;
+  color: #fff;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.search-result-item:hover {
+  background: #1a1a1a;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #fff;
+  padding: 2px;
+}
+
+.search-result-footer {
+  padding: 10px 15px;
+  background: #111;
+  border-top: 1px solid #222;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .search-results-dropdown {
+    left: 10px;
+    right: 10px;
+  }
+
+  .search-result-item {
+    padding: 10px;
+  }
+
+  .search-result-image {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* Mejores estilos para texto en resultados */
+.search-result-item .text-muted {
+  font-size: 0.8rem;
+}
+
+.search-result-item .text-info {
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 2px;
+}
+
+/* ========== PAYMENT SELECTOR STYLES ========== */
+.payment-selector {
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.payment-option {
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+  border-color: var(--accent-color);
+  background: rgba(0, 123, 255, 0.05);
+}
+
+.payment-option.selected {
+  border-color: var(--accent-color);
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.payment-icon {
+  font-size: 1.2rem;
+  width: 24px;
+}
+
+.payment-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.payment-amount {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.payment-details {
+  display: flex;
+  align-items: center;
+  margin-left: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .payment-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .payment-amount {
+    font-size: 0.9rem;
+  }
+}
+
+/* Estilos para la búsqueda en móvil */
+@media (max-width: 767.98px) {
+  .search-results-dropdown {
+    position: fixed;
+    top: auto;
+    left: 10px;
+    right: 10px;
+    max-height: 60vh;
+    z-index: 1050;
+  }
+}
+
+/* Mantener el estilo oscuro existente */
+.cabecera {
+  background-color: #1a1a1a;
+}
+
+.search-input {
+  background-color: #2d2d2d;
+  border-color: #444;
+  color: white;
+}
+
+.search-input:focus {
+  background-color: #2d2d2d;
+  border-color: #666;
+  color: white;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+.search-results-dropdown {
+  background-color: #2d2d2d;
+  border-color: #444;
+  color: white;
+}
+
+.search-result-header {
+  background-color: #3d3d3d;
+  color: #ccc;
+  border-bottom-color: #444;
+}
+
+.search-result-item {
+  border-bottom-color: #444;
+}
+
+.search-result-item:hover {
+  background-color: #3d3d3d;
+}
+
+/* Estilos para el modo oscuro en la búsqueda */
+.search-results-dropdown.bg-dark {
+  background-color: #343a40 !important;
+  border: 1px solid #6c757d;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+.search-result-item.text-light {
+  color: #f8f9fa !important;
+  border-bottom: 1px solid #495057;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.search-result-item.text-light:hover {
+  background-color: #495057;
+}
+
+.search-result-header.bg-secondary {
+  background-color: #6c757d !important;
+  color: #fff !important;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Input oscuro */
+.search-input.bg-dark:focus {
+  background-color: #495057 !important;
+  border-color: #6c757d;
+  color: #fff;
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+}
+
+/* Botón flotante con efecto hover */
+.floating-search-icon .btn-dark:hover {
+  background-color: #23272b !important;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar personalizado para modo oscuro */
+.search-results-dropdown.bg-dark::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-results-dropdown.bg-dark::-webkit-scrollbar-track {
+  background: #343a40;
+}
+
+.search-results-dropdown.bg-dark::-webkit-scrollbar-thumb {
+  background: #6c757d;
+  border-radius: 4px;
+}
+
+.search-results-dropdown.bg-dark::-webkit-scrollbar-thumb:hover {
+  background: #5a6268;
+}
+
+/* ========== FIX PARA BADGE SECONDARY ========== */
+.badge.bg-secondary {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #000000 !important; /* Texto negro para mejor contraste */
+  border: 1px solid #666666 !important;
+}
+
+.modal-backdrop {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+
+
+
+.modal-content {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.product-selector select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+@keyframes softPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.whatsapp-button {
+  animation: softPulse 2s infinite ease-in-out;
+}
+
+.breadcrumb {
+
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.breadcrumb-item a {
+  color: #adb5bd; /* Un gris claro para los enlaces inactivos */
+  text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+  color: #ffffff; /* Blanco para los enlaces al pasar el ratón */
+}
+
+.breadcrumb-item.active {
+  color: #f8f9fa; /* Un blanco más brillante para el elemento activo */
+  font-weight: bold;
+}
+
+/* Opcional: separador de breadcrumbs */
+.breadcrumb-item + .breadcrumb-item::before {
+  color: #6c757d; /* Un gris medio para el separador */
+}
+
+/* Estilo para el contenedor principal de la barra */
+.filters-bar {
+  background-color: #212529; /* Un gris oscuro, casi negro, para que se integre con tu fondo */
+  color: #f8f9fa; /* Color de texto claro para cualquier texto dentro de la barra */
+  border: none; /* Elimina cualquier borde blanco que pueda tener */
+}
+
+/* Estilo para los botones (Nombre, Todos los precios, 3KG) */
+.filters-bar .dropdown-toggle {
+  background-color: #343a40; /* Un gris un poco más claro para los botones */
+  border-color: #495057; /* Borde más oscuro para darle profundidad */
+  color: #f8f9fa; /* Texto blanco en los botones */
+}
+
+/* Estilo al pasar el cursor sobre los botones */
+.filters-bar .dropdown-toggle:hover {
+  background-color: #495057; /* Un gris un poco más oscuro al pasar el cursor */
+}
+
+/* Estilo para los menús desplegables (lo que se muestra al hacer clic en un botón) */
+.filters-bar .dropdown-menu {
+  background-color: #343a40; /* Fondo oscuro para el menú */
+  border-color: #495057; /* Borde oscuro */
+}
+
+/* Estilo para las opciones dentro del menú */
+.filters-bar .dropdown-menu .dropdown-item {
+  color: #f8f9fa; /* Texto blanco para las opciones */
+}
+
+/* Estilo al pasar el cursor sobre las opciones del menú */
+.filters-bar .dropdown-menu .dropdown-item:hover,
+.filters-bar .dropdown-menu .dropdown-item:focus {
+  background-color: #495057; /* Fondo más oscuro al pasar el cursor */
+  color: #ffffff;
+}
+
+/* Estilos principales del overlay del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Estilos del contenido del modal */
+.modal-content-minimal {
+    background-color: white;
+    padding: 1.8rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 320px;
+    width: 90%;
+    position: relative;
+    color: #333;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+    border: 1px solid #ddd;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estilos de la etiqueta "Producto Recomendado" */
+.recommended-label {
+    position: absolute;
+    top: 182px;
+    right: 50%;
+    transform: translateX(50%);
+    background-color: #ffc107;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.9em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: bounceIn 1s ease-in-out;
+}
+
+.recommended-label p {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estilos del botón de cierre que flota fuera del modal */
+.close-button-outside {
+    position: absolute;
+    top: -35px;
+    right: -15px;
+    background-color: transparent;
+    color: #000;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    transition: color 0.2s ease;
+}
+
+.close-button-outside:hover {
+    color: #6c757d;
+}
+
+/* Estilos de la información del producto */
+.product-info-minimal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.product-image-minimal {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 0.8rem;
+}
+
+.product-details-minimal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Título del producto con la fuente 'Playfair Display SC' */
+.product-title-minimal {
+    font-family: 'Playfair Display SC', serif;
+    font-size: 1.4rem;
+    margin: 0;
+    font-weight: 600;
+    color: #343a40;
+    line-height: 1.3;
+}
+
+/* Precio del producto con la fuente 'League Spartan' */
+.product-price-minimal {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #28a745;
+    margin-bottom: 1.2rem;
+}
+
+.view-product-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.view-product-button:hover {
+    background-color: #218838;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounceIn {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) translateX(50%);
+    }
+    40% {
+        transform: translateY(-5px) translateX(50%);
+    }
+    60% {
+        transform: translateY(-2px) translateX(50%);
+    }
+}
+
+/* Regla para hacer el texto más pequeño en móviles */
+@media (max-width: 480px) {
+    .recommended-label {
+        font-size: 0.7em;
+        padding: 5px 12px;
+    }
+}
+
+
