@@ -424,6 +424,8 @@ const PersonalizedNutritionPlan = () => {
               </div>
             ))}
           </div>
+
+          
           
           <div className="supplements-recommendation-section">
             <h4 className="section-subtitle"><Pill className="icon-pill" /> Suplementos Recomendados</h4>
