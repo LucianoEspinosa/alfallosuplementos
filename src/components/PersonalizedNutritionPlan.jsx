@@ -10,6 +10,8 @@ import html2canvas from 'html2canvas';
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 
+
+
 const PersonalizedNutritionPlan = () => {
   // --- Estados del componente ---
   const [userData, setUserData] = useState({
