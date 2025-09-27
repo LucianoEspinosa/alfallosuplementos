@@ -49,11 +49,14 @@
 //                                     </td>
 //                                     <td>
 //                                         <span className="badge bg-info">
-//                                             {code.value}%
+//                                             {code.discountType === "percentage" 
+//                                                 ? `${parseFloat(code.value).toFixed(2)}%` 
+//                                                 : `$${parseFloat(code.value).toFixed(2)}`
+//                                             }
 //                                         </span>
 //                                         {code.minPurchase > 0 && (
 //                                             <div className="text-muted small">
-//                                                 Mín: ${code.minPurchase}
+//                                                 Mín: ${parseFloat(code.minPurchase).toFixed(2)}
 //                                             </div>
 //                                         )}
 //                                     </td>
@@ -111,6 +114,8 @@
 
 // export default DiscountCodeList;
 
+import { useState } from "react";
+
 const DiscountCodeList = ({ discountCodes, loading, onEditCode, onDeleteCode, onToggleStatus }) => {
     if (loading) {
         return (
@@ -144,6 +149,7 @@ const DiscountCodeList = ({ discountCodes, loading, onEditCode, onDeleteCode, on
                             <tr>
                                 <th>Código</th>
                                 <th>Descuento</th>
+                                <th>Primera compra</th>
                                 <th>Usos</th>
                                 <th>Límite</th>
                                 <th>Estado</th>
@@ -171,6 +177,13 @@ const DiscountCodeList = ({ discountCodes, loading, onEditCode, onDeleteCode, on
                                             <div className="text-muted small">
                                                 Mín: ${parseFloat(code.minPurchase).toFixed(2)}
                                             </div>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {code.firstPurchaseOnly ? (
+                                            <span className="badge bg-warning">Sí</span>
+                                        ) : (
+                                            <span className="badge bg-secondary">No</span>
                                         )}
                                     </td>
                                     <td>
