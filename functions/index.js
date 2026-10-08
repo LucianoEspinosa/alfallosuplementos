@@ -1,4 +1,4 @@
-const functions = require("firebase-functions");
+const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 
@@ -6,21 +6,22 @@ admin.initializeApp({
     credential: admin.credential.applicationDefault(),
 });
 
-// Configuración de Nodemailer
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: "lucianoespinosa04@gmail.com",   // <-- tu Gmail
-        pass: "gmzo pvtr jeaq wllm",        // <-- contraseña de aplicación
-    },
-});
-
 // Function en la región southamerica-east1
 exports.sendOrderEmail = functions
     .region("southamerica-east1")
+    .runWith({ secrets: ["GMAIL_APP_PASSWORD"] })
     .firestore
     .document("orders/{orderId}")
     .onCreate(async (snap, context) => {
+        // Configuración de Nodemailer (la contraseña viene del secreto de Firebase)
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "lucianoespinosa04@gmail.com",
+                pass: (process.env.GMAIL_APP_PASSWORD || "").replace(/\s+/g, ""),
+            },
+        });
+
         const orderData = snap.data();
         const orderId = context.params.orderId;
 
@@ -36,11 +37,23 @@ exports.sendOrderEmail = functions
         <tbody>
     `;
 
+        const escapeHtml = (s) => String(s)
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const formatValue = (value) => {
+            if (value && typeof value.toDate === "function") {
+                return escapeHtml(value.toDate().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }));
+            }
+            if (value && typeof value === "object") {
+                return `<pre style="margin:0">${escapeHtml(JSON.stringify(value, null, 2))}</pre>`;
+            }
+            return escapeHtml(value);
+        };
+
         for (const [key, value] of Object.entries(orderData)) {
             orderDetails += `
         <tr>
-          <td><b>${key}</b></td>
-          <td>${value}</td>
+          <td><b>${escapeHtml(key)}</b></td>
+          <td>${formatValue(value)}</td>
         </tr>
       `;
         }
@@ -51,8 +64,8 @@ exports.sendOrderEmail = functions
     `;
 
         const mailOptions = {
-            from: "TUCORREO@gmail.com",
-            to: "TUCORREO@gmail.com",
+            from: "lucianoespinosa04@gmail.com",
+            to: "lucianoespinosa04@gmail.com",
             subject: `Nueva orden recibida - ID ${orderId}`,
             html: `
         <h2>📦 Se ha creado una nueva orden</h2>
@@ -71,3 +84,5 @@ exports.sendOrderEmail = functions
     });
 
 
+
+Object.assign(exports, require("./actualizarPrecios"));
