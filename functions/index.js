@@ -25,6 +25,24 @@ exports.sendOrderEmail = functions
         const orderData = snap.data();
         const orderId = context.params.orderId;
 
+        // Descontar el stock en el servidor (antes lo hacía el navegador del cliente)
+        const db = admin.firestore();
+        for (const item of Array.isArray(orderData.items) ? orderData.items : []) {
+            const cantidad = Number(item && item.quantity);
+            if (!item || !item.id || !Number.isFinite(cantidad) || cantidad <= 0) continue;
+            try {
+                const ref = db.collection("fragancias").doc(String(item.id));
+                await db.runTransaction(async (t) => {
+                    const doc = await t.get(ref);
+                    if (!doc.exists) return;
+                    const stockActual = Number(doc.get("stock")) || 0;
+                    t.update(ref, { stock: Math.max(0, stockActual - cantidad) });
+                });
+            } catch (error) {
+                console.error("Error descontando stock de", item.id, error);
+            }
+        }
+
         // Armar tabla HTML con los campos de la orden
         let orderDetails = `
       <table border="1" cellspacing="0" cellpadding="5">
@@ -86,3 +104,20 @@ exports.sendOrderEmail = functions
 
 
 Object.assign(exports, require("./actualizarPrecios"));
+
+// Verifica en el servidor si un email ya compró (descuento de primera compra).
+// Reemplaza la consulta directa a "orders" desde el navegador, para poder cerrar esa colección.
+exports.esPrimeraCompra = functions
+    .region("southamerica-east1")
+    .https.onCall(async (data) => {
+        const email = String((data && data.email) || "").toLowerCase().trim();
+        if (!email || email.length > 200) {
+            throw new functions.https.HttpsError("invalid-argument", "Email inválido");
+        }
+        const snap = await admin.firestore().collection("orders").where("buyer.email", "==", email).get();
+        const validas = snap.docs.filter((d) => {
+            const status = d.data().status;
+            return status !== "cancelada" && status !== "pendiente";
+        });
+        return { esPrimeraCompra: validas.length === 0 };
+    });

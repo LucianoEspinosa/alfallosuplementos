@@ -1,3 +1,16 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /add-product
+Disallow: /edit/
+Disallow: /upload-products
+Disallow: /normalizar-categorias
+Disallow: /orders
+Disallow: /sabores
+Disallow: /discount
+Disallow: /excel
+Disallow: /recomendado
+Disallow: /convert
+Disallow: /admin-ejercicios
+Disallow: /agregar-ejercicio
+Disallow: /editar-ejercicio/
+Disallow: /checkout

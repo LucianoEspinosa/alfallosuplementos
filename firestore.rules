@@ -1,0 +1,71 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Cuentas de administrador (mantener igual que ADMIN_EMAILS en src/components/AdminRoute.jsx)
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['lucianoespinosa04@gmail.com'];
+    }
+
+    // Productos: los ve cualquiera; solo el administrador los crea, edita o borra.
+    // (El stock lo descuenta el servidor con la Cloud Function sendOrderEmail.)
+    match /fragancias/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Órdenes: cualquier cliente puede crear una (con la forma esperada); solo el administrador
+    // puede leerlas, cambiar su estado o borrarlas. Los clientes no pueden listarlas ni leerlas.
+    match /orders/{orderId} {
+      allow create: if request.resource.data.keys().hasAll(['buyer', 'items', 'total', 'status'])
+        && request.resource.data.status == 'confirmando'
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 50
+        && request.resource.data.total is number
+        && request.resource.data.total >= 0;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Códigos de descuento: se pueden consultar uno por uno (el cliente valida su código),
+    // pero no listar todos. Un cliente solo puede sumar o restar 1 al contador de usos.
+    match /discountCodes/{code} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['timesUsed'])
+            && request.resource.data.timesUsed is number
+            && (request.resource.data.timesUsed == resource.data.timesUsed + 1
+                || request.resource.data.timesUsed == resource.data.timesUsed - 1));
+    }
+
+    // Producto recomendado y demás ajustes públicos
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Catálogo de ejercicios (app de rutinas)
+    match /ejercicios/{exerciseId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Rutinas e historial de cada usuario: solo el propio usuario
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Todo lo demás, cerrado
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

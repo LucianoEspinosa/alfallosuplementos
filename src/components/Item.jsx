@@ -19,6 +19,7 @@ const Item = ({ item }) => {
                             src={item.img} 
                             className="img-fluid product-image" 
                             alt={item.marca + " " + item.nombre}
+                            loading="lazy"
                             style={{ 
                                 maxHeight: '100%', 
                                 maxWidth: '100%', 

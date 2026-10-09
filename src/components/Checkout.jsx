@@ -1068,7 +1068,8 @@
 
 import { useContext, useState, useEffect } from "react";
 import { CartContext } from "./context/CartContext";
-import { getFirestore, collection, addDoc, doc, updateDoc, Timestamp, getDoc, increment, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, updateDoc, Timestamp, getDoc, increment } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { Navigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -1128,23 +1129,11 @@ const Checkout = () => {
   // Función para verificar primera compra
   const verificarPrimeraCompra = async (email) => {
     try {
-      const db = getFirestore();
-      const ordersRef = collection(db, "orders");
-      
-      const q = query(
-        ordersRef, 
-        where("buyer.email", "==", email.toLowerCase().trim())
-      );
-      
-      const querySnapshot = await getDocs(q);
-      
-      const ordenesValidas = querySnapshot.docs.filter(doc => {
-        const orderData = doc.data();
-        return orderData.status !== 'cancelada' && orderData.status !== 'pendiente';
-      });
-      
-      return ordenesValidas.length === 0;
-      
+      // La consulta se hace en el servidor (Cloud Function): "orders" no es legible desde el navegador
+      const funciones = getFunctions(undefined, "southamerica-east1");
+      const esPrimeraCompraFn = httpsCallable(funciones, "esPrimeraCompra");
+      const resultado = await esPrimeraCompraFn({ email: email.toLowerCase().trim() });
+      return resultado.data.esPrimeraCompra === true;
     } catch (error) {
       console.error("Error verificando primera compra:", error);
       return false;
@@ -1438,19 +1427,7 @@ const Checkout = () => {
       setCompletedOrder(completedOrderData);
       setShowConfirmation(true);
 
-      const productCollection = collection(db, "fragancias");
-      const updatePromises = cart.map(async (item) => {
-        try {
-          const productRef = doc(productCollection, item.id);
-          await updateDoc(productRef, {
-            stock: item.stock - item.cantidad
-          });
-        } catch (error) {
-          console.log("Error actualizando stock:", error);
-        }
-      });
-
-      await Promise.all(updatePromises);
+      // El stock se descuenta en el servidor (Cloud Function sendOrderEmail al crearse la orden)
       clearCart();
 
     } catch (error) {

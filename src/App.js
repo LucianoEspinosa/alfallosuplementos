@@ -29,6 +29,7 @@ import MacronutrientCalculator from './components/MacronutrientCalculator.jsx';
 import PersonalizedNutritionPlan from './components/PersonalizedNutritionPlan.jsx';
 import AddEjercicio from './components/FitnessApp/AddEjercicio.jsx';
 import EditEjercicio from './components/FitnessApp/EditEjercicio.jsx';
+import AdminRoute from './components/AdminRoute.jsx';
 
 
 
@@ -70,24 +71,24 @@ function App() {
               <Route path={'/cart'} element={<Cart />} />
               <Route path={'/checkout'} element={<Checkout />} />
               <Route path={'/thankyou/:orderId'} element={<ThankYou />} />
-              <Route path={'*'} element={<Error404 />} />
-              <Route path={'/admin'} element={<Administrator />} />
-              <Route path="/add-product" element={<AddProduct />} />
-              <Route path="/edit/:id" element={<EditProduct />} />
-              <Route path="/upload-products" element={<UploadProducts />} />
-              <Route path="/normalizar-categorias" element={<NormalizadorCategorias />} />
-              <Route path="/orders" element={<OrdersList />} />
-              <Route path="/sabores" element={<BulkSaborManager />} />
-              <Route path="/discount" element={<DiscountCodeManager />} />
-              <Route path="/excel" element={<ExcelManager />} />
-              <Route path="/recomendado" element={<RecommendedProductSelector />} />
+              <Route path={'/admin'} element={<AdminRoute><Administrator /></AdminRoute>} />
+              <Route path="/add-product" element={<AdminRoute><AddProduct /></AdminRoute>} />
+              <Route path="/edit/:id" element={<AdminRoute><EditProduct /></AdminRoute>} />
+              <Route path="/upload-products" element={<AdminRoute><UploadProducts /></AdminRoute>} />
+              <Route path="/normalizar-categorias" element={<AdminRoute><NormalizadorCategorias /></AdminRoute>} />
+              <Route path="/orders" element={<AdminRoute><OrdersList /></AdminRoute>} />
+              <Route path="/sabores" element={<AdminRoute><BulkSaborManager /></AdminRoute>} />
+              <Route path="/discount" element={<AdminRoute><DiscountCodeManager /></AdminRoute>} />
+              <Route path="/excel" element={<AdminRoute><ExcelManager /></AdminRoute>} />
+              <Route path="/recomendado" element={<AdminRoute><RecommendedProductSelector /></AdminRoute>} />
               <Route path="/fitness-app" element={<FitnessApp />} />
-              <Route path="/convert" element={<ExcelToJsonConverter />} />
-              <Route path="/admin-ejercicios" element={<AdminExercises />} />
-              <Route path="/agregar-ejercicio" element={<AddEjercicio />} />
-              <Route path="/editar-ejercicio/:id" element={<EditEjercicio />} />
+              <Route path="/convert" element={<AdminRoute><ExcelToJsonConverter /></AdminRoute>} />
+              <Route path="/admin-ejercicios" element={<AdminRoute><AdminExercises /></AdminRoute>} />
+              <Route path="/agregar-ejercicio" element={<AdminRoute><AddEjercicio /></AdminRoute>} />
+              <Route path="/editar-ejercicio/:id" element={<AdminRoute><EditEjercicio /></AdminRoute>} />
               <Route path="/calculadora" element={<MacronutrientCalculator />} />
               <Route path="/plan" element={<PersonalizedNutritionPlan />} />
+              <Route path={'*'} element={<Error404 />} />
 
 
               
