@@ -453,6 +453,35 @@ const ItemDetail = ({ producto }) => {
             <Helmet>
                 <title>{item.nombre} | {item.marca} | Al Fallo</title>
                 <meta name="description" content={item.descripcion} />
+                <link rel="canonical" href={`https://alfallo.vercel.app/item/${item.id}`} />
+                <meta property="og:type" content="product" />
+                <meta property="og:title" content={`${item.nombre} | ${item.marca} | Al Fallo`} />
+                <meta property="og:description" content={item.descripcion} />
+                {item.img && <meta property="og:image" content={item.img} />}
+                {item.nombre && (
+                    <script type="application/ld+json">
+                        {JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "Product",
+                            name: `${item.marca || ""} ${item.nombre}`.trim(),
+                            image: item.img ? [item.img] : undefined,
+                            description: item.descripcion || undefined,
+                            brand: item.marca ? { "@type": "Brand", name: item.marca } : undefined,
+                            category: item.categoria || undefined,
+                            offers: {
+                                "@type": "Offer",
+                                url: `https://alfallo.vercel.app/item/${item.id}`,
+                                priceCurrency: "ARS",
+                                price: item.descuento
+                                    ? Math.round(item.precio - (item.precio * item.descuento) / 100)
+                                    : item.precio,
+                                availability: item.stock > 0
+                                    ? "https://schema.org/InStock"
+                                    : "https://schema.org/OutOfStock",
+                            },
+                        })}
+                    </script>
+                )}
             </Helmet>
 
             {/* Breadcrumb */}

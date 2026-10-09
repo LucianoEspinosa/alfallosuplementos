@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import ItemList from "./ItemList";
 import { useParams, Link, useLocation, useSearchParams } from "react-router-dom";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getAllProducts } from "../utils/productsCache";
 import Loading from "./Loading";
 import FilterBar from "./FilterBar";
 import CategoryCards from "./CategoryCards";
@@ -128,14 +128,8 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     useEffect(() => {
         const fetchAllProducts = async () => {
             setLoading(true);
-            const db = getFirestore();
-            const itemsCollection = collection(db, "fragancias");
             try {
-                const resultado = await getDocs(itemsCollection);
-                const todosLosProductos = resultado.docs.map(producto => ({
-                    id: producto.id,
-                    ...producto.data()
-                }));
+                const todosLosProductos = await getAllProducts();
                 setAllProducts(todosLosProductos);
             } catch (error) {
                 console.error("Error al cargar productos:", error);

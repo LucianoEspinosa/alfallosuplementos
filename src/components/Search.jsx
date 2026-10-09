@@ -313,7 +313,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getAllProducts } from "../utils/productsCache";
 
 const Search = ({ isMobile = false, onClose, darkMode = false }) => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -333,10 +333,7 @@ const Search = ({ isMobile = false, onClose, darkMode = false }) => {
         const fetchAllProducts = async () => {
             setLoading(true);
             try {
-                const db = getFirestore();
-                const productsRef = collection(db, "fragancias");
-                const snapshot = await getDocs(productsRef);
-                const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const productsData = await getAllProducts();
                 setAllProducts(productsData);
             } catch (error) {
                 console.error("Error al cargar los productos:", error);

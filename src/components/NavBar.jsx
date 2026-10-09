@@ -194,7 +194,7 @@ import WhatsAppIcon from "./WhatsAppIcon";
 import Search from "./Search";
 import FloatingSearchIcon from "./FloatingSearchIcon";
 import logo from "./img/alfallonegro.png";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getAllProducts } from "../utils/productsCache";
 import AuthComponent from "./AuthComponent"; // <-- COMPONENTE AGREGADO
 
 const NavBar = () => {
@@ -210,11 +210,7 @@ const NavBar = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const db = getFirestore();
-                const productsRef = collection(db, "fragancias");
-                const snapshot = await getDocs(productsRef);
-
-                const allProducts = snapshot.docs.map(doc => doc.data());
+                const allProducts = await getAllProducts();
 
                 const uniqueCategories = [...new Set(
                     allProducts.map(product => product.categoria).filter(Boolean)
