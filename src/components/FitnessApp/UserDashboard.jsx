@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dumbbell, Plus, Trash2, Edit2, Play, ChevronDown, ChevronUp } from 'lucide-react';
+import { Dumbbell, Plus, Trash2, Edit2, Play, ChevronDown } from 'lucide-react';
 import ExerciseList from './ExerciseList';
 import ExerciseDetailsModal from './ExerciseDetailsModal';
 
@@ -117,7 +117,6 @@ const UserDashboard = ({
                                 <div className="list-group list-group-flush">
                                     {groupedRoutine[dayKey].exercises.map((item, index) => {
                                         const exerciseHistory = getExerciseHistory(item.id);
-                                        const lastSeries = exerciseHistory.length > 0 ? exerciseHistory[exerciseHistory.length - 1] : null;
                                         
                                         return (
                                             <div key={index} className="list-group-item d-flex flex-column align-items-stretch mb-2" style={{ backgroundColor: 'var(--bg-light-alt)' }}>

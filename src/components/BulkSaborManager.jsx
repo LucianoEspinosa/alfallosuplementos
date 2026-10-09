@@ -26,6 +26,7 @@ const BulkSaborManager = () => {
 
     useEffect(() => {
         aplicarFiltros();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [allProducts, filtros]);
 
     const fetchProducts = async () => {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2, Save, Activity } from 'lucide-react';
 import ExerciseList from './ExerciseList';
 import ExerciseDetailsModal from './ExerciseDetailsModal';

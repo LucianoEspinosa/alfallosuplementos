@@ -32,6 +32,7 @@ const DiscountCodeManager = () => {
 
     useEffect(() => {
         loadDiscountCodes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Función para crear un nuevo código

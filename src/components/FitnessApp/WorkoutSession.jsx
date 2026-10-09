@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, FastForward, Check, Clock, Edit, Plus } from 'lucide-react';
+import { Play, Check, Clock, Edit, Plus } from 'lucide-react';
 
 const WorkoutSession = ({
     activeSession,
