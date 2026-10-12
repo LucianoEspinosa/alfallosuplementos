@@ -744,3 +744,8 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
 .af-qty--sm .af-qty-btn { width:32px; height:32px; font-size:17px; }
 .af-qty--sm .af-qty-value { min-width:20px; font-size:14px; }
 .af-qty-btn:disabled { color:var(--color-neutral-600); cursor:not-allowed; }
+
+/* sin footer en mobile (a pedido): en tablet y desktop se mantiene */
+@media (max-width: 767px) { .af-footer { display:none; } }
+/* sin footer, la grilla deja lugar al botón de WhatsApp para que no tape la última fila */
+@media (max-width: 767px) { .af-products-layout { padding-bottom:96px; } }
