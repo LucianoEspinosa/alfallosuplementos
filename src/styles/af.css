@@ -678,6 +678,15 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
   animation:af-wa-pulse 2s ease-in-out infinite; }
 .af-done-wa svg { animation:af-wa-shake 3s ease-in-out infinite; transform-origin:50% 60%; }
 .af-done-wa:hover, .af-done-wa:hover svg { animation-play-state:paused; }
+/* Reflejo de luz que cruza el botón cada pocos segundos */
+.af-done-wa { position:relative; overflow:hidden; isolation:isolate; }
+.af-done-wa::after { content:''; position:absolute; top:0; bottom:0; left:0; width:45%; z-index:-1; pointer-events:none;
+  background:linear-gradient(105deg, transparent 0%, color-mix(in srgb, var(--color-accent) 35%, transparent) 50%, transparent 100%);
+  transform:translateX(-120%) skewX(-20deg); animation:af-wa-shine 3.5s ease-in-out infinite; }
+@keyframes af-wa-shine {
+  0%, 55% { transform:translateX(-120%) skewX(-20deg); }
+  85%, 100% { transform:translateX(320%) skewX(-20deg); }
+}
 /* Late para que el cliente note que tiene que tocar acá */
 @keyframes af-wa-pulse {
   0%, 100% { transform:scale(1); box-shadow:0 0 28px color-mix(in srgb, var(--color-accent) 32%, transparent), 0 0 0 0 color-mix(in srgb, var(--color-accent) 45%, transparent); }
@@ -691,7 +700,8 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
   94% { transform:rotate(4deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .af-done-wa, .af-done-wa svg { animation:none; }
+  .af-done-wa, .af-done-wa svg, .af-done-wa::after { animation:none; }
+  .af-done-wa::after { display:none; }
 }
 .af-done-item { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
 .af-done-iteminfo { display:flex; flex-direction:column; min-width:0; }
