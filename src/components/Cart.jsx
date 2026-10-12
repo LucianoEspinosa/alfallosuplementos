@@ -1,215 +1,113 @@
 import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { PiArrowRight, PiShoppingBagOpen, PiTrash } from "react-icons/pi";
 import { CartContext } from "./context/CartContext";
-import { Link } from "react-router-dom";
+import CompraHeader from "./af/CompraHeader";
+import ProductPhoto from "./af/ProductPhoto";
+import { formatoPrecio, precioTransferencia, etiquetaCantidad } from "../utils/productos";
 
 const Cart = () => {
     const { cart, cartTotal, precioTotal, removeItem, clear } = useContext(CartContext);
+    const navigate = useNavigate();
+
+    const volver = () => {
+        if (window.history.length > 1) navigate(-1);
+        else navigate("/");
+    };
 
     if (cartTotal() === 0) {
         return (
-            <div className="container d-flex align-items-center justify-content-center" style={{ minHeight: 'calc(100vh - 341px)' }}>
-                <div className="row text-center">
-                    <div className="col">
-                        <div className="alert alert-dark border border-secondary" role="alert">
-                            <i className="fas fa-shopping-cart me-2"></i>
-                            No hay productos en el carrito
-                        </div>
-                        <Link to={"/"} className="btn btn-outline-primary mt-3">
-                            ← Volver a inicio
-                        </Link>
+            <div className="af-compra">
+                <CompraHeader paso={0} onBack={volver} />
+                <section className="af-cart-empty">
+                    <div className="af-cart-empty-icon"><PiShoppingBagOpen size={26} /></div>
+                    <h1 className="af-compra-title af-compra-title--empty">Tu carrito está vacío</h1>
+                    <span className="af-cart-empty-text">No hay productos en el carrito.</span>
+                    <div className="af-cart-empty-actions">
+                        <Link to="/" className="af-btn af-btn-primary af-cart-empty-btn">Volver al inicio</Link>
                     </div>
-                </div>
+                </section>
             </div>
         );
     }
 
+    const total = precioTotal();
+
     return (
-        <div className="container alto my-5">
-            <div className="row mb-4">
-                <div className="col text-center">
-                    <h1 className="text-decoration-underline">Resumen de tu compra</h1>
-                    <p className="text-muted">{cartTotal()} producto(s) en el carrito</p>
-                </div>
-            </div>
-
-            {/* Vista para desktop (sin cambios) */}
-            <div className="d-none d-lg-block">
-                <div className="row justify-content-center">
-                    <div className="col-12 col-lg-10">
-                        <div className="card border border-secondary ">
-                            <div className="card-body p-0">
-                                <div className="table-responsive">
-                                    <table className="table table-hover mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Presentación</th>
-                                                <th>Precio Unit.</th>
-                                                <th>Cantidad</th>
-                                                <th>Subtotal</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {cart.map((item) => {
-                                                const subtotal = item.precioFinal * item.cantidad;
-
-                                                return (
-                                                    <tr key={item.id}>
-                                                        <td>
-                                                            <div className="d-flex align-items-center">
-                                                                <img
-                                                                    src={item.img}
-                                                                    alt={item.nombre}
-                                                                    style={{
-                                                                        width: '50px',
-                                                                        height: '50px',
-                                                                        objectFit: 'contain',
-                                                                        marginRight: '1rem',
-                                                                        borderRadius: '4px'
-                                                                    }}
-                                                                />
-                                                                <div>
-                                                                    <div style={{ fontWeight: '600' }}>
-                                                                        {item.marca}
-                                                                    </div>
-                                                                    <div style={{ color: 'var(--text-secondary)' }}>
-                                                                        {item.nombreCompleto || item.nombre}
-                                                                    </div>
-                                                                    {/* MOSTRAR SABOR SI EXISTE */}
-                                                                    {item.saborSeleccionado && (
-                                                                        <div className="mt-1">
-                                                                            <span className="badge bg-info text-dark">
-                                                                                🍦 Sabor: {item.saborSeleccionado}
-                                                                            </span>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <span className="badge bg-primary">{item.presentacion}</span>
-                                                        </td>
-                                                        <td>${item.precioFinal?.toLocaleString('es-AR')}</td>
-                                                        <td>
-                                                            <span className="badge bg-dark">{item.cantidad}</span>
-                                                        </td>
-                                                        <td style={{ fontWeight: '600' }}>
-                                                            ${subtotal.toLocaleString('es-AR')}
-                                                        </td>
-                                                        <td style={{ textAlign: 'center' }}>
-                                                            <button
-                                                                onClick={() => removeItem(item.id)}
-                                                                className="btn btn-link text-danger p-0"
-                                                                title="Eliminar producto"
-                                                            >
-                                                                🗑️
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+        <div className="af-compra">
+            <CompraHeader paso={0} onBack={volver} />
+            <div className="af-cart">
+                <section className="af-cart-main">
+                    <div className="af-compra-titles">
+                        <h1 className="af-compra-title">Tu carrito</h1>
+                        <span className="af-compra-count">{etiquetaCantidad(cartTotal())}</span>
                     </div>
-                </div>
-            </div>
 
-            <div className="d-lg-none">
-                {cart.map((item) => {
-                    const subtotal = item.precioFinal * item.cantidad;
-                    
-                    return (
-                        <div key={item.id} className="card mb-3 border border-secondary">
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between align-items-start mb-2">
-                                    <div className="d-flex align-items-center">
-                                        <img
-                                            src={item.img}
-                                            alt={item.nombre}
-                                            style={{
-                                                width: '60px',
-                                                height: '60px',
-                                                objectFit: 'contain',
-                                                marginRight: '1rem',
-                                                borderRadius: '4px'
-                                            }}
-                                        />
-                                        <div>
-                                            <div style={{ fontWeight: '600' }}>
-                                                {item.marca}
+                    <div className="af-cart-list">
+                        {cart.map((item) => {
+                            const subtotal = item.precioFinal * item.cantidad;
+                            return (
+                                <div key={item.id} className="af-cartitem">
+                                    <div className="af-tile af-cartitem-thumb">
+                                        <ProductPhoto img={item.img} marca={item.marca} nombre={item.nombre} variant="initial" />
+                                    </div>
+                                    <div className="af-cartitem-body">
+                                        <div className="af-cartitem-top">
+                                            <div className="af-cartitem-names">
+                                                <span className="af-cartitem-brand">{item.marca}</span>
+                                                <span className="af-cartitem-name">{item.nombre}</span>
                                             </div>
-                                            <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                                                {item.nombreCompleto || item.nombre}
-                                            </div>
+                                            <button type="button" className="af-cartitem-remove" onClick={() => removeItem(item.id)} aria-label="Eliminar producto" title="Eliminar producto">
+                                                <PiTrash size={18} />
+                                            </button>
+                                        </div>
+                                        <div className="af-cartitem-tags">
+                                            {item.presentacion && <span className="af-cartitem-tag">{item.presentacion}</span>}
+                                            {item.saborSeleccionado && <span className="af-cartitem-tag">{item.saborSeleccionado}</span>}
+                                        </div>
+                                        <div className="af-cartitem-bottom">
+                                            <span className="af-cartitem-qty">{item.cantidad} × {formatoPrecio(item.precioFinal)}</span>
+                                            <span className="af-cartitem-sub">{formatoPrecio(subtotal)}</span>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => removeItem(item.id)}
-                                        className="btn btn-link text-danger p-0"
-                                        title="Eliminar producto"
-                                    >
-                                        🗑️
-                                    </button>
                                 </div>
-                                
-                                {item.saborSeleccionado && (
-                                    <div className="mb-2">
-                                        <span className="badge bg-success  te">
-                                            🍦 Sabor: {item.saborSeleccionado}
-                                        </span>
-                                    </div>
-                                )}
-                                
-                                <div className="d-flex justify-content-between flex-wrap">
-                                    <div className="me-3 mb-2">
-                                        <small className=" ">Presentación:</small>
-                                        <div><span className="badge bg-success">{item.presentacion}</span></div>
-                                    </div>
-                                    <div className="me-3 mb-2">
-                                        <small className="">Precio:</small>
-                                        <div>${item.precioFinal?.toLocaleString('es-AR')}</div>
-                                    </div>
-                                    <div className="me-3 mb-2">
-                                        <small className="">Cantidad:</small>
-                                        <div><span className="badge bg-success">{item.cantidad}</span></div>
-                                    </div>
-                                    <div className="mb-2">
-                                        <small className="">Subtotal:</small>
-                                        <div style={{ fontWeight: '600' }}>${subtotal.toLocaleString('es-AR')}</div>
-                                    </div>
-                                </div>
-                            </div>
+                            );
+                        })}
+                    </div>
+
+                    <div className="af-cart-actions">
+                        <Link to="/" className="af-btn af-btn-secondary af-cart-keep">Seguir comprando</Link>
+                        <button type="button" className="af-btn af-btn-ghost af-cart-clear" onClick={clear}>Vaciar carrito</button>
+                    </div>
+                </section>
+
+                <aside className="af-cart-side">
+                    <div className="af-cart-total">
+                        <div className="af-cart-totalrow">
+                            <span>Total en efectivo</span>
+                            <span className="af-cart-totalvalue">{formatoPrecio(total)}</span>
                         </div>
-                    );
-                })}
+                        <div className="af-cart-transfer">
+                            <span>Con transferencia (+7,5%)</span>
+                            <span>{formatoPrecio(precioTransferencia(total))}</span>
+                        </div>
+                        <span className="af-cart-note">Elegís el medio de pago en el próximo paso.</span>
+                        <Link to="/checkout" className="af-btn af-btn-primary af-cart-checkout-d">
+                            Finalizar compra<PiArrowRight size={18} />
+                        </Link>
+                    </div>
+                </aside>
             </div>
 
-            {/* Sección de total y botones - Mejorada para móvil */}
-            <div className="row justify-content-center mt-4">
-                <div className="col-12 col-lg-10">
-                    <div className="d-lg-flex justify-content-between align-items-center p-3 p-lg-4 border border-secondary rounded">
-                        <div className="text-center text-lg-start mb-3 mb-lg-0">
-                            <h4 className="mb-0">
-                                Total: <span className="text-success">${precioTotal().toLocaleString('es-AR')}</span>
-                            </h4>
-                        </div>
-                        <div className="d-grid d-lg-flex gap-2">
-                            <button onClick={clear} className="btn btn-outline-danger mb-2 mb-lg-0">
-                                🗑️ Vaciar Carrito
-                            </button>
-                            <Link to={"/"} className="btn btn-outline-secondary mb-2 mb-lg-0">
-                                ← Seguir comprando
-                            </Link>
-                            <Link to={"/checkout"} className="btn btn-success">
-                                ✅ Finalizar Compra
-                            </Link>
-                        </div>
-                    </div>
+            {/* Mobile: barra fija con el total y "Finalizar compra" */}
+            <div className="af-buybar af-buybar--compra">
+                <div className="af-buybar-total">
+                    <span className="af-buybar-label">Total efectivo</span>
+                    <span className="af-buybar-value">{formatoPrecio(total)}</span>
                 </div>
+                <Link to="/checkout" className="af-btn af-btn-primary af-buybar-btn af-buybar-btn--lg">
+                    Finalizar compra<PiArrowRight size={18} />
+                </Link>
             </div>
         </div>
     );

@@ -1,16 +1,21 @@
 import { Link, useParams } from "react-router-dom";
-const ThankYou = () => {
-    const { orderId,nombre } = useParams();
-    return (
-        <div className="container-fluid d-flex align-items-center justify-content-center" style={{ minHeight: "60vh" }}>
-            <div className="text-center">
-                <h2>¡Gracias {nombre} por tu compra!</h2>
-                <p>Tu número de orden es: <span className="fw-bold fs-5 text-primary"> {orderId}</span></p>
-                <p>En instantes nos contactaremos</p>
-                <Link to="/" className="btn btn-primary mt-4">Volver al inicio</Link>
-            </div>
-        </div>
+import { PiCheck } from "react-icons/pi";
 
+const ThankYou = () => {
+    const { orderId, nombre } = useParams();
+    return (
+        <section className="af-done af-thankyou">
+            <div className="af-done-hero">
+                <span className="af-done-check"><PiCheck size={22} /></span>
+                <h1 className="af-compra-title af-done-title">¡Gracias{nombre ? ` ${nombre}` : ""} por tu compra!</h1>
+                <span className="af-done-text">En instantes nos contactaremos.</span>
+                <div className="af-done-order">
+                    <span className="af-overline af-overline--soft">N° de orden</span>
+                    <span className="af-done-orderid">{orderId}</span>
+                </div>
+            </div>
+            <Link to="/" className="af-btn af-btn-primary af-thankyou-btn">Volver al inicio</Link>
+        </section>
     );
 };
 
