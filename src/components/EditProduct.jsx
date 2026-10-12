@@ -231,6 +231,20 @@ const EditProduct = () => {
                     <input type="number" className="form-control" id="stock" name="stock" value={item.stock || 0} onChange={handleInputChange} />
                 </div>
 
+                {/* Badge "Más vendido" en la tienda y filtro de /masvendidos (campo opcional) */}
+                <div className="mb-3 col-md-3 d-flex align-items-end">
+                    <div className="form-check form-switch">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="masVendido"
+                            checked={item.masVendido === true}
+                            onChange={(e) => setItem(prev => ({ ...prev, masVendido: e.target.checked }))}
+                        />
+                        <label className="form-check-label" htmlFor="masVendido">Más vendido</label>
+                    </div>
+                </div>
+
                 {/* Sección de precios */}
                 <div className="mb-3 col-md-3">
                     <label className="form-label">Costo:</label>
