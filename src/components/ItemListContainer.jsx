@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, Link, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
-import { PiX } from "react-icons/pi";
+import { PiX, PiCaretDown } from "react-icons/pi";
 import { Helmet } from "react-helmet";
 import ItemList from "./ItemList";
 import Loading from "./Loading";
@@ -31,23 +31,43 @@ const Chips = ({ opciones, activa, onPick, tipo }) => (
     </div>
 );
 
-const ListaLateral = ({ titulo, opciones, activa, onPick, contar }) => (
-    <div className="af-side-group">
-        <span className="af-overline af-side-title">{titulo}</span>
-        {[TODAS, ...opciones].map((op) => (
+// Categorías que van primero en la tienda
+const PRIORIDAD_CATEGORIAS = ["proteina", "creatina"];
+const prioridadCategoria = (cat) => {
+    const i = PRIORIDAD_CATEGORIAS.findIndex((k) => normalizarTexto(cat).startsWith(k));
+    return i === -1 ? PRIORIDAD_CATEGORIAS.length : i;
+};
+
+// Grupo del lateral (desktop): compacto, se despliega al tocar el título
+const ListaLateral = ({ titulo, opciones, activa, onPick, contar }) => {
+    const [abierto, setAbierto] = useState(false);
+    return (
+        <div className={`af-side-group ${abierto ? "is-open" : ""}`}>
             <button
-                key={op}
                 type="button"
-                className={`af-side-item ${activa === op ? "is-on" : ""}`}
-                onClick={() => onPick(op)}
-                aria-pressed={activa === op}
+                className="af-side-toggle"
+                onClick={() => setAbierto((v) => !v)}
+                aria-expanded={abierto}
             >
-                <span>{op}</span>
-                <span className="af-side-count">{contar(op)}</span>
+                <span className="af-overline af-side-title">{titulo}</span>
+                {!abierto && activa !== TODAS && <span className="af-side-current">{activa}</span>}
+                <PiCaretDown size={14} className="af-side-caret" />
             </button>
-        ))}
-    </div>
-);
+            {abierto && [TODAS, ...opciones].map((op) => (
+                <button
+                    key={op}
+                    type="button"
+                    className={`af-side-item ${activa === op ? "is-on" : ""}`}
+                    onClick={() => onPick(op)}
+                    aria-pressed={activa === op}
+                >
+                    <span>{op}</span>
+                    <span className="af-side-count">{contar(op)}</span>
+                </button>
+            ))}
+        </div>
+    );
+};
 
 const ItemListContainer = ({ top, oferta, titulo }) => {
     const [allProducts, setAllProducts] = useState([]);
@@ -185,7 +205,11 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
         return allProducts;
     }, [allProducts, searchTerm, oferta, top]);
 
-    const categorias = useMemo(() => [...new Set(base.map((p) => p.categoria).filter(Boolean))].sort(), [base]);
+    const categorias = useMemo(
+        () => [...new Set(base.map((p) => p.categoria).filter(Boolean))]
+            .sort((a, b) => prioridadCategoria(a) - prioridadCategoria(b) || a.localeCompare(b)),
+        [base]
+    );
     const marcas = useMemo(() => [...new Set(base.map((p) => p.marca).filter(Boolean))].sort(), [base]);
 
     // La categoría o la marca de la URL (/category/:id, /brand/:id) arrancan seleccionadas en los chips
@@ -217,7 +241,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                 case "nuevos": return (fechaAlta(b)?.getTime() || 0) - (fechaAlta(a)?.getTime() || 0);
                 case "masvendidos":
                 default:
-                    return (b.masVendido === true) - (a.masVendido === true) || (a.nombre || '').localeCompare(b.nombre || '');
+                    return prioridadCategoria(a.categoria) - prioridadCategoria(b.categoria) || (b.masVendido === true) - (a.masVendido === true) || (a.nombre || '').localeCompare(b.nombre || '');
             }
         });
     }, [base, categoria, marca, sortBy]);
