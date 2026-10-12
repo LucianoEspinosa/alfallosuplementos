@@ -674,7 +674,25 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
 .af-done-text { font-size:15px; color:var(--color-neutral-300); }
 .af-done-order { display:flex; flex-direction:column; gap:2px; margin-top:4px; }
 .af-done-orderid { font-size:17px; font-weight:500; letter-spacing:0.04em; word-break:break-all; }
-.af-done-wa { min-height:56px; font-size:17px; box-shadow:0 0 28px color-mix(in srgb, var(--color-accent) 32%, transparent); }
+.af-done-wa { min-height:56px; font-size:17px; box-shadow:0 0 28px color-mix(in srgb, var(--color-accent) 32%, transparent);
+  animation:af-wa-pulse 2s ease-in-out infinite; }
+.af-done-wa svg { animation:af-wa-shake 3s ease-in-out infinite; transform-origin:50% 60%; }
+.af-done-wa:hover, .af-done-wa:hover svg { animation-play-state:paused; }
+/* Late para que el cliente note que tiene que tocar acá */
+@keyframes af-wa-pulse {
+  0%, 100% { transform:scale(1); box-shadow:0 0 28px color-mix(in srgb, var(--color-accent) 32%, transparent), 0 0 0 0 color-mix(in srgb, var(--color-accent) 45%, transparent); }
+  50% { transform:scale(1.02); box-shadow:0 0 36px color-mix(in srgb, var(--color-accent) 45%, transparent), 0 0 0 8px color-mix(in srgb, var(--color-accent) 0%, transparent); }
+}
+@keyframes af-wa-shake {
+  0%, 78%, 100% { transform:rotate(0); }
+  82% { transform:rotate(-14deg); }
+  86% { transform:rotate(12deg); }
+  90% { transform:rotate(-8deg); }
+  94% { transform:rotate(4deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .af-done-wa, .af-done-wa svg { animation:none; }
+}
 .af-done-item { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
 .af-done-iteminfo { display:flex; flex-direction:column; min-width:0; }
 .af-done-itemname { font-size:14px; line-height:1.25; }
