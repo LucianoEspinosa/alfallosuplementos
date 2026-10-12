@@ -1,58 +1,19 @@
-import React from 'react';
-
-import { Link } from 'react-router-dom';
 import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { PiShoppingBagOpen } from 'react-icons/pi';
 import { CartContext } from './context/CartContext';
-import bag from "./img/icon/bag.svg";
 
-
+// Botón de carrito del spec: af-btn af-btn-secondary af-btn-icon con el contador verde.
 const CartWidget = () => {
-    const { cartTotal, } = useContext(CartContext);
+    const { cartTotal } = useContext(CartContext);
+    const cantidad = cartTotal();
+
     return (
-        <div>
-            <Link
-                to="/cart"
-                className="position-relative d-inline-block"
-            >
-                <img
-                    src={bag}
-                    alt="carrito de compras"
-                    width={26}
-                    style={{ position: "relative", zIndex: 0 }}
-                />
-
-                {cartTotal() > 0 && (
-                    <span
-                        className="badge rounded-pill"
-                        style={{
-                            position: "absolute",
-                            top: "-6px",
-                            right: "-6px",
-                            backgroundColor: "white",
-                            color: "black",
-                            border: "1px solid black",
-                            minWidth: "20px",
-                            height: "20px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            zIndex: 1,
-                        }}
-                    >
-                        {cartTotal()}
-                    </span>
-                )}
-            </Link>
-
-
-
-        </div>
-
-
-    )
-}
-
+        <Link to="/cart" className="af-btn af-btn-secondary af-btn-icon af-cartbtn" aria-label="Carrito">
+            <PiShoppingBagOpen size={20} />
+            {cantidad > 0 && <span className="af-cartbtn-count">{cantidad}</span>}
+        </Link>
+    );
+};
 
 export default CartWidget;
