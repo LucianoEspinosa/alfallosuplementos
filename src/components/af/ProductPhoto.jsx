@@ -4,7 +4,7 @@ import { PiImage } from "react-icons/pi";
 // Foto de producto dentro del recuadro crema (.af-tile).
 // Si no hay imagen o la URL falla, muestra el estado "Foto no disponible" del spec AFCard
 // (variant="full") o solo la inicial de la marca (variant="initial", para miniaturas).
-const ProductPhoto = ({ img, marca, nombre, pct = 84, variant = "full", alt }) => {
+const ProductPhoto = ({ img, marca, nombre, pct = 84, variant = "full", alt, onFail }) => {
     const [fallo, setFallo] = useState(false);
 
     useEffect(() => {
@@ -17,7 +17,10 @@ const ProductPhoto = ({ img, marca, nombre, pct = 84, variant = "full", alt }) =
                 src={img}
                 alt={alt !== undefined ? alt : `${marca || ""} ${nombre || ""}`.trim()}
                 loading="lazy"
-                onError={() => setFallo(true)}
+                onError={() => {
+                    setFallo(true);
+                    if (onFail) onFail();
+                }}
                 style={{ width: `${pct}%`, height: `${pct}%` }}
             />
         );
