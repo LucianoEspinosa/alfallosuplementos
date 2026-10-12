@@ -720,3 +720,15 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
 /* mosaico del hero: aparición suave al alternar productos */
 @keyframes af-fade-in { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:none; } }
 .af-hero-tile > img { animation:af-fade-in .6s ease both; }
+
+/* detalle: confirmación después de agregar al carrito */
+.af-added { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:12px;
+  border:1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  background:color-mix(in srgb, var(--color-accent) 10%, var(--color-surface)); }
+.af-added-icon { width:30px; height:30px; flex:none; border-radius:50%; display:grid; place-items:center;
+  border:1.5px solid var(--color-accent); color:var(--color-accent-400); }
+.af-added-text { display:flex; flex-direction:column; gap:1px; }
+.af-added-title { font-size:15px; font-weight:500; color:var(--color-accent-300); }
+.af-added-sub { font-size:13px; color:var(--color-neutral-300); }
+.af-buybar--added { gap:8px; }
+.af-buybar-keep { min-height:50px; font-size:15px; padding:0 14px; white-space:nowrap; }

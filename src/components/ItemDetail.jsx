@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { PiArrowLeft, PiShoppingBagOpen } from "react-icons/pi";
+import { PiArrowLeft, PiCheck, PiShoppingBagOpen } from "react-icons/pi";
 import ItemCount from "./ItemCount";
 import CartWidget from "./CartWidget";
 import ProductPhoto from "./af/ProductPhoto";
@@ -10,7 +10,7 @@ import { getAllProducts } from "../utils/productsCache";
 import { normalizarTexto, precioFinalDe, precioTransferencia, formatoPrecio, badgeDe } from "../utils/productos";
 
 const ItemDetail = ({ producto }) => {
-    const { addItem } = useContext(CartContext);
+    const { addItem, cartTotal } = useContext(CartContext);
     const navigate = useNavigate();
     const [item, setItem] = useState({});
     const [addedToCart, setAddedToCart] = useState(false);
@@ -257,22 +257,43 @@ const ItemDetail = ({ producto }) => {
                         <span className="af-detail-nostock">Sin stock por el momento. Escribinos por WhatsApp y te avisamos cuando entre.</span>
                     )}
 
-                    {/* Mobile: barra fija abajo. Desktop: debajo de la cantidad */}
-                    <div className="af-buybar">
-                        <div className="af-buybar-total">
-                            <span className="af-buybar-label">{cantidad === 1 ? "Efectivo" : `${cantidad} u. · efectivo`}</span>
-                            <span className="af-buybar-value">{formatoPrecio(precioFinal * cantidad)}</span>
+                    {/* Confirmación después de agregar */}
+                    {addedToCart && (
+                        <div className="af-added" role="status">
+                            <span className="af-added-icon"><PiCheck size={16} /></span>
+                            <span className="af-added-text">
+                                <span className="af-added-title">¡Producto agregado al carrito!</span>
+                                {saborSeleccionado && <span className="af-added-sub">Sabor: {saborSeleccionado}</span>}
+                            </span>
                         </div>
-                        <button
-                            type="button"
-                            className="af-btn af-btn-primary af-buybar-btn"
-                            onClick={agregarAlCarrito}
-                            disabled={sinStock && !addedToCart}
-                        >
-                            <PiShoppingBagOpen size={18} />
-                            {addedToCart ? "Agregado al carrito ✓" : "Agregar al carrito"}
-                        </button>
-                    </div>
+                    )}
+
+                    {/* Mobile: barra fija abajo. Desktop: debajo de la cantidad */}
+                    {addedToCart ? (
+                        <div className="af-buybar af-buybar--added">
+                            <Link to="/" className="af-btn af-btn-secondary af-buybar-keep">Seguir comprando</Link>
+                            <Link to="/cart" className="af-btn af-btn-primary af-buybar-btn">
+                                <PiShoppingBagOpen size={18} />
+                                Ver carrito ({cartTotal()})
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="af-buybar">
+                            <div className="af-buybar-total">
+                                <span className="af-buybar-label">{cantidad === 1 ? "Efectivo" : `${cantidad} u. · efectivo`}</span>
+                                <span className="af-buybar-value">{formatoPrecio(precioFinal * cantidad)}</span>
+                            </div>
+                            <button
+                                type="button"
+                                className="af-btn af-btn-primary af-buybar-btn"
+                                onClick={agregarAlCarrito}
+                                disabled={sinStock}
+                            >
+                                <PiShoppingBagOpen size={18} />
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    )}
                 </section>
             </div>
 
