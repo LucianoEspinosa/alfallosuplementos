@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-53dad074-e8c8-4936-9bdb-717221df4f45/styles.css">
+<script src="_ds/nocturne-53dad074-e8c8-4936-9bdb-717221df4f45/_ds_bundle.js"></script>
+</helmet>
+<div style="position:relative;width:390px;height:844px;border-radius:32px;overflow:hidden;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);box-shadow:var(--shadow-md)">
+  <div style="height:100%;overflow-y:auto;scrollbar-width:none">
+    <header style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:14px 16px 12px;background:color-mix(in srgb, var(--color-bg) 90%, transparent);backdrop-filter:blur(12px)">
+      <button class="btn btn-secondary btn-icon" aria-label="Volver"><svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path></svg></button>
+      <span style="font-size:13px;color:var(--color-neutral-400);margin-right:auto;padding-left:4px">Inicio / Proteínas</span>
+      <button class="btn btn-secondary btn-icon" aria-label="Pedido" style="position:relative"><svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path></svg><span style="position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;border-radius:9px;background:var(--color-accent);color:var(--color-neutral-900);font-size:10px;font-weight:700;display:grid;place-items:center">{{ cartCount }}</span></button>
+    </header>
+
+    <div style="padding:4px 16px 0">
+      <div style="position:relative;aspect-ratio:1/1;border-radius:var(--radius-lg);display:grid;place-items:center;background:radial-gradient(circle at 50% 42%, var(--tile-a, var(--color-neutral-200)), var(--tile-b, var(--color-neutral-400)) 115%)">
+        <img src="{{ img }}" alt="Gold Nutrition 100% Whey Protein" style="width:78%;height:78%;object-fit:contain;mix-blend-mode:multiply">
+        <span style="position:absolute;top:12px;left:12px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:4px 9px;border-radius:6px;background:var(--color-neutral-900);color:var(--color-accent-300)">Más vendido</span>
+      </div>
+    </div>
+
+    <section style="display:flex;flex-direction:column;gap:18px;padding:18px 16px 24px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-400)">Gold Nutrition</span>
+        <h1 style="font-size:32px;line-height:1.02;letter-spacing:var(--h-track, -0.025em);font-style:var(--h-style, normal);text-transform:var(--h-tt, none);margin:0">100% Whey Protein</h1>
+        <span style="font-size:14px;color:var(--color-neutral-300)">Blend de proteína concentrada, aislada e hidrolizada. 28 g de proteína por servicio.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:2px;padding:14px;border-radius:var(--radius-lg);background:var(--color-surface)">
+        <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:32px;font-weight:600;letter-spacing:-0.03em;color:var(--color-accent-400)">{{ price }}</span><span style="font-size:13px;color:var(--color-neutral-400)">en efectivo</span></div>
+        <span style="font-size:13px;color:var(--color-neutral-400)">{{ transfer }} con transferencia (incluye 7,5% de recargo bancario)</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-400)">Presentación</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <sc-for list="{{ sizes }}" as="s" hint-placeholder-count="2">
+            <sc-if value="{{ s.on }}"><button onClick="{{ s.pick }}" style="min-height:48px;border-radius:var(--radius-md);border:1px solid var(--color-accent);background:color-mix(in srgb, var(--color-accent) 14%, transparent);color:var(--color-accent-300);font:500 15px var(--font-body);cursor:pointer">{{ s.label }}</button></sc-if>
+            <sc-if value="{{ s.off }}"><button onClick="{{ s.pick }}" style="min-height:48px;border-radius:var(--radius-md);border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-300);font:500 15px var(--font-body);cursor:pointer">{{ s.label }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-400)">Sabor: <span style="color:var(--color-text)">{{ flavor }}</span></span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ flavors }}" as="f" hint-placeholder-count="4">
+            <sc-if value="{{ f.on }}"><button onClick="{{ f.pick }}" style="min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--color-accent);background:color-mix(in srgb, var(--color-accent) 14%, transparent);color:var(--color-accent-300);font:500 14px var(--font-body);cursor:pointer">{{ f.label }}</button></sc-if>
+            <sc-if value="{{ f.off }}"><button onClick="{{ f.pick }}" style="min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-300);font:500 14px var(--font-body);cursor:pointer">{{ f.label }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-400)">Cantidad</span>
+        <div style="display:flex;align-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-md)">
+          <button onClick="{{ dec }}" aria-label="Restar" style="width:44px;height:46px;background:none;border:0;color:var(--color-text);font-size:20px;cursor:pointer">−</button>
+          <span style="min-width:24px;text-align:center;font-size:15px;font-weight:500">{{ qty }}</span>
+          <button onClick="{{ inc }}" aria-label="Sumar" style="width:44px;height:46px;background:none;border:0;color:var(--color-text);font-size:20px;cursor:pointer">+</button>
+        </div>
+      </div>
+    </section>
+
+    <div style="height:110px"></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:12px;padding:12px 16px 22px;background:color-mix(in srgb, var(--color-bg) 94%, transparent);backdrop-filter:blur(12px);box-shadow:0 -1px 0 var(--color-divider)">
+    <div style="display:flex;flex-direction:column;line-height:1.15"><span style="font-size:11px;color:var(--color-neutral-400)">{{ qtyLabel }}</span><span style="font-size:18px;font-weight:600;color:var(--color-accent-400)">{{ lineTotal }}</span></div>
+    <button class="btn btn-primary" onClick="{{ add }}" style="flex:1;min-height:50px;font-size:15px;box-shadow:0 0 24px color-mix(in srgb, var(--color-accent) 28%, transparent)"><svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path></svg>{{ addLabel }}</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  state = { size: '5 LB', flavor: 'Chocolate', qty: 1, added: false,
+    cart: [{ name: 'Advance Whey', brand: 'Xtrenght', size: '2 LB', flavor: 'Vainilla', price: 57850, qty: 1, img: ((window.__resources&&window.__resources.xtr)||'assets/xtr.png') }] };
+  renderVals() {
+    const f = n => '$' + Math.round(n).toLocaleString('es-AR');
+    const P = { '2 LB': 47970, '5 LB': 99710 };
+    const { size, flavor, qty, cart, added } = this.state;
+    const opt = (list, key) => list.map(l => ({ label: l, on: this.state[key] === l, off: this.state[key] !== l, pick: () => this.setState({ [key]: l, added: false }) }));
+    const sum = cart.reduce((a, c) => a + c.price * c.qty, 0);
+    const n = cart.reduce((a, c) => a + c.qty, 0);
+    return {
+      img: size === '5 LB' ? ((window.__resources&&window.__resources.gold5)||'assets/gold5.png') : ((window.__resources&&window.__resources.gold2)||'assets/gold2.png'),
+      price: f(P[size]), transfer: f(P[size] * 1.075),
+      sizes: opt(['2 LB', '5 LB'], 'size'), flavors: opt(['Chocolate', 'Vainilla', 'Frutilla', 'Cookies'], 'flavor'), flavor,
+      qty, dec: () => this.setState({ qty: Math.max(1, qty - 1), added: false }), inc: () => this.setState({ qty: qty + 1, added: false }),
+      addLabel: added ? 'Agregado al carrito ✓' : 'Agregar al carrito',
+      add: () => this.setState({ added: true, cart: [...cart, { name: '100% Whey Protein', brand: 'Gold Nutrition', size, flavor, price: P[size], qty, img: size === '5 LB' ? ((window.__resources&&window.__resources.gold5)||'assets/gold5.png') : ((window.__resources&&window.__resources.gold2)||'assets/gold2.png') }] }),
+      cart: cart.map(c => ({ ...c, meta: c.brand + ' · ' + c.size + ' · ' + c.flavor + ' · x' + c.qty, total: f(c.price * c.qty) })),
+      cartCount: n, cartCountLabel: n + (n === 1 ? ' producto' : ' productos'),
+      total: f(sum), totalT: f(sum * 1.075), lineTotal: f(P[size] * qty), qtyLabel: qty === 1 ? 'Efectivo' : qty + ' u. · efectivo'
+    };
+  }
+}
+</script>
+</body>
+</html>

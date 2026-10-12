@@ -2,15 +2,24 @@ import { useContext, useState, useEffect } from "react";
 import { CartContext } from "./context/CartContext";
 import { getFirestore, collection, addDoc, doc, updateDoc, Timestamp, getDoc, increment } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { PiCheck } from "react-icons/pi";
+import { FaWhatsapp } from "react-icons/fa";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Table from "./Table";
 import WhatsAppConfirmation from "./WhatsAppConfirmation";
 import PaymentMethodSelector from "./PaymentMethodSelector";
+import CompraHeader from "./af/CompraHeader";
+import ProductPhoto from "./af/ProductPhoto";
+import { etiquetaCantidad } from "../utils/productos";
+import { TRANSFER_SURCHARGE } from "../config";
+
+// Montos con el mismo formato que se mostraba antes (sin redondear)
+const formatoMonto = (n) => "$" + Number(n || 0).toLocaleString("es-AR");
 
 const Checkout = () => {
   const { cart, precioTotal, clear: clearCart } = useContext(CartContext);
+  const navigate = useNavigate();
   const [orderId, setOrderId] = useState("");
   const [completedOrder, setCompletedOrder] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -44,7 +53,7 @@ const Checkout = () => {
   useEffect(() => {
     const subtotal = precioTotal();
     const totalConRecargo = metodoPago === "transferencia"
-      ? Math.round(subtotal * 1.075)
+      ? Math.round(subtotal * (1 + TRANSFER_SURCHARGE))
       : subtotal;
 
     const totalConDescuento = totalConRecargo - descuentoAplicado;
@@ -260,7 +269,7 @@ const Checkout = () => {
 
     const nuevosItems = cart.map(item => {
       const precioConRecargo = metodo === "transferencia"
-        ? Math.round(item.precioFinal * 1.075)
+        ? Math.round(item.precioFinal * (1 + TRANSFER_SURCHARGE))
         : item.precioFinal;
 
       return {
@@ -380,53 +389,69 @@ const Checkout = () => {
     );
   }
 
+  const subtotalCompra = precioTotal();
+  const cantidadTotal = cart.reduce((suma, item) => suma + item.cantidad, 0);
+  const esTransferencia = metodoPago === "transferencia";
+  const mensajeDescuento = infoDescuento ? infoDescuento.replace(/^❌\s*/, "") : null;
+  const verificando = codigoValido === null && !!infoDescuento;
+
   return (
-    <div className="container" style={{ minHeight: "60vh" }}>
-      <div className="row my-5">
-        <div className="col-md-5">
-          <h3 className="text-decoration-underline">Carrito de Compras</h3>
-          <Table
-            cart={itemsConRecargo}
-            metodoPago={metodoPago}
-            showOriginalPrice={metodoPago === "transferencia"}
-          />
+    <div className="af-compra">
+      <CompraHeader paso={1} onBack={() => navigate("/cart")} />
 
-          <div className="mt-4 p-3 bg-dark text-white rounded">
-            <h5>📱 Confirmación por WhatsApp</h5>
-            <p className="mb-1">• Recibirás el resumen por WhatsApp</p>
-            <p className="mb-1">• Respondé para coordinar envío</p>
-            <p className="mb-0">• Atención personalizada</p>
-          </div>
-        </div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ errors, touched, submitCount, handleChange }) => (
+          <Form className="af-checkout" noValidate>
+            <h1 className="af-compra-title af-checkout-title-m">Finalizar compra</h1>
 
-        <div className="col-md-5 offset-md-1">
-          <h3 className="text-decoration-underline mb-4">Checkout</h3>
+            {/* Resumen del pedido (en desktop, columna izquierda fija) */}
+            <aside className="af-checkout-side">
+              <h1 className="af-compra-title af-checkout-title-d">Finalizar compra</h1>
+              <div className="af-order">
+                <span className="af-overline af-overline--soft">Tu pedido · {etiquetaCantidad(cantidadTotal)}</span>
+                {itemsConRecargo.map((item) => (
+                  <div key={item.id} className="af-order-row">
+                    <div className="af-tile af-order-thumb">
+                      <ProductPhoto img={item.img} marca={item.marca} nombre={item.nombre} variant="initial" alt="" />
+                    </div>
+                    <div className="af-order-info">
+                      <span className="af-order-name">{item.marca} {item.nombre}</span>
+                      <span className="af-order-meta">
+                        {[item.presentacion, item.saborSeleccionado, `x${item.cantidad}`].filter(Boolean).join(" · ")}
+                      </span>
+                    </div>
+                    <span className="af-order-sub">{formatoMonto(item.precioConRecargo * item.cantidad)}</span>
+                  </div>
+                ))}
+              </div>
+            </aside>
 
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ errors, touched, isSubmitting: formikSubmitting, submitCount, values, handleChange }) => (
-              <Form>
-                {/* CAMPOS DEL FORMULARIO */}
-                <div className="mb-3">
-                  <label className="form-label">Nombre completo *</label>
+            <section className="af-checkout-main">
+              {/* 1 · Tus datos */}
+              <div className="af-form-block">
+                <span className="af-form-step">1 · Tus datos</span>
+
+                <label className="af-field">
+                  <span className="af-field-label">Nombre completo *</span>
                   <Field
                     type="text"
                     name="nombre"
-                    className={`form-control ${errors.nombre && touched.nombre ? "is-invalid" : ""}`}
+                    className={`af-field-input ${errors.nombre && touched.nombre ? "is-bad" : ""}`}
                     placeholder="Ej: María González"
                   />
-                  <ErrorMessage name="nombre" component="div" className="invalid-feedback" />
-                </div>
+                  <ErrorMessage name="nombre" component="span" className="af-field-error" />
+                </label>
 
-                <div className="mb-3">
-                  <label className="form-label">Email *</label>
+                <label className="af-field">
+                  <span className="af-field-label">Email *</span>
                   <Field
                     type="email"
                     name="email"
-                    className={`form-control ${errors.email && touched.email ? "is-invalid" : ""}`}
+                    className={`af-field-input ${errors.email && touched.email ? "is-bad" : ""}`}
                     placeholder="ejemplo@gmail.com"
                     onChange={(e) => {
                       // Primero dejar que Formik maneje el cambio
@@ -435,170 +460,138 @@ const Checkout = () => {
                       setEmailActual(e.target.value.trim());
                     }}
                   />
-                  <ErrorMessage name="email" component="div" className="invalid-feedback" />
-                </div>
+                  <ErrorMessage name="email" component="span" className="af-field-error" />
+                </label>
 
-                <div className="mb-4">
-                  <label className="form-label">WhatsApp *</label>
+                <label className="af-field">
+                  <span className="af-field-label">WhatsApp *</span>
                   <Field
                     type="tel"
                     name="telefono"
-                    className={`form-control ${errors.telefono && touched.telefono ? "is-invalid" : ""}`}
+                    className={`af-field-input ${errors.telefono && touched.telefono ? "is-bad" : ""}`}
                     placeholder="11 2345-6789"
                   />
-                  <ErrorMessage name="telefono" component="div" className="invalid-feedback" />
-                  <small className="text-muted">Te contactaremos por este número</small>
-                </div>
+                  <ErrorMessage name="telefono" component="span" className="af-field-error" />
+                  {!(errors.telefono && touched.telefono) && (
+                    <span className="af-field-help">Te contactamos por este número.</span>
+                  )}
+                </label>
+              </div>
 
-                {/* CÓDIGO DE DESCUENTO */}
-                <div className="card mb-3">
-                  <div className="card-body bg-secondary-subtle">
-                    <h6 className="card-title">¿Tienes un código de descuento?</h6>
-                    
-                    {/* Aviso cuando hay un código de primera compra aplicado */}
-                    {discountData?.firstPurchaseOnly && descuentoAplicado > 0 && (
-                      <div className="alert alert-info py-2 mb-2">
-                        <small>
-                          ⚠️ <strong>Importante:</strong> Este código es válido solo para primera compra. 
-                          Si cambias el email, el descuento se re-validará automáticamente.
-                        </small>
-                      </div>
-                    )}
-                    
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Ingresa tu código"
-                        value={codigoDescuento}
-                        onChange={(e) => setCodigoDescuento(e.target.value)}
-                        disabled={descuentoAplicado > 0}
-                      />
-                      {descuentoAplicado > 0 ? (
-                        <button
-                          className="btn btn-outline-danger"
-                          type="button"
-                          onClick={limpiarDescuento}
-                        >
-                          Quitar
-                        </button>
-                      ) : (
-                        <button
-                          className="btn btn-outline-secondary"
-                          type="button"
-                          onClick={aplicarDescuento}
-                          disabled={loadingDescuento || !codigoDescuento.trim()}
-                        >
-                          {loadingDescuento ? (
-                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                          ) : (
-                            "Aplicar"
-                          )}
-                        </button>
-                      )}
-                    </div>
-
-                    {infoDescuento && (
-                      <div className={`mt-2 ${codigoValido ? 'text-success' : 'text-danger'}`}>
-                        <small>
-                          {codigoValido ? '✓ ' : '✗ '}
-                          {infoDescuento}
-                          {discountData?.firstPurchaseOnly && codigoValido && (
-                            <span className="badge bg-warning ms-2">Primera compra</span>
-                          )}
-                        </small>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Selector de método de pago */}
-                <div className="mb-4">
-                  <PaymentMethodSelector
-                    total={precioTotal()}
-                    onPaymentMethodChange={handlePaymentMethodChange}
+              {/* Código de descuento */}
+              <div className="af-discount">
+                <span className="af-field-label">¿Tenés un código de descuento?</span>
+                <div className="af-discount-row">
+                  <input
+                    type="text"
+                    className="af-discount-input"
+                    placeholder="Ingresá tu código"
+                    value={codigoDescuento}
+                    onChange={(e) => setCodigoDescuento(e.target.value)}
+                    disabled={descuentoAplicado > 0}
+                    aria-label="Código de descuento"
                   />
+                  {descuentoAplicado > 0 ? (
+                    <button className="af-btn af-btn-secondary af-discount-btn" type="button" onClick={limpiarDescuento}>
+                      Quitar
+                    </button>
+                  ) : (
+                    <button
+                      className="af-btn af-btn-secondary af-discount-btn"
+                      type="button"
+                      onClick={aplicarDescuento}
+                      disabled={loadingDescuento || !codigoDescuento.trim()}
+                    >
+                      {loadingDescuento ? <span className="af-spinner" aria-label="Validando" /> : "Aplicar"}
+                    </button>
+                  )}
                 </div>
 
-                {/* Resumen final */}
-                <div className="card mb-4">
-                  <div className="card-body">
-                    <h6 className="card-title">Resumen Final</h6>
-                    <div className="d-flex justify-content-between">
-                      <span>Subtotal:</span>
-                      <span>${precioTotal().toLocaleString('es-AR')}</span>
-                    </div>
+                {mensajeDescuento && codigoValido === true && (
+                  <span className="af-discount-ok">
+                    <PiCheck size={14} />{mensajeDescuento}
+                    {discountData?.firstPurchaseOnly && <span className="af-tag af-tag-outline">Primera compra</span>}
+                  </span>
+                )}
+                {mensajeDescuento && codigoValido === false && <span className="af-discount-bad">{mensajeDescuento}</span>}
+                {mensajeDescuento && verificando && <span className="af-discount-info">{mensajeDescuento}</span>}
 
-                    {recargo > 0 && (
-                      <div className="d-flex justify-content-between text-danger">
-                        <span>Recargo por transferencia (7.5%):</span>
-                        <span>+${recargo.toLocaleString('es-AR')}</span>
-                      </div>
-                    )}
+                {/* Aviso cuando hay un código de primera compra aplicado */}
+                {discountData?.firstPurchaseOnly && descuentoAplicado > 0 && (
+                  <span className="af-discount-info">
+                    Este código es válido solo para primera compra. Si cambiás el email, el descuento se vuelve a validar.
+                  </span>
+                )}
+              </div>
 
-                    {descuentoAplicado > 0 && (
-                      <div className="d-flex justify-content-between text-success">
-                        <span>
-                          Descuento ({codigoDescuento})
-                          {discountData?.firstPurchaseOnly && (
-                            <span className="badge bg-warning ms-1">Primera compra</span>
-                          )}:
-                        </span>
-                        <span>-${descuentoAplicado.toLocaleString('es-AR')}</span>
-                      </div>
-                    )}
+              {/* 2 · Cómo pagás */}
+              <div className="af-form-block af-form-block--pay">
+                <span className="af-form-step">2 · Cómo pagás</span>
+                <PaymentMethodSelector
+                  total={subtotalCompra}
+                  descuento={descuentoAplicado}
+                  onPaymentMethodChange={handlePaymentMethodChange}
+                />
+              </div>
 
-                    <hr />
-
-                    <div className="d-flex justify-content-between fw-bold fs-5">
-                      <span>Total:</span>
-                      <span className="text-success">${totalFinal.toLocaleString('es-AR')}</span>
-                    </div>
-
-                    <small className="text-muted">
-                      {metodoPago === 'transferencia'
-                        ? "Incluye 7.5% de recargo"
-                        : "Sin recargos adicionales"
-                      }
-                    </small>
+              {/* Resumen */}
+              <div className="af-summary">
+                <span className="af-form-step">Resumen</span>
+                <div className="af-summary-row"><span>Subtotal</span><span>{formatoMonto(subtotalCompra)}</span></div>
+                {recargo > 0 && (
+                  <div className="af-summary-row"><span>Recargo por transferencia (7,5%)</span><span>+{formatoMonto(recargo)}</span></div>
+                )}
+                {descuentoAplicado > 0 && (
+                  <div className="af-summary-row af-summary-row--discount">
+                    <span>
+                      Descuento ({codigoDescuento.toUpperCase()})
+                      {discountData?.firstPurchaseOnly && <span className="af-tag af-tag-outline af-summary-tag">Primera compra</span>}
+                    </span>
+                    <span>−{formatoMonto(descuentoAplicado)}</span>
                   </div>
-                </div>
+                )}
+                <hr className="af-hr af-summary-hr" />
+                <div className="af-summary-total"><span>Total</span><span className="af-summary-totalvalue">{formatoMonto(totalFinal)}</span></div>
+                <span className="af-summary-note">{esTransferencia ? "Incluye 7,5% de recargo." : "Sin recargos adicionales."}</span>
+              </div>
 
-                {/* BOTÓN DE CONFIRMAR */}
+              <div className="af-wanote">
+                <FaWhatsapp size={18} className="af-wanote-icon" />
+                <span>Al confirmar, te mostramos el resumen y lo mandás por WhatsApp. Ahí coordinamos stock, envío y pago.</span>
+              </div>
+
+              {/* Aviso dinámico: solo si intentó enviar y hay errores */}
+              {submitCount > 0 && Object.keys(errors).length > 0 && (
+                <span className="af-form-error">Recordá completar todos los campos obligatorios</span>
+              )}
+
+              <span className="af-terms">Al completar aceptás nuestros términos y condiciones.</span>
+
+              {/* BOTÓN DE CONFIRMAR: barra fija en mobile, al final del formulario en desktop */}
+              <div className="af-buybar af-buybar--compra af-buybar--checkout">
+                <div className="af-buybar-total">
+                  <span className="af-buybar-label">{esTransferencia ? "Total transferencia" : "Total efectivo"}</span>
+                  <span className="af-buybar-value">{formatoMonto(totalFinal)}</span>
+                </div>
                 <button
-                  className="btn btn-success w-100 py-2"
+                  className="af-btn af-btn-primary af-buybar-btn af-buybar-btn--lg"
                   type="submit"
                   disabled={isSubmitting || cart.length === 0}
                 >
                   {isSubmitting ? (
                     <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Procesando...
+                      <span className="af-spinner" aria-hidden="true" />
+                      Procesando…
                     </>
                   ) : (
-                    `✅ Confirmar Compra - $${totalFinal.toLocaleString('es-AR')}`
+                    "Confirmar compra"
                   )}
                 </button>
-
-                {/* Aviso dinámico: solo si intentó enviar y hay errores */}
-                {submitCount > 0 && Object.keys(errors).length > 0 && (
-                  <div className="mt-2 text-center">
-                    <small className="text-danger fw-bold">
-                      ⚠️ Recordá completar todos los campos obligatorios
-                    </small>
-                  </div>
-                )}
-
-                <div className="mt-3 text-center">
-                  <small className="text-muted">
-                    Al completar aceptás nuestros términos y condiciones
-                  </small>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
-      </div>
+              </div>
+            </section>
+          </Form>
+        )}
+      </Formik>
 
       {orderId && <Navigate to={`/thankyou/${orderId}`} />}
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import { PiList, PiX, PiCaretDown } from "react-icons/pi";
 import CartWidget from "./CartWidget";
 import WhatsAppIcon from "./WhatsAppIcon";
 import Search from "./Search";
@@ -8,176 +8,160 @@ import FloatingSearchIcon from "./FloatingSearchIcon";
 import logo from "./img/alfallonegro.png";
 import { getAllProducts } from "../utils/productsCache";
 
+// En mobile, el detalle, el carrito y el checkout tienen su propio encabezado y su barra fija abajo:
+// ahí no se muestran el header general, la lupa flotante ni el botón de WhatsApp.
+export const esPantallaConBarra = (pathname) =>
+    pathname.startsWith("/item/") || pathname === "/cart" || pathname === "/checkout";
+
+// El menú se abre al pasar el mouse. La separación con el botón está dentro del área del menú
+// (padding) y el cierre espera un instante, así no se cierra al bajar el mouse para elegir.
+const Desplegable = ({ titulo, items, aRuta, abierto, onAbrir, onCerrar }) => {
+    const timer = useRef(null);
+    const abrir = () => {
+        clearTimeout(timer.current);
+        onAbrir();
+    };
+    const cerrarConDemora = () => {
+        clearTimeout(timer.current);
+        timer.current = setTimeout(onCerrar, 180);
+    };
+    useEffect(() => () => clearTimeout(timer.current), []);
+
+    return (
+        <div className="af-navdrop" onMouseEnter={abrir} onMouseLeave={cerrarConDemora}>
+            <button type="button" className="af-navlink" onClick={abierto ? onCerrar : abrir} aria-expanded={abierto}>
+                {titulo}<PiCaretDown size={12} />
+            </button>
+            {abierto && items.length > 0 && (
+                <div className="af-navdrop-menu">
+                    <div className="af-navdrop-panel">
+                        {items.map((item) => (
+                            <Link key={item} to={aRuta(item)} className="af-navdrop-item" onClick={onCerrar}>
+                                {item}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const MenuPanel = ({ categorias, marcas, onCerrar }) => (
+    <div className="af-menupanel">
+        <div className="af-menupanel-group">
+            <span className="af-overline">Categorías</span>
+            {categorias.map((c) => (
+                <Link key={c} to={`/category/${encodeURIComponent(c)}`} className="af-menupanel-item" onClick={onCerrar}>{c}</Link>
+            ))}
+        </div>
+        <div className="af-menupanel-group">
+            <span className="af-overline">Marcas</span>
+            {marcas.map((m) => (
+                <Link key={m} to={`/brand/${encodeURIComponent(m)}`} className="af-menupanel-item" onClick={onCerrar}>{m}</Link>
+            ))}
+        </div>
+    </div>
+);
+
 const NavBar = () => {
     const [isNavOpen, setIsNavOpen] = useState(false);
-    const [isProductsOpen, setIsProductsOpen] = useState(false);
-    const [isBrandsOpen, setIsBrandsOpen] = useState(false);
+    const [abierto, setAbierto] = useState(null); // "categorias" | "marcas" | null
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
-    const [loading, setLoading] = useState(true);
     const navRef = useRef(null);
+    const { pathname } = useLocation();
+    const conBarra = esPantallaConBarra(pathname);
 
     // Obtener categorías y marcas
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const allProducts = await getAllProducts();
-
-                const uniqueCategories = [...new Set(
-                    allProducts.map(product => product.categoria).filter(Boolean)
-                )].sort();
-
-                const uniqueBrands = [...new Set(
-                    allProducts.map(product => product.marca).filter(Boolean)
-                )].sort();
-
-                setCategories(uniqueCategories);
-                setBrands(uniqueBrands);
-
-            } catch (error) {
-                console.error("Error:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+        getAllProducts()
+            .then((allProducts) => {
+                setCategories([...new Set(allProducts.map((p) => p.categoria).filter(Boolean))].sort());
+                setBrands([...new Set(allProducts.map((p) => p.marca).filter(Boolean))].sort());
+            })
+            .catch((error) => console.error("Error:", error));
     }, []);
 
-    const toggleNav = () => setIsNavOpen(!isNavOpen);
-    const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
-    const toggleBrands = () => setIsBrandsOpen(!isBrandsOpen);
-
     const closeAllMenus = () => {
-        setIsProductsOpen(false);
-        setIsBrandsOpen(false);
+        setAbierto(null);
         setIsNavOpen(false);
     };
 
-    // Función para manejar la búsqueda y cerrar el nav
+    // Cerrar los menús al hacer clic fuera o al cambiar de página
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (navRef.current && !navRef.current.contains(event.target)) {
-                closeAllMenus();
-            }
+            if (navRef.current && !navRef.current.contains(event.target)) closeAllMenus();
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        closeAllMenus();
+    }, [pathname]);
+
+    const botonMenu = (
+        <button
+            type="button"
+            className="af-btn af-btn-secondary af-btn-icon"
+            aria-label={isNavOpen ? "Cerrar menú" : "Menú"}
+            aria-expanded={isNavOpen}
+            onClick={() => setIsNavOpen(!isNavOpen)}
+        >
+            {isNavOpen ? <PiX size={20} /> : <PiList size={20} />}
+        </button>
+    );
+
     return (
-        <div className="fixed-top cabecera">
-            <div className="container">
-                <div className="row navbar navbar-expand-md fs-7 fs-md-5 d-flex align-items-end align-items-md-center">
-
-                    {/* Logo */}
-                    <Link to={"/"} className="col-4 col-md-2 d-flex align-items-end text-decoration-none text-black">
-                        <img src={logo} className="w-50 logoStyle d-md-none" alt="Al Fallo logo" />
-                        <img src={logo} className="w-75 logoStyle d-none d-md-block" alt="Al Fallo logo" />
+        <>
+            <header ref={navRef} className={`af-header ${conBarra ? "af-header--subpage" : ""}`}>
+                {/* Mobile (< 768px): logo, carrito y menú */}
+                <div className="af-header-m">
+                    <Link to="/" className="af-header-logo-m" aria-label="Al Fallo Suplementos, inicio">
+                        <img src={logo} alt="Al Fallo Suplementos" />
                     </Link>
-
-                    {/* Search Bar Desktop */}
-                    <div className="col-md-4 d-none d-md-block">
-                        <Search isMobile={false} />
-                    </div>
-
-                    {/* Iconos móvil */}
-                    <div className="col-8 col-md-2 d-flex d-md-none align-items-center justify-content-end gap-2">
-                        <CartWidget />
-                        <button className="navbar-toggler custom-button" onClick={toggleNav}>
-                            {isNavOpen ? <FaTimes /> : <FaBars />}
-                        </button>
-                    </div>
-
-                    {/* Menú de navegación */}
-                    <div ref={navRef} className={`col-md-3 collapse navbar-collapse flex-column py-0 ${isNavOpen ? 'show' : ''}`}>
-
-                        {/* Search Mobile - con margen superior */}
-                        {isNavOpen && (
-                            <div className="d-md-none mb-4 mt-3"> {/* Más margen */}
-                                <Search isMobile={true} onClose={closeAllMenus} />
-                            </div>
-                        )}
-
-                        <ul className="navbar-nav mt-2 mt-md-0 w-100 d-flex justify-content-center">
-
-                            {/* Dropdown de Categorías */}
-                            <li className="nav-item dropdown position-relative"
-                                onMouseEnter={() => !loading && setIsProductsOpen(true)}
-                                onMouseLeave={() => setIsProductsOpen(false)}>
-                                <div className="nav-link py-0 py-2 d-flex align-items-center cursor-pointer" onClick={toggleProducts}>
-                                    Categorías <FaChevronDown className="ms-1" size={12} />
-                                </div>
-
-                                {!loading && categories.length > 0 && (
-                                    <ul className={`dropdown-menu ${isProductsOpen ? 'show' : ''}`}>
-                                        {categories.map((category, index) => (
-                                            <li key={index}>
-                                                <Link
-                                                    className="dropdown-item"
-                                                    to={`/category/${encodeURIComponent(category)}`}
-                                                    onClick={closeAllMenus}
-                                                >
-                                                    {category}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </li>
-
-                            {/* Dropdown de Marcas */}
-                            <li className="nav-item dropdown position-relative"
-                                onMouseEnter={() => !loading && setIsBrandsOpen(true)}
-                                onMouseLeave={() => setIsBrandsOpen(false)}>
-                                <div className="nav-link py-0 py-2 d-flex align-items-center cursor-pointer" onClick={toggleBrands}>
-                                    Marcas <FaChevronDown className="ms-1" size={12} />
-                                </div>
-
-                                {!loading && brands.length > 0 && (
-                                    <ul className={`dropdown-menu ${isBrandsOpen ? 'show' : ''}`}>
-                                        {brands.map((brand, index) => (
-                                            <li key={index}>
-                                                <Link
-                                                    className="dropdown-item"
-                                                    to={`/brand/${encodeURIComponent(brand)}`}
-                                                    onClick={closeAllMenus}
-                                                >
-                                                    {brand}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </li>
-
-<li className="nav-item">
-    <Link 
-        to="/plan" 
-        className="nav-link py-0 py-2 d-flex align-items-center cursor-pointer" 
-        onClick={closeAllMenus}
-    >
-        Plan de Nutrición
-    </Link>
-</li>
-
-
-
-                        </ul>
-                    </div>
-
-                    {/* Carrito desktop */}
-                    <div className="col-md-2 d-none d-md-flex justify-content-end align-items-center">
-                        <CartWidget />
-                    </div>
+                    <CartWidget />
+                    {botonMenu}
                 </div>
-            </div>
 
-            {/* Botón flotante - solo visible cuando el nav está cerrado */}
-            <FloatingSearchIcon isNavOpen={isNavOpen} />
-            <WhatsAppIcon />
-        </div>
+                {/* Desktop (≥ 768px): logo, buscador, menú y carrito */}
+                <div className="af-header-d">
+                    <Link to="/" className="af-header-logo-d" aria-label="Al Fallo Suplementos, inicio">
+                        <img src={logo} alt="Al Fallo Suplementos" />
+                    </Link>
+                    <div className="af-header-search">
+                        <Search />
+                    </div>
+                    <nav className="af-header-nav" aria-label="Principal">
+                        <Desplegable
+                            titulo="Categorías"
+                            items={categories}
+                            aRuta={(c) => `/category/${encodeURIComponent(c)}`}
+                            abierto={abierto === "categorias"}
+                            onAbrir={() => setAbierto("categorias")}
+                            onCerrar={() => setAbierto(null)}
+                        />
+                        <Desplegable
+                            titulo="Marcas"
+                            items={brands}
+                            aRuta={(m) => `/brand/${encodeURIComponent(m)}`}
+                            abierto={abierto === "marcas"}
+                            onAbrir={() => setAbierto("marcas")}
+                            onCerrar={() => setAbierto(null)}
+                        />
+                    </nav>
+                    <span className="af-header-burger">{botonMenu}</span>
+                    <CartWidget />
+                </div>
+
+                {isNavOpen && <MenuPanel categorias={categories} marcas={brands} onCerrar={closeAllMenus} />}
+            </header>
+
+            {/* Lupa flotante (solo mobile) y botón de WhatsApp */}
+            {!conBarra && <FloatingSearchIcon isNavOpen={isNavOpen} />}
+            <WhatsAppIcon ocultarEnMobile={conBarra} />
+        </>
     );
 };
 
