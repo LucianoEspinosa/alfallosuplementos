@@ -186,6 +186,8 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     };
 
     const isHomePage = !id && !top && !oferta && location.pathname === "/";
+    // En la home el título principal (h1) es el del hero; en categoría, marca, búsqueda, etc. es el de la grilla
+    const TituloProductos = isHomePage ? "h2" : "h1";
     const currentCategory = normalizarTexto(id ? decodeURIComponent(id) : '');
 
     useEffect(() => {
@@ -385,7 +387,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
             <section id="productos" className="af-products">
                 {/* Mobile y tablet: título, chips en dos filas y conteo */}
                 <div className="af-products-head">
-                    <h2 className="af-products-title">{getUserVisibleTitle()}</h2>
+                    <TituloProductos className="af-products-title">{getUserVisibleTitle()}</TituloProductos>
                     {id && seoData.description && <p className="af-products-desc">{seoData.description}</p>}
                     <Chips tipo="cat" opciones={categorias} activa={categoria} onPick={setCategoria} />
                     <Chips tipo="brand" opciones={marcas} activa={marca} onPick={setMarca} />
@@ -404,7 +406,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
 
                     <div className="af-products-main">
                         <div className="af-products-headd">
-                            <h2 className="af-products-titled">{getUserVisibleTitle()}</h2>
+                            <TituloProductos className="af-products-titled">{getUserVisibleTitle()}</TituloProductos>
                             <span className="af-products-count">{conteo}</span>
                             <FilterBar sortBy={sortBy} onSortChange={setSortBy} />
                         </div>
