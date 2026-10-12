@@ -38,22 +38,17 @@ const prioridadCategoria = (cat) => {
     return i === -1 ? PRIORIDAD_CATEGORIAS.length : i;
 };
 
-// Grupo del lateral (desktop): compacto, se despliega al tocar el título
-const ListaLateral = ({ titulo, opciones, activa, onPick, contar }) => {
-    const [abierto, setAbierto] = useState(false);
+// Grupo del lateral (desktop): con "limite" muestra solo las primeras opciones y un botón para ver el resto
+const ListaLateral = ({ titulo, opciones, activa, onPick, contar, limite }) => {
+    const [expandido, setExpandido] = useState(false);
+    const hayMas = limite && opciones.length > limite;
+    // Si la opción elegida quedó entre las ocultas, se muestra todo para no perderla de vista
+    const verTodo = !hayMas || expandido || opciones.indexOf(activa) >= limite;
+    const visibles = verTodo ? opciones : opciones.slice(0, limite);
     return (
-        <div className={`af-side-group ${abierto ? "is-open" : ""}`}>
-            <button
-                type="button"
-                className="af-side-toggle"
-                onClick={() => setAbierto((v) => !v)}
-                aria-expanded={abierto}
-            >
-                <span className="af-overline af-side-title">{titulo}</span>
-                {!abierto && activa !== TODAS && <span className="af-side-current">{activa}</span>}
-                <PiCaretDown size={14} className="af-side-caret" />
-            </button>
-            {abierto && [TODAS, ...opciones].map((op) => (
+        <div className="af-side-group">
+            <span className="af-overline af-side-title">{titulo}</span>
+            {[TODAS, ...visibles].map((op) => (
                 <button
                     key={op}
                     type="button"
@@ -65,6 +60,17 @@ const ListaLateral = ({ titulo, opciones, activa, onPick, contar }) => {
                     <span className="af-side-count">{contar(op)}</span>
                 </button>
             ))}
+            {hayMas && (
+                <button
+                    type="button"
+                    className="af-side-more"
+                    onClick={() => setExpandido((v) => !v)}
+                    aria-expanded={verTodo}
+                >
+                    {verTodo ? "Ver menos" : `Ver más (${opciones.length - limite})`}
+                    <PiCaretDown size={14} className={`af-side-caret ${verTodo ? "is-up" : ""}`} />
+                </button>
+            )}
         </div>
     );
 };
@@ -392,7 +398,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                 <div className="af-products-layout">
                     {/* Desktop: barra lateral fija con contadores */}
                     <aside className="af-side">
-                        <ListaLateral titulo="Categoría" opciones={categorias} activa={categoria} onPick={setCategoria} contar={contarCategoria} />
+                        <ListaLateral titulo="Categoría" opciones={categorias} activa={categoria} onPick={setCategoria} contar={contarCategoria} limite={5} />
                         <ListaLateral titulo="Marca" opciones={marcas} activa={marca} onPick={setMarca} contar={contarMarca} />
                     </aside>
 
