@@ -63,9 +63,11 @@ function App() {
           {isLoading && <LoadingScreen />}
 
           {/* Contenido principal */}
-          <div style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
+          {/* af-app: ocupa al menos el alto de la ventana; af-main se estira y deja el footer abajo */}
+          <div className="af-app" style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
             <NavBar />
             <ScrollToTop />
+            <div className="af-main">
             <Routes>
               <Route path={"/"} element={<ItemListContainer />} />
               <Route path={'/masvendidos'} element={<ItemListContainer top={true} titulo={"Top en Ventas"} />} />
@@ -99,6 +101,7 @@ function App() {
               
 
             </Routes>
+            </div>
             <Footer />
           </div>
         </BrowserRouter>

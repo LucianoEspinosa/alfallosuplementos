@@ -732,3 +732,8 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
 .af-added-sub { font-size:13px; color:var(--color-neutral-300); }
 .af-buybar--added { gap:8px; }
 .af-buybar-keep { min-height:50px; font-size:15px; padding:0 14px; white-space:nowrap; }
+
+/* footer siempre abajo: la app ocupa al menos el alto de la ventana y el contenido se estira */
+.af-app { min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
+.af-main { flex:1 0 auto; }
+.af-footer { flex-shrink:0; }
