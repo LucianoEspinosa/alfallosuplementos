@@ -1,14 +1,8 @@
 const Loading = () => {
     return (
-        <div className="container justify-content-center">
-            <div className="row">
-                <div className="col p-5 text-center">
-                    <div className="spinner-border text-secondary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </div>
-
+        <div className="af-loading" role="status">
+            <span className="af-spinner" />
+            <span className="af-sr-only">Cargando...</span>
         </div>
     )
 }

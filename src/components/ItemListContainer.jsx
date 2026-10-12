@@ -1,27 +1,69 @@
-
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useParams, Link, useLocation, useSearchParams, useNavigate } from "react-router-dom";
+import { FaWhatsapp } from "react-icons/fa";
+import { PiX } from "react-icons/pi";
+import { Helmet } from "react-helmet";
 import ItemList from "./ItemList";
-import { useParams, Link, useLocation, useSearchParams } from "react-router-dom";
-import { getAllProducts } from "../utils/productsCache";
 import Loading from "./Loading";
 import FilterBar from "./FilterBar";
-import CategoryCards from "./CategoryCards";
-import { Helmet } from "react-helmet";
-import CategoryModal from "./CategoryModal"; // 👈 LÍNEA AGREGADA
+import TrustStrip from "./TrustStrip";
+import CategoryModal from "./CategoryModal";
+import ProductPhoto from "./af/ProductPhoto";
+import { getAllProducts } from "../utils/productsCache";
+import { normalizarTexto, coincideBusqueda, fechaAlta, etiquetaCantidad } from "../utils/productos";
+import { whatsappUrl } from "../config";
+
+const TODAS = "Todas";
+
+const Chips = ({ opciones, activa, onPick, tipo }) => (
+    <div className={`af-chips af-chips--${tipo} af-noscrollbar`}>
+        {[TODAS, ...opciones].map((op) => (
+            <button
+                key={op}
+                type="button"
+                className={`af-chip af-chip--${tipo} ${activa === op ? "is-on" : ""}`}
+                onClick={() => onPick(op)}
+                aria-pressed={activa === op}
+            >
+                {op}
+            </button>
+        ))}
+    </div>
+);
+
+const ListaLateral = ({ titulo, opciones, activa, onPick, contar }) => (
+    <div className="af-side-group">
+        <span className="af-overline af-side-title">{titulo}</span>
+        {[TODAS, ...opciones].map((op) => (
+            <button
+                key={op}
+                type="button"
+                className={`af-side-item ${activa === op ? "is-on" : ""}`}
+                onClick={() => onPick(op)}
+                aria-pressed={activa === op}
+            >
+                <span>{op}</span>
+                <span className="af-side-count">{contar(op)}</span>
+            </button>
+        ))}
+    </div>
+);
 
 const ItemListContainer = ({ top, oferta, titulo }) => {
     const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sortBy, setSortBy] = useState("nombre");
-    const [priceRange, setPriceRange] = useState([0, 100000]);
-    const [selectedPresentation, setSelectedPresentation] = useState("");
-    const [showFilters, setShowFilters] = useState(false);
+    const [sortBy, setSortBy] = useState("masvendidos");
+    const [categoria, setCategoria] = useState(TODAS);
+    const [marca, setMarca] = useState(TODAS);
+    const [fotosRotas, setFotosRotas] = useState([]);
     const { id } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('search');
+    const esMarca = location.pathname.includes('/brand/');
 
-    // ✅ CONTENIDO SEO Y DESCRIPTIVO (sin cambios)
+    // Contenido SEO y descriptivo por categoría
     const categoryContent = {
         'proteinas': {
             title: "Las Mejores Proteínas para Aumentar Masa Muscular | Al Fallo",
@@ -117,155 +159,152 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
         },
     };
 
-    const normalizarTexto = useCallback((texto) => {
-        if (!texto) return '';
-        return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    }, []);
-
-    const isHomePage = !id && !searchTerm && location.pathname === "/";
-    const currentCategory = normalizarTexto(id || '');
+    const isHomePage = !id && !top && !oferta && location.pathname === "/";
+    const currentCategory = normalizarTexto(id ? decodeURIComponent(id) : '');
 
     useEffect(() => {
-        const fetchAllProducts = async () => {
-            setLoading(true);
-            try {
-                const todosLosProductos = await getAllProducts();
-                setAllProducts(todosLosProductos);
-            } catch (error) {
-                console.error("Error al cargar productos:", error);
-            } finally {
-                setLoading(false);
-            }
+        let vigente = true;
+        setLoading(true);
+        getAllProducts()
+            .then((todosLosProductos) => vigente && setAllProducts(todosLosProductos))
+            .catch((error) => console.error("Error al cargar productos:", error))
+            .finally(() => vigente && setLoading(false));
+        return () => {
+            vigente = false;
         };
-        fetchAllProducts();
     }, []);
 
-    const filteredAndSortedItems = useMemo(() => {
-        let filtrados = [...allProducts];
-
-        // Filtros principales (categoría, búsqueda, etc.)
-        if (searchTerm) {
-            const normalizedSearch = normalizarTexto(searchTerm);
-            const keywords = normalizedSearch.split(/\s+/).filter(Boolean);
-            filtrados = filtrados.filter(item => {
-                const searchText = `
-                    ${normalizarTexto(item.nombre || '')} 
-                    ${normalizarTexto(item.marca || '')} 
-                    ${normalizarTexto(item.categoria || '')}
-                    ${normalizarTexto(item.descripcion || '')}
-                `;
-                return keywords.every(keyword => searchText.includes(keyword));
-            });
+    // Conjunto base de la página: búsqueda, ofertas o más vendidos (los chips filtran dentro de este conjunto)
+    const base = useMemo(() => {
+        if (searchTerm) return allProducts.filter((item) => coincideBusqueda(item, searchTerm));
+        if (oferta) return allProducts.filter((item) => item.descuento > 0);
+        if (top) {
+            const marcados = allProducts.filter((item) => item.masVendido === true);
+            return marcados.length > 0 ? marcados : allProducts.filter((item) => item.stock < 15);
         }
-        else if (oferta) {
-            filtrados = filtrados.filter(item => item.descuento > 0);
+        return allProducts;
+    }, [allProducts, searchTerm, oferta, top]);
+
+    const categorias = useMemo(() => [...new Set(base.map((p) => p.categoria).filter(Boolean))].sort(), [base]);
+    const marcas = useMemo(() => [...new Set(base.map((p) => p.marca).filter(Boolean))].sort(), [base]);
+
+    // La categoría o la marca de la URL (/category/:id, /brand/:id) arrancan seleccionadas en los chips
+    useEffect(() => {
+        const desdeUrl = id ? normalizarTexto(decodeURIComponent(id)) : "";
+        const buscar = (lista) => lista.find((v) => normalizarTexto(v) === desdeUrl) || TODAS;
+        if (esMarca) {
+            setMarca(buscar(marcas));
+            setCategoria(TODAS);
         } else if (id) {
-            const esMarca = location.pathname.includes('/brand/');
-            const textoBuscado = normalizarTexto(decodeURIComponent(id));
-            if (esMarca) {
-                filtrados = filtrados.filter(item => item.marca && normalizarTexto(item.marca) === textoBuscado);
-            } else {
-                filtrados = filtrados.filter(item => item.categoria && normalizarTexto(item.categoria) === textoBuscado);
-            }
-        } else if (top) {
-            filtrados = filtrados.filter(item => item.stock < 15);
+            setCategoria(buscar(categorias));
+            setMarca(TODAS);
+        } else {
+            setCategoria(TODAS);
+            setMarca(TODAS);
         }
+    }, [id, esMarca, categorias, marcas]);
 
-        // Filtro de presentación
-        if (selectedPresentation) {
-            filtrados = filtrados.filter(item => normalizarTexto(item.presentacion) === normalizarTexto(selectedPresentation));
-        }
-
-        // Filtro de rango de precio
-        filtrados = filtrados.filter(item =>
-            (item.precio || 0) >= priceRange[0] && (item.precio || 0) <= priceRange[1]
+    const filteredAndSortedItems = useMemo(() => {
+        const filtrados = base.filter((item) =>
+            (categoria === TODAS || item.categoria === categoria) &&
+            (marca === TODAS || item.marca === marca)
         );
-
-        // Ordenamiento
         return [...filtrados].sort((a, b) => {
             switch (sortBy) {
                 case "precio-asc": return (a.precio || 0) - (b.precio || 0);
                 case "precio-desc": return (b.precio || 0) - (a.precio || 0);
                 case "nombre": return (a.nombre || '').localeCompare(b.nombre || '');
-                case "nuevos": return new Date(b.fechaCreacion || 0) - new Date(a.fechaCreacion || 0);
-                default: return 0;
+                case "nuevos": return (fechaAlta(b)?.getTime() || 0) - (fechaAlta(a)?.getTime() || 0);
+                case "masvendidos":
+                default:
+                    return (b.masVendido === true) - (a.masVendido === true) || (a.nombre || '').localeCompare(b.nombre || '');
             }
         });
-    }, [allProducts, id, top, oferta, searchTerm, location.pathname, priceRange, sortBy, normalizarTexto, selectedPresentation]);
+    }, [base, categoria, marca, sortBy]);
 
-    const uniquePresentations = useMemo(() => {
-        // Obtenemos una lista de productos que ya pasaron el filtro principal
-        let productosFiltradosPrincipales = [...allProducts];
-        if (searchTerm) {
-            const normalizedSearch = normalizarTexto(searchTerm);
-            const keywords = normalizedSearch.split(/\s+/).filter(Boolean);
-            productosFiltradosPrincipales = productosFiltradosPrincipales.filter(item => {
-                const searchText = `
-                    ${normalizarTexto(item.nombre || '')} 
-                    ${normalizarTexto(item.marca || '')} 
-                    ${normalizarTexto(item.categoria || '')}
-                    ${normalizarTexto(item.descripcion || '')}
-                `;
-                return keywords.every(keyword => searchText.includes(keyword));
-            });
+    // Ir a la grilla al llegar con una búsqueda o con el link "#productos" del footer
+    useEffect(() => {
+        if (loading) return;
+        if (searchTerm || location.hash === "#productos") {
+            const el = document.getElementById("productos");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-        else if (oferta) {
-            productosFiltradosPrincipales = productosFiltradosPrincipales.filter(item => item.descuento > 0);
-        } else if (id) {
-            const esMarca = location.pathname.includes('/brand/');
-            const textoBuscado = normalizarTexto(decodeURIComponent(id));
-            if (esMarca) {
-                productosFiltradosPrincipales = productosFiltradosPrincipales.filter(item => item.marca && normalizarTexto(item.marca) === textoBuscado);
-            } else {
-                productosFiltradosPrincipales = productosFiltradosPrincipales.filter(item => item.categoria && normalizarTexto(item.categoria) === textoBuscado);
-            }
-        } else if (top) {
-            productosFiltradosPrincipales = productosFiltradosPrincipales.filter(item => item.stock < 15);
-        }
-        
-        const presentations = productosFiltradosPrincipales.map(p => p.presentacion).filter(Boolean);
-        const unique = [...new Set(presentations)].sort();
-        return unique;
-    }, [allProducts, id, top, oferta, searchTerm, location.pathname, normalizarTexto]);
-
-    const handleSortChange = (sortType) => {
-        setSortBy(sortType);
-    };
-
-    const handlePriceFilter = (min, max) => {
-        setPriceRange([min, max]);
-    };
+    }, [loading, searchTerm, location.hash]);
 
     const handleClearFilters = () => {
-        setSortBy("nombre");
-        setPriceRange([0, 100000]);
-        setSelectedPresentation("");
+        setCategoria(TODAS);
+        setMarca(TODAS);
+        if (searchTerm || id || top || oferta) navigate("/");
+    };
+
+    const verProductos = () => {
+        const el = document.getElementById("productos");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
     const getUserVisibleTitle = () => {
-        if (searchTerm) {
-            return `Búsqueda: "${decodeURIComponent(searchTerm)}"`;
-        }
-        if (id) {
-            return decodeURIComponent(id);
-        }
+        if (isHomePage) return "Productos";
+        if (id) return decodeURIComponent(id);
         if (titulo) return titulo;
         return "Productos";
     };
 
-    const getSeoMetadata = () => {
-        const data = categoryContent[currentCategory];
-        return {
-            title: data?.title || '',
-            description: data?.description || ''
-        };
+    const seoData = {
+        title: categoryContent[currentCategory]?.title || '',
+        description: categoryContent[currentCategory]?.description || ''
     };
 
-    const seoData = getSeoMetadata();
-    const showBreadcrumb = (id || location.pathname.includes('/brand/')) && !searchTerm;
+    // Mosaico del hero desktop: va alternando creatinas y proteínas de Pitbull y Star Nutrition
+    // (orden aleatorio en cada visita; las fotos que fallan se saltean)
+    const candidatosHero = useMemo(() => {
+        const marcasHero = ["pitbull", "star nutrition"];
+        const lista = allProducts.filter((p) => {
+            const cat = normalizarTexto(p.categoria);
+            return p.img && marcasHero.includes(normalizarTexto(p.marca)) && (cat.startsWith("prote") || cat.includes("creatin"));
+        });
+        for (let i = lista.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [lista[i], lista[j]] = [lista[j], lista[i]];
+        }
+        return lista;
+    }, [allProducts]);
+    const [turnoHero, setTurnoHero] = useState(0);
+    const destacados = useMemo(() => {
+        const sanos = candidatosHero.filter((p) => !fotosRotas.includes(p.id));
+        if (sanos.length <= 2) return sanos;
+        const i = (turnoHero * 2) % sanos.length;
+        return [sanos[i], sanos[(i + 1) % sanos.length]];
+    }, [candidatosHero, fotosRotas, turnoHero]);
+    useEffect(() => {
+        if (!isHomePage || candidatosHero.length <= 2) return undefined;
+        const t = setInterval(() => setTurnoHero((n) => n + 1), 6000);
+        return () => clearInterval(t);
+    }, [isHomePage, candidatosHero.length]);
+    const descartarFoto = (pid) => setFotosRotas((prev) => (prev.includes(pid) ? prev : [...prev, pid]));
+
+    const contarCategoria = (op) => (op === TODAS ? base.length : base.filter((p) => p.categoria === op).length);
+    const contarMarca = (op) => (op === TODAS ? base.length : base.filter((p) => p.marca === op).length);
+
+    const conteo = (
+        searchTerm ? (
+            <button type="button" className="af-searchchip" onClick={() => navigate("/")}>
+                "{searchTerm}" · {etiquetaCantidad(filteredAndSortedItems.length)}<PiX size={12} />
+            </button>
+        ) : (
+            <span>{etiquetaCantidad(filteredAndSortedItems.length)}</span>
+        )
+    );
+
+    const vacio = (
+        <div className="af-empty">
+            <span className="af-empty-title">No encontramos productos con esos filtros.</span>
+            <span className="af-empty-sub">Escribinos y te conseguimos lo que buscás.</span>
+            <button type="button" className="af-btn af-btn-primary" onClick={handleClearFilters}>Ver todos los productos</button>
+        </div>
+    );
 
     return (
-        <div className="container alto my-5">
+        <main className="af-home">
             {id && seoData.title && (
                 <Helmet>
                     <title>{seoData.title}</title>
@@ -273,120 +312,85 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                 </Helmet>
             )}
 
-            {/* 👈 LÍNEA AGREGADA - Modal que aparece solo si hay una categoría en la URL */}
-            {id && <CategoryModal category={id} />}
+            {/* Modal del producto recomendado: aparece solo si hay una categoría en la URL */}
+            {id && !esMarca && <CategoryModal category={id} />}
 
-            {showBreadcrumb && (
-                <nav aria-label="breadcrumb" className="mb-3">
-                    <ol className="breadcrumb justify-content-center">
-                        <li className="breadcrumb-item">
-                            <Link to="/" className="text-decoration-none">Inicio</Link>
-                        </li>
-                        {location.pathname.includes('/brand/') && (
-                            <li className="breadcrumb-item">
-                                <Link to="/" className="text-decoration-none">Marcas</Link>
-                            </li>
-                        )}
-                        <li className="breadcrumb-item active text-capitalize">
-                            {id ? decodeURIComponent(id) : ''}
-                        </li>
-                    </ol>
-                </nav>
-            )}
-
-            {isHomePage && <CategoryCards />}
-
-            <div className="row text-center mb-4">
-                <div className="col">
-                    <h1 className="text-capitalize fw-bold">{getUserVisibleTitle()}</h1>
-                </div>
-            </div>
-
-            {id && categoryContent[currentCategory] && (
-                <div className="row mb-5 text-center">
-                    <div className="col">
-                        <p>{categoryContent[currentCategory].description}</p>
-                    </div>
-                </div>
-            )}
-
-            {allProducts.length > 0 && filteredAndSortedItems.length > 0 && (
-                <div className="row mb-4">
-                    <div className="col">
-                        <button
-                            className={`btn ${showFilters ? 'btn-secondary' : 'btn-outline-secondary'}`}
-                            onClick={() => setShowFilters(!showFilters)}
-                            style={{ transition: 'all 0.3s ease' }}
-                        >
-                            {showFilters ? '▲ Ocultar Filtros' : '▼ Mostrar Filtros'}
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {showFilters && allProducts.length > 0 && filteredAndSortedItems.length > 0 && (
-                <FilterBar
-                    onSortChange={handleSortChange}
-                    onPriceFilter={handlePriceFilter}
-                    onClearFilters={handleClearFilters}
-                    onPresentationFilter={setSelectedPresentation}
-                    sortBy={sortBy}
-                    priceRange={priceRange}
-                    selectedPresentation={selectedPresentation}
-                    uniquePresentations={uniquePresentations}
-                    productCount={filteredAndSortedItems.length}
-                    totalProducts={allProducts.length}
-                />
-            )}
-
-            {!loading && filteredAndSortedItems.length === 0 && (
-                <div className="text-center py-5">
-                    <div className="py-4">
-                        <h4 className="text-muted mb-3">😔 No se encontraron productos</h4>
-                        <p className="text-muted mb-4">
-                            {searchTerm ?
-                                "Intenta con otros términos de búsqueda" :
-                                id ?
-                                    `Pronto tendremos más stock ${location.pathname.includes('/brand/') ? 'de esta marca' : 'en esta categoría'}` :
-                                    "Intenta con otros filtros o visita nuestras otras secciones"
-                            }
-                        </p>
-                        <div className="d-flex gap-2 justify-content-center">
-                            <button
-                                className="btn btn-primary"
-                                onClick={handleClearFilters}
-                            >
-                                ↺ Limpiar filtros
-                            </button>
-                            <Link to="/" className="btn btn-outline-secondary">
-                                ← Volver al inicio
-                            </Link>
+            {isHomePage && (
+                <>
+                    <section className="af-hero">
+                        <div className="af-hero-inner">
+                            <div className="af-hero-copy">
+                                <span className="af-tag af-tag-outline af-hero-tag">Suplementos 100% originales</span>
+                                <h1 className="af-hero-title">Entrená al fallo.<br /><span>Del resto nos ocupamos nosotros.</span></h1>
+                                <p className="af-hero-text">ENA, Gentech, Gold Nutrition, Star, Xtrenght y Pitbull. Consultá stock y precio por WhatsApp y te respondemos al toque.</p>
+                                <div className="af-hero-actions">
+                                    <a className="af-btn af-btn-primary af-hero-wa" href={whatsappUrl()} target="_blank" rel="noopener noreferrer">
+                                        <FaWhatsapp size={20} />Comprar por WhatsApp
+                                    </a>
+                                    <button type="button" className="af-btn af-btn-secondary af-hero-ver" onClick={verProductos}>Ver productos</button>
+                                </div>
+                            </div>
+                            <div className="af-hero-mosaic" aria-hidden={destacados.length === 0}>
+                                {destacados[0] && (
+                                    <Link key={destacados[0].id} to={`/item/${destacados[0].id}`} className="af-tile af-hero-tile af-hero-tile--big">
+                                        <ProductPhoto key={destacados[0].id} img={destacados[0].img} marca={destacados[0].marca} nombre={destacados[0].nombre} pct={84} onFail={() => descartarFoto(destacados[0].id)} />
+                                    </Link>
+                                )}
+                                {destacados[1] && (
+                                    <Link key={destacados[1].id} to={`/item/${destacados[1].id}`} className="af-tile af-hero-tile">
+                                        <ProductPhoto key={destacados[1].id} img={destacados[1].img} marca={destacados[1].marca} nombre={destacados[1].nombre} pct={82} onFail={() => descartarFoto(destacados[1].id)} />
+                                    </Link>
+                                )}
+                                <div className="af-hero-brands">
+                                    <span className="af-overline af-overline--soft">6 marcas oficiales</span>
+                                    <span className="af-hero-brands-list">ENA · Gentech · Gold · Star · Xtrenght · Pitbull</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </section>
+                    <TrustStrip />
+                </>
             )}
 
-            <div className="row justify-content-center">
-                {loading ? (
-                    <Loading />
-                ) : filteredAndSortedItems.length > 0 ? (
-                    <ItemList items={filteredAndSortedItems} />
-                ) : null}
-            </div>
-
-            {(id || oferta || top || searchTerm) && filteredAndSortedItems.length > 0 && (
-                <div className="row mt-5">
-                    <div className="col text-center">
-                        <Link
-                            to="/"
-                            className="btn btn-outline-secondary"
-                        >
-                            ← Ver todos los productos
-                        </Link>
+            <section id="productos" className="af-products">
+                {/* Mobile y tablet: título, chips en dos filas y conteo */}
+                <div className="af-products-head">
+                    <h2 className="af-products-title">{getUserVisibleTitle()}</h2>
+                    {id && seoData.description && <p className="af-products-desc">{seoData.description}</p>}
+                    <Chips tipo="cat" opciones={categorias} activa={categoria} onPick={setCategoria} />
+                    <Chips tipo="brand" opciones={marcas} activa={marca} onPick={setMarca} />
+                    <div className="af-products-bar">
+                        {conteo}
+                        <FilterBar sortBy={sortBy} onSortChange={setSortBy} />
                     </div>
                 </div>
-            )}
-        </div>
+
+                <div className="af-products-layout">
+                    {/* Desktop: barra lateral fija con contadores */}
+                    <aside className="af-side">
+                        <ListaLateral titulo="Categoría" opciones={categorias} activa={categoria} onPick={setCategoria} contar={contarCategoria} />
+                        <ListaLateral titulo="Marca" opciones={marcas} activa={marca} onPick={setMarca} contar={contarMarca} />
+                    </aside>
+
+                    <div className="af-products-main">
+                        <div className="af-products-headd">
+                            <h2 className="af-products-titled">{getUserVisibleTitle()}</h2>
+                            <span className="af-products-count">{conteo}</span>
+                            <FilterBar sortBy={sortBy} onSortChange={setSortBy} />
+                        </div>
+                        {id && seoData.description && <p className="af-products-descd">{seoData.description}</p>}
+
+                        {loading ? (
+                            <Loading />
+                        ) : filteredAndSortedItems.length > 0 ? (
+                            <ItemList items={filteredAndSortedItems} />
+                        ) : (
+                            vacio
+                        )}
+                    </div>
+                </div>
+            </section>
+        </main>
     );
 };
 

@@ -8,7 +8,6 @@ const ItemDetailContainer = () => {
     const [item, setItem] = useState({});
     const [loading, setLoading] = useState(true);
     const {id}= useParams();
-    console.log(id);
     useEffect(() => {
         const db= getFirestore();
         const prod= doc(db,"fragancias",id);
@@ -18,9 +17,9 @@ const ItemDetailContainer = () => {
         });
 
     }, [id])
-    
+
     return (
-        <div className="bg-white alto">
+        <div className="af-detail-page">
             {loading ? <Loading />:<ItemDetail producto={item} />}
         </div>
     )

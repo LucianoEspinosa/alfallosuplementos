@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-53dad074-e8c8-4936-9bdb-717221df4f45/styles.css">
+<script src="_ds/nocturne-53dad074-e8c8-4936-9bdb-717221df4f45/_ds_bundle.js"></script>
+</helmet>
+<article style="display:flex;flex-direction:column;gap:10px;height:100%;padding:6px 6px 10px;background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);font-family:var(--font-body);color:var(--color-text)">
+  <div style="position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%, var(--tile-a, var(--color-neutral-200)), var(--tile-b, var(--color-neutral-400)) 115%)">
+    <sc-if value="{{ hasImg }}" hint-placeholder-val="{{ true }}">
+      <img src="{{ img }}" alt="{{ alt }}" onError="{{ onErr }}" style="width:84%;height:84%;object-fit:contain;mix-blend-mode:multiply">
+    </sc-if>
+    <sc-if value="{{ noImg }}">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px;text-align:center;color:var(--color-neutral-800)">
+        <div style="width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--color-neutral-600);font-weight:600;font-size:17px;font-style:var(--h-style, normal)">{{ initial }}</div>
+        <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ brand }}</div>
+        <div style="font-size:13px;font-weight:500;line-height:1.2;color:var(--color-neutral-900)">{{ name }}</div>
+        <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-neutral-700)"><svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"></path></svg>Foto no disponible</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isTop }}"><span style="position:absolute;top:8px;left:8px;font-size:10.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--color-neutral-900);color:var(--color-accent-300)">Más vendido</span></sc-if>
+    <sc-if value="{{ isNuevo }}"><span style="position:absolute;top:8px;left:8px;font-size:10.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:2px 7px;border-radius:6px;border:1px solid var(--color-neutral-800);color:var(--color-neutral-900)">Nuevo</span></sc-if>
+    <sc-if value="{{ isOferta }}"><span style="position:absolute;top:8px;left:8px;font-size:10.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--color-accent);color:var(--color-neutral-900)">Oferta {{ off }}</span></sc-if>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:3px;padding:0 4px;flex:1">
+    <div style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-400)">{{ brand }}</div>
+    <div style="font-size:14px;font-weight:500;line-height:1.25;text-wrap:pretty">{{ name }}</div>
+    <div style="font-size:11.5px;color:var(--color-neutral-400)">{{ size }}</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1px;padding:0 4px">
+    <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+      <span style="font-size:21px;font-weight:600;letter-spacing:-0.02em;color:var(--color-accent-400)">{{ price }}</span>
+      <sc-if value="{{ isOferta }}"><span style="font-size:12px;color:var(--color-neutral-500);text-decoration:line-through">{{ old }}</span></sc-if>
+    </div>
+    <div style="font-size:11.5px;color:var(--color-neutral-400)">{{ transfer }} con transferencia</div>
+  </div>
+  <div style="padding:0 4px">
+    <button class="btn btn-primary" style="width:100%;min-height:40px;font-size:13px;gap:4px;padding-inline:8px;white-space:nowrap">Ver producto<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg></button>
+  </div>
+</article>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:200,&quot;height&quot;:360},&quot;p&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  state = { failed: false };
+  renderVals() {
+    const p = this.props.p || {};
+    const f = n => '$' + Math.round(n || 0).toLocaleString('es-AR');
+    const hasImg = !!p.img && !this.state.failed;
+    return {
+      brand: p.brand, name: p.name, size: p.size, img: p.img, alt: (p.brand || '') + ' ' + (p.name || ''),
+      hasImg, noImg: !hasImg, initial: (p.brand || '?')[0],
+      price: f(p.price), transfer: f((p.price || 0) * 1.075), old: p.old ? f(p.old) : '',
+      off: p.old ? '-' + Math.round((1 - p.price / p.old) * 100) + '%' : '',
+      isTop: p.badge === 'Más vendido', isNuevo: p.badge === 'Nuevo', isOferta: p.badge === 'Oferta',
+      onErr: () => this.setState({ failed: true }),
+      added: !!this.state.added, notAdded: !this.state.added,
+      add: () => this.setState(s => ({ added: !s.added }))
+    };
+  }
+}
+</script>
+</body>
+</html>

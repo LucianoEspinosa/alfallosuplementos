@@ -31,7 +31,14 @@ exports.sendOrderEmail = functions
             const cantidad = Number(item && item.quantity);
             if (!item || !item.id || !Number.isFinite(cantidad) || cantidad <= 0) continue;
             try {
-                const ref = db.collection("fragancias").doc(String(item.id));
+                // En el carrito, los productos con sabor llevan el sabor pegado al ID
+                // ("<id>-<sabor>"): se quita para descontar el stock del producto real.
+                let productoId = String(item.id);
+                if (item.saborSeleccionado) {
+                    const sufijo = `-${String(item.saborSeleccionado).replace(/\s+/g, "-").toLowerCase()}`;
+                    if (productoId.endsWith(sufijo)) productoId = productoId.slice(0, -sufijo.length);
+                }
+                const ref = db.collection("fragancias").doc(productoId);
                 await db.runTransaction(async (t) => {
                     const doc = await t.get(ref);
                     if (!doc.exists) return;

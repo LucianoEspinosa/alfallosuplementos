@@ -1,309 +1,174 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { PiMagnifyingGlass, PiTrendUp } from "react-icons/pi";
 import { getAllProducts } from "../utils/productsCache";
+import { coincideBusqueda, precioFinalDe, formatoPrecio, etiquetaCantidad } from "../utils/productos";
+import ProductPhoto from "./af/ProductPhoto";
 
-const Search = ({ isMobile = false, onClose, darkMode = false }) => {
+const MAS_BUSCADO = ["Creatina", "Whey", "Pre-entreno", "Aminoácidos", "Magnesio"];
+
+// Fila de resultado (spec AFMobileHome: miniatura de 52px, marca, nombre, presentación y precio)
+const Resultado = ({ producto, onClick }) => (
+    <button type="button" className="af-searchrow" onClick={onClick}>
+        <span className="af-tile af-searchrow-tile">
+            <ProductPhoto img={producto.img} marca={producto.marca} nombre={producto.nombre} variant="initial" alt="" />
+        </span>
+        <span className="af-searchrow-info">
+            <span className="af-searchrow-brand">{producto.marca}</span>
+            <span className="af-searchrow-name">{producto.nombre}</span>
+            <span className="af-searchrow-size">{producto.presentacion}</span>
+        </span>
+        <span className="af-searchrow-price">{formatoPrecio(precioFinalDe(producto))}</span>
+    </button>
+);
+
+// variant="header": input del header desktop con resultados en un desplegable.
+// variant="panel": contenido del panel de búsqueda mobile (input de 48px, sugerencias y resultados).
+const Search = ({ variant = "header", onClose }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [allProducts, setAllProducts] = useState([]);
-    const [searchResults, setSearchResults] = useState({
-        products: [],
-        categories: [],
-        brands: []
-    });
     const [showSearchResults, setShowSearchResults] = useState(false);
-    const [loading, setLoading] = useState(false);
     const searchRef = useRef(null);
     const navigate = useNavigate();
+    const esPanel = variant === "panel";
 
-    // Efecto para cargar todos los productos una sola vez al montar el componente
+    // Cargar todos los productos una sola vez (lectura compartida y cacheada)
     useEffect(() => {
-        const fetchAllProducts = async () => {
-            setLoading(true);
-            try {
-                const productsData = await getAllProducts();
-                setAllProducts(productsData);
-            } catch (error) {
-                console.error("Error al cargar los productos:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAllProducts();
+        getAllProducts()
+            .then(setAllProducts)
+            .catch((error) => console.error("Error al cargar los productos:", error));
     }, []);
 
-    // Búsqueda en tiempo real (ahora filtra por palabras clave)
-    const handleSearch = (query) => {
-        setSearchQuery(query);
+    const consulta = searchQuery.trim();
+    const coincidencias = useMemo(
+        () => (consulta ? allProducts.filter((p) => coincideBusqueda(p, consulta)) : []),
+        [allProducts, consulta]
+    );
+    const marcas = useMemo(
+        () => [...new Set(allProducts.map((p) => p.marca).filter(Boolean))].sort(),
+        [allProducts]
+    );
 
-        if (query.length > 1) {
-            const normalizedQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            
-            // Divide la consulta del usuario en palabras individuales
-            const keywords = normalizedQuery.split(/\s+/).filter(Boolean); // Divide por espacios y elimina vacíos
-
-            // Filtrar productos
-            const productResults = allProducts.filter(product => {
-                const searchText = `
-                    ${product.nombre || ''} 
-                    ${product.marca || ''} 
-                    ${product.categoria || ''}
-                    ${product.descripcion || ''}
-                    ${product.presentacion || ''}
-                `.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-                // Verifica si TODAS las palabras clave están incluidas en el searchText
-                return keywords.every(keyword => searchText.includes(keyword));
-
-            }).slice(0, 8);
-
-            // Filtrar categorías
-            const categoryResults = [...new Set(allProducts.map(p => p.categoria))].filter(categoria =>
-                categoria && keywords.every(keyword => categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(keyword))
-            ).slice(0, 3);
-
-            // Filtrar marcas
-            const brandResults = [...new Set(allProducts.map(p => p.marca))].filter(marca =>
-                marca && keywords.every(keyword => marca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(keyword))
-            ).slice(0, 3);
-
-            setSearchResults({
-                products: productResults,
-                categories: categoryResults,
-                brands: brandResults
-            });
-            setShowSearchResults(true);
-        } else {
-            setShowSearchResults(false);
-        }
+    const cerrar = () => {
+        setSearchQuery("");
+        setShowSearchResults(false);
+        if (onClose) onClose();
     };
 
-    // Funciones de navegación (sin cambios)
+    // Ver todos los resultados: filtra la grilla del inicio
+    const handleSeeAllResults = () => {
+        if (!consulta) return;
+        navigate(`/?search=${encodeURIComponent(consulta)}`);
+        cerrar();
+    };
+
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        if (searchQuery.trim()) {
-            navigate(`/?search=${encodeURIComponent(searchQuery)}`);
-            setSearchQuery("");
-            setShowSearchResults(false);
-            if (onClose) onClose();
-        }
+        handleSeeAllResults();
     };
 
     const handleProductClick = (productId) => {
         navigate(`/item/${productId}`);
-        setSearchQuery("");
-        setShowSearchResults(false);
-        if (onClose) onClose();
+        cerrar();
     };
 
-    const handleCategoryClick = (category) => {
-        navigate(`/category/${encodeURIComponent(category)}`);
-        setSearchQuery("");
-        setShowSearchResults(false);
-        if (onClose) onClose();
-    };
-
-    const handleBrandClick = (brand) => {
-        navigate(`/brand/${encodeURIComponent(brand)}`);
-        setSearchQuery("");
-        setShowSearchResults(false);
-        if (onClose) onClose();
-    };
-
-    const handleSeeAllResults = () => {
-        navigate(`/?search=${encodeURIComponent(searchQuery)}`);
-        setShowSearchResults(false);
-        if (onClose) onClose();
-    };
-
-    // Cerrar resultados al hacer clic fuera (sin cambios)
+    // Cerrar el desplegable al hacer clic fuera (header desktop)
     useEffect(() => {
+        if (esPanel) return undefined;
         const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
-                setShowSearchResults(false);
-            }
+            if (searchRef.current && !searchRef.current.contains(event.target)) setShowSearchResults(false);
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    }, [esPanel]);
 
-    // Clases CSS y JSX del render (sin cambios)
-    const inputClass = darkMode 
-        ? "form-control search-input bg-dark text-light border-secondary" 
-        : "form-control search-input";
-    const resultsDropdownClass = darkMode 
-        ? "search-results-dropdown bg-dark border-secondary" 
-        : "search-results-dropdown";
-    const resultItemClass = darkMode 
-        ? "search-result-item text-light border-secondary" 
-        : "search-result-item";
-    const resultHeaderClass = darkMode 
-        ? "search-result-header bg-secondary text-light" 
-        : "search-result-header";
-    const textMutedClass = darkMode 
-        ? "text-light" 
-        : "text-muted";
-
-    const SearchResultsDropdown = () => {
-        if (loading) {
-            return (
-                <div className={resultsDropdownClass}>
-                    <div className={`${resultItemClass} text-center`}>
-                        <div className="spinner-border spinner-border-sm" role="status">
-                            <span className="visually-hidden">Buscando...</span>
-                        </div>
-                        <small className="ms-2">Cargando productos...</small>
-                    </div>
-                </div>
-            );
-        }
-
-        if (searchQuery.length > 1 && !searchResults.products.length && !searchResults.categories.length && !searchResults.brands.length) {
-            return (
-                <div className={resultsDropdownClass}>
-                    <div className={`${resultItemClass} ${textMutedClass}`}>
-                        <i className="fas fa-search me-2"></i>
-                        No se encontraron resultados para "{searchQuery}"
-                    </div>
-                </div>
-            );
-        }
-        
-        return (
-            <div className={resultsDropdownClass}>
-                {searchResults.products.length > 0 && (
-                    <>
-                        <div className={resultHeaderClass}>
-                            <i className="fas fa-cube me-2"></i> PRODUCTOS
-                        </div>
-                        {searchResults.products.map(product => (
-                            <div
-                                key={product.id}
-                                className={resultItemClass}
-                                onClick={() => handleProductClick(product.id)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <div className="d-flex align-items-center">
-                                    <img
-                                        src={product.img}
-                                        alt={product.nombre}
-                                        className="search-result-image"
-                                        style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
-                                        onError={(e) => {
-                                            e.target.src = 'https://via.placeholder.com/40x40/333/fff?text=Imagen';
-                                        }}
-                                    />
-                                    <div className="ms-2 flex-grow-1">
-                                        <div className="fw-bold">{product.nombre}</div>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <small className={textMutedClass}>
-                                                {product.marca} • {product.presentacion}
-                                            </small>
-                                            <span className="text-success fw-bold">
-                                                ${product.precio?.toLocaleString('es-AR')}
-                                            </span>
-                                        </div>
-                                        {product.categoria && (
-                                            <small className="text-info">
-                                                <i className="fas fa-tag me-1"></i>
-                                                {product.categoria}
-                                            </small>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </>
-                )}
-
-                {searchResults.categories.length > 0 && (
-                    <>
-                        <div className={resultHeaderClass}>
-                            <i className="fas fa-tag me-2"></i> CATEGORÍAS
-                        </div>
-                        {searchResults.categories.map(category => (
-                            <div
-                                key={category}
-                                className={resultItemClass}
-                                onClick={() => handleCategoryClick(category)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <i className="fas fa-folder me-2 text-primary"></i>
-                                {category}
-                            </div>
-                        ))}
-                    </>
-                )}
-
-                {searchResults.brands.length > 0 && (
-                    <>
-                        <div className={resultHeaderClass}>
-                            <i className="fas fa-star me-2"></i> MARCAS
-                        </div>
-                        {searchResults.brands.map(brand => (
-                            <div
-                                key={brand}
-                                className={resultItemClass}
-                                onClick={() => handleBrandClick(brand)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <i className="fas fa-copyright me-2 text-warning"></i>
-                                {brand}
-                            </div>
-                        ))}
-                    </>
-                )}
-
-                {(searchResults.products.length > 0) && (
-                    <div className="search-result-footer">
-                        <button
-                            className={`btn btn-sm w-100 ${darkMode ? 'btn-outline-light' : 'btn-outline-primary'}`}
-                            onClick={handleSeeAllResults}
-                        >
-                            <i className="fas fa-eye me-1"></i>
-                            Ver todos los resultados para "{searchQuery}"
-                        </button>
+    const resultados = (
+        <>
+            <div className="af-searchresults">
+                {coincidencias.slice(0, 6).map((p) => (
+                    <Resultado key={p.id} producto={p} onClick={() => handleProductClick(p.id)} />
+                ))}
+                {coincidencias.length === 0 && (
+                    <div className="af-searchempty">
+                        <span className="af-searchempty-title">Sin resultados para "{consulta}".</span>
+                        <span className="af-searchempty-sub">Escribinos por WhatsApp y te lo conseguimos.</span>
                     </div>
                 )}
             </div>
+            {coincidencias.length > 0 && (
+                <button type="button" className="af-btn af-btn-primary af-searchall" onClick={handleSeeAllResults}>
+                    Ver {etiquetaCantidad(coincidencias.length)}
+                </button>
+            )}
+        </>
+    );
+
+    if (esPanel) {
+        return (
+            <form className="af-searchpanel-body" onSubmit={handleSearchSubmit}>
+                <label className="af-searchpanel-field">
+                    <PiMagnifyingGlass size={18} className="af-searchpanel-icon" />
+                    <span className="af-sr-only">Buscar productos</span>
+                    <input
+                        type="search"
+                        className="af-searchpanel-input"
+                        placeholder="Buscar proteína, creatina, marca…"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        autoFocus
+                    />
+                </label>
+
+                {!consulta ? (
+                    <>
+                        <div className="af-searchgroup">
+                            <span className="af-overline">Lo más buscado</span>
+                            <div className="af-searchpopular">
+                                {MAS_BUSCADO.map((t) => (
+                                    <button key={t} type="button" className="af-searchpill" onClick={() => setSearchQuery(t)}>
+                                        <PiTrendUp size={13} />{t}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="af-searchgroup">
+                            <span className="af-overline">Marcas</span>
+                            <div className="af-searchbrands">
+                                {marcas.map((m) => (
+                                    <button key={m} type="button" className="af-searchbrand" onClick={() => setSearchQuery(m)}>
+                                        {m}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    resultados
+                )}
+            </form>
         );
-    };
+    }
 
     return (
-        <div className="search-container position-relative" ref={searchRef}>
+        <div className="af-headsearch" ref={searchRef}>
             <form onSubmit={handleSearchSubmit}>
-                <div className="input-group">
+                <label className="af-headsearch-field">
+                    <PiMagnifyingGlass size={16} className="af-headsearch-icon" />
+                    <span className="af-sr-only">Buscar productos o marcas</span>
                     <input
-                        type="text"
-                        className={inputClass}
-                        placeholder={isMobile ? "🔍 Buscar productos..." : "🔍 Buscar productos, marcas, categorías..."}
+                        type="search"
+                        className="af-input af-headsearch-input"
+                        placeholder="Buscar productos o marcas"
                         value={searchQuery}
-                        onChange={(e) => handleSearch(e.target.value)}
-                        onFocus={() => searchQuery.length > 1 && setShowSearchResults(true)}
-                        autoFocus={isMobile}
-                        style={{
-                            borderColor: '#dee2e6',
-                            boxShadow: 'none',
-                            backgroundColor: darkMode ? '#343a40' : '#fff',
-                            color: darkMode ? '#fff' : '#000',
-                            borderRadius: '0.375rem'
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setShowSearchResults(true);
                         }}
+                        onFocus={() => consulta && setShowSearchResults(true)}
                     />
-                </div>
+                </label>
             </form>
-
-            {showSearchResults && (
-                <div style={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: 0,
-                    right: 0,
-                    zIndex: 1060,
-                    marginTop: '5px'
-                }}>
-                    <SearchResultsDropdown />
-                </div>
-            )}
+            {showSearchResults && consulta && <div className="af-headsearch-dropdown">{resultados}</div>}
         </div>
     );
 };

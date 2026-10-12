@@ -1,7 +1,7 @@
 
 
 import { useState } from 'react';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, Timestamp } from 'firebase/firestore';
 import { Link, Navigate } from 'react-router-dom';
 
 const AddProduct = () => {
@@ -56,7 +56,8 @@ const AddProduct = () => {
             const fraganciasCollection = collection(db, 'fragancias');
             
             // Asegurar que el precio esté calculado si está en modo auto
-            const productoParaGuardar = { ...nuevoProducto };
+            // fechaCreacion: para el badge "Nuevo" (30 días) y el orden "más nuevos"
+            const productoParaGuardar = { ...nuevoProducto, fechaCreacion: Timestamp.now() };
             if (autoCalculate && productoParaGuardar.precio_costo) {
                 productoParaGuardar.precio = Math.round(productoParaGuardar.precio_costo * (productoParaGuardar.ganancia || 1.25));
             }

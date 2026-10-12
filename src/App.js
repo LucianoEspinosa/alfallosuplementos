@@ -30,6 +30,7 @@ import PersonalizedNutritionPlan from './components/PersonalizedNutritionPlan.js
 import AddEjercicio from './components/FitnessApp/AddEjercicio.jsx';
 import EditEjercicio from './components/FitnessApp/EditEjercicio.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
+import { getAllProducts } from './utils/productsCache';
 
 
 
@@ -37,13 +38,17 @@ import AdminRoute from './components/AdminRoute.jsx';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
 
+  // La pantalla de carga se muestra solo mientras llega el catálogo (lectura compartida y cacheada)
   useEffect(() => {
-    // Simular tiempo de carga de recursos
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2500); // 2.5 segundos
-
-    return () => clearTimeout(timer);
+    let vigente = true;
+    getAllProducts()
+      .catch(() => {})
+      .finally(() => {
+        if (vigente) setIsLoading(false);
+      });
+    return () => {
+      vigente = false;
+    };
   }, []);
 
   return (
@@ -58,9 +63,11 @@ function App() {
           {isLoading && <LoadingScreen />}
 
           {/* Contenido principal */}
-          <div style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
+          {/* af-app: ocupa al menos el alto de la ventana; af-main se estira y deja el footer abajo */}
+          <div className="af-app" style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
             <NavBar />
             <ScrollToTop />
+            <div className="af-main">
             <Routes>
               <Route path={"/"} element={<ItemListContainer />} />
               <Route path={'/masvendidos'} element={<ItemListContainer top={true} titulo={"Top en Ventas"} />} />
@@ -94,6 +101,7 @@ function App() {
               
 
             </Routes>
+            </div>
             <Footer />
           </div>
         </BrowserRouter>

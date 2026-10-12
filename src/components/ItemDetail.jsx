@@ -1,25 +1,39 @@
-import { useContext, useEffect, useState } from "react";
-import ItemCount from "./ItemCount";
-import { CartContext } from "./context/CartContext";
-import { Link } from "react-router-dom";
-// ✅ NUEVO: Importar Helmet
+import { useContext, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { PiArrowLeft, PiCheck, PiShoppingBagOpen } from "react-icons/pi";
+import ItemCount from "./ItemCount";
+import CartWidget from "./CartWidget";
+import ProductPhoto from "./af/ProductPhoto";
+import { CartContext } from "./context/CartContext";
+import { getAllProducts } from "../utils/productsCache";
+import { normalizarTexto, precioFinalDe, precioTransferencia, formatoPrecio, badgeDe } from "../utils/productos";
 
 const ItemDetail = ({ producto }) => {
     const { addItem, cartTotal } = useContext(CartContext);
+    const navigate = useNavigate();
     const [item, setItem] = useState({});
     const [addedToCart, setAddedToCart] = useState(false);
     const [loading, setLoading] = useState(true);
     const [saborSeleccionado, setSaborSeleccionado] = useState(null);
     const [showFullDescription, setShowFullDescription] = useState(false);
+    const [cantidad, setCantidad] = useState(1);
+    const [stockRestante, setStockRestante] = useState(0);
+    const [todos, setTodos] = useState([]);
 
     useEffect(() => {
         if (producto) {
             setItem(producto);
             setLoading(false);
-            
+            setCantidad(1);
+            setStockRestante(producto.stock || 0);
+            setAddedToCart(false);
+            setShowFullDescription(false);
+
             if (producto.sabores && producto.sabores.length > 0) {
                 setSaborSeleccionado(producto.sabores[0]);
+            } else {
+                setSaborSeleccionado(null);
             }
         }
     }, [producto]);
@@ -31,6 +45,19 @@ const ItemDetail = ({ producto }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [saborSeleccionado]);
 
+    // Catálogo (lectura compartida) para mostrar las otras presentaciones del mismo producto
+    useEffect(() => {
+        getAllProducts().then(setTodos).catch(() => {});
+    }, []);
+
+    const presentaciones = useMemo(() => {
+        if (!item.nombre) return [];
+        const mismo = (p) => normalizarTexto(p.marca) === normalizarTexto(item.marca) && normalizarTexto(p.nombre) === normalizarTexto(item.nombre);
+        const lista = todos.filter((p) => mismo(p) && p.presentacion);
+        if (!lista.some((p) => p.id === item.id) && item.presentacion) lista.push(item);
+        return lista.sort((a, b) => (a.precio || 0) - (b.precio || 0));
+    }, [todos, item]);
+
     const onAdd = (quantity) => {
         if (item.sabores && item.sabores.length > 0 && !saborSeleccionado) {
             alert("Por favor selecciona un sabor antes de agregar al carrito");
@@ -40,7 +67,7 @@ const ItemDetail = ({ producto }) => {
         const itemParaCarrito = {
             ...item,
             saborSeleccionado: saborSeleccionado,
-            nombreCompleto: saborSeleccionado 
+            nombreCompleto: saborSeleccionado
                 ? `${item.nombre} - ${saborSeleccionado}`
                 : item.nombre
         };
@@ -49,39 +76,58 @@ const ItemDetail = ({ producto }) => {
         setAddedToCart(true);
     };
 
+    // Misma regla de stock que tenía ItemCount: no se puede pedir más de lo que queda
+    const sumarUnidad = () => {
+        if (cantidad < stockRestante) setCantidad(cantidad + 1);
+        setAddedToCart(false);
+    };
+    const restarUnidad = () => {
+        if (cantidad > 1) setCantidad(cantidad - 1);
+        setAddedToCart(false);
+    };
+    const agregarAlCarrito = () => {
+        if (cantidad <= stockRestante) {
+            setStockRestante(stockRestante - cantidad);
+            setCantidad(1);
+            onAdd(cantidad);
+        }
+    };
+
+    const volver = () => {
+        if (window.history.length > 1) navigate(-1);
+        else navigate("/");
+    };
+
     if (loading) {
         return (
-            <div className="container text-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Cargando...</span>
-                </div>
-                <p className="mt-3">Cargando producto...</p>
+            <div className="af-loading" role="status">
+                <span className="af-spinner" />
+                <span className="af-sr-only">Cargando producto...</span>
             </div>
         );
     }
 
-    if (!item || Object.keys(item).length === 0) {
+    if (!item || !item.nombre) {
         return (
-            <div className="container text-center py-5">
-                <h2>Producto no encontrado</h2>
-                <p>El producto que buscas no existe o ha sido removido.</p>
-                <Link to="/" className="btn btn-primary">
-                    Volver al inicio
-                </Link>
+            <div className="af-notfound">
+                <h1 className="af-notfound-title">Producto no encontrado</h1>
+                <p className="af-notfound-text">El producto que buscas no existe o ha sido removido.</p>
+                <Link to="/" className="af-btn af-btn-primary af-notfound-btn">Volver al inicio</Link>
             </div>
         );
     }
 
-    const precioFinal = item.descuento > 0 
-        ? Math.round(item.precio - (item.precio * item.descuento) / 100)
-        : item.precio;
-
-    const precioConTransferencia = Math.round(precioFinal * 1.075);
-    const recargoTransferencia = precioConTransferencia - precioFinal;
+    const precioFinal = precioFinalDe(item);
+    const precioConTransferencia = precioTransferencia(precioFinal);
+    const badge = badgeDe(item);
+    const sinStock = stockRestante < 1;
+    const descripcion = item.descripcion || "";
+    const descripcionCorta = descripcion.length > 140 && !showFullDescription
+        ? `${descripcion.substring(0, 140).trim()}…`
+        : descripcion;
 
     return (
-        <div className="container py-5">
-            {/* ✅ NUEVO: Helmet para SEO dinámico */}
+        <div className="af-detail">
             <Helmet>
                 <title>{item.nombre} | {item.marca} | Al Fallo</title>
                 <meta name="description" content={item.descripcion} />
@@ -116,278 +162,154 @@ const ItemDetail = ({ producto }) => {
                 )}
             </Helmet>
 
-            {/* Breadcrumb */}
-            <nav aria-label="breadcrumb" className="mb-4">
-                <ol className="breadcrumb">
-                    <li className="breadcrumb-item">
-                        <Link to="/" className="text-decoration-none text-secondary">
-                            Inicio
-                        </Link>
-                    </li>
-                    <li className="breadcrumb-item">
-                        <Link to={`/category/${item.categoria}`} className="text-decoration-none text-secondary">
-                            {item.categoria}
-                        </Link>
-                    </li>
-                    <li className="breadcrumb-item active text-primary">{item.nombre}</li>
-                </ol>
-            </nav>
+            {/* Encabezado propio en mobile: volver, "Inicio / categoría" y carrito */}
+            <header className="af-pagehead">
+                <button type="button" className="af-btn af-btn-secondary af-btn-icon" aria-label="Volver" onClick={volver}>
+                    <PiArrowLeft size={20} />
+                </button>
+                <span className="af-crumbs">
+                    <Link to="/">Inicio</Link> / {item.categoria
+                        ? <Link to={`/category/${encodeURIComponent(item.categoria)}`}>{item.categoria}</Link>
+                        : "Productos"}
+                </span>
+                <CartWidget />
+            </header>
 
-            <div className="row">
-                {/* Columna de imagen */}
-                <div className="col-md-6 mb-4">
-                    <div className="card border-0" style={{ background: 'var(--bg-card)' }}>
-                        <div className="card-body p-4 text-center">
-                            <img 
-                                src={item.img} 
-                                alt={item.nombre} 
-                                className="img-fluid rounded"
-                                style={{ 
-                                    maxHeight: '400px', 
-                                    width: 'auto',
-                                    objectFit: 'contain'
-                                }} 
-                                onError={(e) => {
-                                    e.target.src = 'https://via.placeholder.com/300x300?text=Imagen+No+Disponible';
-                                }}
-                            />
-                        </div>
+            <div className="af-detail-grid">
+                <div className="af-detail-photo">
+                    <div className="af-tile af-detail-tile">
+                        <ProductPhoto img={item.img} marca={item.marca} nombre={item.nombre} pct={78} />
+                        {badge && <span className={`af-badge af-badge-${badge.tipo} af-detail-badge`}>{badge.texto}</span>}
                     </div>
                 </div>
 
-                {/* Columna de información */}
-                <div className="col-md-6">
-                    <div className="card border-0 h-100" style={{ background: 'var(--bg-card)' }}>
-                        <div className="card-body p-4 d-flex flex-column">
-                            {/* Marca y nombre */}
-                            <div className="mb-3">
-                                <span className="badge bg-secondary mb-2">{item.marca}</span>
-                                <h1 className="h2 fw-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-                                    {item.nombre}
-                                    {saborSeleccionado && (
-                                        <span className="h4 text-muted"> - {saborSeleccionado}</span>
-                                    )}
-                                </h1>
-                                <span className="badge bg-dark">{item.presentacion}</span>
-                                {item.sabores && item.sabores.length > 0 && (
-                                    <span className="badge bg-info ms-2">Múltiples sabores</span>
+                <section className="af-detail-info">
+                    <span className="af-crumbs af-crumbs--desktop">
+                        <Link to="/">Inicio</Link> / {item.categoria
+                            ? <Link to={`/category/${encodeURIComponent(item.categoria)}`}>{item.categoria}</Link>
+                            : "Productos"}
+                    </span>
+
+                    <div className="af-detail-head">
+                        <span className="af-detail-brand">{item.marca}</span>
+                        <h1 className="af-detail-name">{item.nombre}</h1>
+                        {descripcion && (
+                            <span className="af-detail-desc">
+                                {descripcionCorta}
+                                {descripcion.length > 140 && (
+                                    <button type="button" className="af-detail-more" onClick={() => setShowFullDescription(!showFullDescription)}>
+                                        {showFullDescription ? "Ver menos" : "Ver más"}
+                                    </button>
                                 )}
-                            </div>
+                            </span>
+                        )}
+                    </div>
 
-                            {/* Descripción - CON ACORDEÓN PARA MÓVIL */}
-                            <div className="mb-4">
-                                {/* Vista desktop - descripción completa */}
-                                <div className="d-none d-md-block">
-                                    <p className="text-muted" style={{ lineHeight: '1.6' }}>
-                                        {item.descripcion || "Descripción no disponible."}
-                                    </p>
-                                </div>
+                    <div className="af-detail-price">
+                        <div className="af-detail-pricerow">
+                            <span className="af-detail-pricevalue">{formatoPrecio(precioFinal)}</span>
+                            {item.descuento > 0 && <span className="af-detail-old">{formatoPrecio(item.precio)}</span>}
+                            <span className="af-detail-cash">en efectivo</span>
+                        </div>
+                        <span className="af-detail-transfer">{formatoPrecio(precioConTransferencia)} con transferencia (incluye 7,5% de recargo bancario)</span>
+                    </div>
 
-                                {/* Vista mobile - acordeón */}
-                                <div className="d-md-none">
-                                    {showFullDescription ? (
-                                        <>
-                                            <p className="text-muted" style={{ lineHeight: '1.6' }}>
-                                                {item.descripcion || "Descripción no disponible."}
-                                            </p>
-                                            <button
-                                                type="button"
-                                                className="btn btn-link p-0 text-primary"
-                                                onClick={() => setShowFullDescription(false)}
-                                            >
-                                                <small>Ver menos ↑</small>
-                                            </button>
-                                        </>
+                    {presentaciones.length > 0 && (
+                        <div className="af-detail-group">
+                            <span className="af-detail-label">Presentación</span>
+                            <div className="af-detail-sizes">
+                                {presentaciones.map((p) =>
+                                    p.id === item.id ? (
+                                        <span key={p.id} className="af-optchip af-optchip--size is-on" aria-current="true">{p.presentacion}</span>
                                     ) : (
-                                        <>
-                                            <p className="text-muted" style={{ lineHeight: '1.6' }}>
-                                                {item.descripcion 
-                                                    ? `${item.descripcion.substring(0, 100)}${item.descripcion.length > 100 ? '...' : ''}`
-                                                    : "Descripción no disponible."
-                                                }
-                                            </p>
-                                            {item.descripcion && item.descripcion.length > 100 && (
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-link p-0 text-primary"
-                                                    onClick={() => setShowFullDescription(true)}
-                                                >
-                                                    <small>Ver más ↓</small>
-                                                </button>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* SELECTOR DE SABORES */}
-                            {item.sabores && item.sabores.length > 0 && (
-                                <div className="mb-4">
-                                    <h6 className="fw-bold text-light mb-3">🎨 Elegí tu sabor:</h6>
-                                    <div className="d-flex flex-wrap gap-2">
-                                        {item.sabores.map((sabor, index) => (
-                                            <button
-                                                key={index}
-                                                type="button"
-                                                className={`btn btn-sm ${saborSeleccionado === sabor ? 'btn-primary' : 'btn-outline-primary'}`}
-                                                onClick={() => setSaborSeleccionado(sabor)}
-                                                style={{ 
-                                                    transition: 'all 0.3s ease',
-                                                    borderRadius: '20px'
-                                                }}
-                                            >
-                                                {sabor}
-                                                {saborSeleccionado === sabor && (
-                                                    <span className="ms-1">✓</span>
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    {saborSeleccionado && (
-                                        <div className="mt-2">
-                                            <small className="text-success">
-                                                ✅ Sabor seleccionado: <strong>{saborSeleccionado}</strong>
-                                            </small>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* PRECIOS */}
-                            <div className="mb-4">
-                                <div className="text-center text-md-start mb-3">
-                                    {item.descuento > 0 ? (
-                                        <>
-                                            <div className="d-flex align-items-center justify-content-center justify-content-md-start gap-3 mb-2">
-                                                <span className="text-decoration-line-through text-muted fs-5">
-                                                    ${item.precio?.toLocaleString('es-AR')}
-                                                </span>
-                                                <span className="badge bg-danger fs-6">
-                                                    -{item.descuento}% OFF
-                                                </span>
-                                            </div>
-                                            <h2 className="text-success fw-bold mb-2">
-                                                ${precioFinal.toLocaleString('es-AR')}
-                                            </h2>
-                                            <small className="text-muted">Precio en efectivo</small>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <h2 className="text-success fs-1 fw-bold mb-2">
-                                                ${precioFinal.toLocaleString('es-AR')}
-                                            </h2>
-                                            <small className="text-muted">Precio en efectivo</small>
-                                        </>
-                                    )}
-                                </div>
-
-                                <div className="border-top pt-3">
-                                    <div className="text-center text-md-start">
-                                        <div className="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
-                                            <span className="text-danger fw-bold fs-4">
-                                                ${precioConTransferencia.toLocaleString('es-AR')}
-                                            </span>
-                                            <span className="badge bg-info">Transferencia</span>
-                                        </div>
-                                        <div className="text-muted small">
-                                            <div>Incluye 7.5% de recargo bancario</div>
-                                            <div>
-                                                <small className="text-danger">
-                                                    (+${recargoTransferencia.toLocaleString('es-AR')} por comisiones)
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="alert alert-info mt-3 p-2 small">
-                                    <strong>💡 Importante:</strong> El recargo del 7.5% aplica solo para pagos por transferencia bancaria y cubre comisiones bancarias.
-                                </div>
-                            </div>
-
-                            {/* Stock */}
-                            <div className="mb-3">
-                                <small className={item.stock > 0 ? "text-success" : "text-danger"}>
-                                    {item.stock > 0 ? `✅ ${item.stock} unidades disponibles` : "❌ Sin stock"}
-                                </small>
-                            </div>
-
-                            {/* Contador y botones */}
-                            <div className="mt-auto">
-                                {addedToCart ? (
-                                    <div className="text-center">
-                                        <div className="alert alert-success mb-3">
-                                            <i className="fas fa-check-circle me-2"></i>
-                                            ¡Producto agregado al carrito!
-                                            {saborSeleccionado && (
-                                                <div>
-                                                    <small>Sabor: {saborSeleccionado}</small>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="d-flex gap-2 justify-content-center">
-                                            <Link to="/" className="btn btn-outline-primary">
-                                                ← Seguir comprando
-                                            </Link>
-                                            <Link to="/cart" className="btn btn-success">
-                                                <i className="fas fa-shopping-cart me-2"></i>
-                                                Ver carrito ({cartTotal()})
-                                            </Link>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <ItemCount 
-                                        stock={item.stock || 0} 
-                                        onAdd={onAdd} 
-                                        initial={1}
-                                        disabled={item.sabores && item.sabores.length > 0 && !saborSeleccionado}
-                                    />
+                                        <Link key={p.id} to={`/item/${p.id}`} className="af-optchip af-optchip--size">{p.presentacion}</Link>
+                                    )
                                 )}
-                            </div>
-
-                            {/* Información adicional */}
-                            <div className="mt-4 pt-3 border-top border-secondary">
-                                <div className="row">
-                                    <div className="col-6">
-                                        <small className="text-muted">
-                                            <i className="fas fa-truck me-1"></i>
-                                            Envío gratis
-                                        </small>
-                                    </div>
-                                    <div className="col-6 text-end">
-                                        <small className="text-muted">
-                                            <i className="fas fa-shield-alt me-1"></i>
-                                            Garantía
-                                        </small>
-                                    </div>
-                                </div>
                             </div>
                         </div>
+                    )}
+
+                    {item.sabores && item.sabores.length > 0 && (
+                        <div className="af-detail-group">
+                            <span className="af-detail-label">Sabor: <span className="af-detail-labelvalue">{saborSeleccionado}</span></span>
+                            <div className="af-detail-flavors">
+                                {item.sabores.map((sabor, index) => (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        className={`af-optchip af-optchip--flavor ${saborSeleccionado === sabor ? "is-on" : ""}`}
+                                        onClick={() => setSaborSeleccionado(sabor)}
+                                        aria-pressed={saborSeleccionado === sabor}
+                                    >
+                                        {sabor}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="af-detail-qtyrow">
+                        <span className="af-detail-label">Cantidad</span>
+                        <ItemCount value={cantidad} onDec={restarUnidad} onInc={sumarUnidad} />
                     </div>
-                </div>
+
+                    {sinStock && !addedToCart && (
+                        <span className="af-detail-nostock">Sin stock por el momento. Escribinos por WhatsApp y te avisamos cuando entre.</span>
+                    )}
+
+                    {/* Confirmación después de agregar */}
+                    {addedToCart && (
+                        <div className="af-added" role="status">
+                            <span className="af-added-icon"><PiCheck size={16} /></span>
+                            <span className="af-added-text">
+                                <span className="af-added-title">¡Producto agregado al carrito!</span>
+                                {saborSeleccionado && <span className="af-added-sub">Sabor: {saborSeleccionado}</span>}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Mobile: barra fija abajo. Desktop: debajo de la cantidad */}
+                    {addedToCart ? (
+                        <div className="af-buybar af-buybar--added">
+                            <Link to="/" className="af-btn af-btn-secondary af-buybar-keep">Seguir comprando</Link>
+                            <Link to="/cart" className="af-btn af-btn-primary af-buybar-btn">
+                                <PiShoppingBagOpen size={18} />
+                                Ver carrito ({cartTotal()})
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="af-buybar">
+                            <div className="af-buybar-total">
+                                <span className="af-buybar-label">{cantidad === 1 ? "Efectivo" : `${cantidad} u. · efectivo`}</span>
+                                <span className="af-buybar-value">{formatoPrecio(precioFinal * cantidad)}</span>
+                            </div>
+                            <button
+                                type="button"
+                                className="af-btn af-btn-primary af-buybar-btn"
+                                onClick={agregarAlCarrito}
+                                disabled={sinStock}
+                            >
+                                <PiShoppingBagOpen size={18} />
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    )}
+                </section>
             </div>
 
-            {/* Sección de características */}
+            {/* Características */}
             {item.caracteristicas && item.caracteristicas.length > 0 && (
-                <div className="row mt-5">
-                    <div className="col-12">
-                        <div className="card border-0" style={{ background: 'var(--bg-card)' }}>
-                            <div className="card-body p-4">
-                                <h5 className="mb-3">Características</h5>
-                                <div className="row">
-                                    {item.caracteristicas.map((caract, index) => (
-                                        <div key={index} className="col-md-6 mb-2">
-                                            <small className="text-muted">
-                                                • {caract}
-                                            </small>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <section className="af-detail-features">
+                    <span className="af-detail-label">Características</span>
+                    <ul>
+                        {item.caracteristicas.map((caract, index) => (
+                            <li key={index}>{caract}</li>
+                        ))}
+                    </ul>
+                </section>
             )}
+
+            <div className="af-buybar-spacer" />
         </div>
     );
 };
