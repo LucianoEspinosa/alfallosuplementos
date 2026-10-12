@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TRANSFER_SURCHARGE } from '../config';
 
 const PaymentMethodSelector = ({ total, onPaymentMethodChange }) => {
     const [metodoSeleccionado, setMetodoSeleccionado] = useState('efectivo');
@@ -15,7 +16,7 @@ const PaymentMethodSelector = ({ total, onPaymentMethodChange }) => {
             id: 'transferencia',
             nombre: 'Transferencia Bancaria',
             icono: '📲',
-            recargo: 0.075,
+            recargo: TRANSFER_SURCHARGE,
             descripcion: '7.5% de recargo por costos bancarios'
         }
     ];

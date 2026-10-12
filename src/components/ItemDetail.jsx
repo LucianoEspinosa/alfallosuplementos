@@ -4,6 +4,7 @@ import { CartContext } from "./context/CartContext";
 import { Link } from "react-router-dom";
 // ✅ NUEVO: Importar Helmet
 import { Helmet } from "react-helmet";
+import { TRANSFER_SURCHARGE } from "../config";
 
 const ItemDetail = ({ producto }) => {
     const { addItem, cartTotal } = useContext(CartContext);
@@ -76,7 +77,7 @@ const ItemDetail = ({ producto }) => {
         ? Math.round(item.precio - (item.precio * item.descuento) / 100)
         : item.precio;
 
-    const precioConTransferencia = Math.round(precioFinal * 1.075);
+    const precioConTransferencia = Math.round(precioFinal * (1 + TRANSFER_SURCHARGE));
     const recargoTransferencia = precioConTransferencia - precioFinal;
 
     return (

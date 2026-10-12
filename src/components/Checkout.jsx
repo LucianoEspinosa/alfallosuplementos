@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import Table from "./Table";
 import WhatsAppConfirmation from "./WhatsAppConfirmation";
 import PaymentMethodSelector from "./PaymentMethodSelector";
+import { TRANSFER_SURCHARGE } from "../config";
 
 const Checkout = () => {
   const { cart, precioTotal, clear: clearCart } = useContext(CartContext);
@@ -44,7 +45,7 @@ const Checkout = () => {
   useEffect(() => {
     const subtotal = precioTotal();
     const totalConRecargo = metodoPago === "transferencia"
-      ? Math.round(subtotal * 1.075)
+      ? Math.round(subtotal * (1 + TRANSFER_SURCHARGE))
       : subtotal;
 
     const totalConDescuento = totalConRecargo - descuentoAplicado;
@@ -260,7 +261,7 @@ const Checkout = () => {
 
     const nuevosItems = cart.map(item => {
       const precioConRecargo = metodo === "transferencia"
-        ? Math.round(item.precioFinal * 1.075)
+        ? Math.round(item.precioFinal * (1 + TRANSFER_SURCHARGE))
         : item.precioFinal;
 
       return {

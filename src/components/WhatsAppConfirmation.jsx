@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
+import { WHATSAPP_NUMBER } from '../config';
 
 const WhatsAppConfirmation = ({ order, onBack }) => {
-    const whatsappNumber = '5491167936064';
+    const whatsappNumber = WHATSAPP_NUMBER;
 
     // 👇 Cuando se monta el componente, hace scroll al top
     useEffect(() => {

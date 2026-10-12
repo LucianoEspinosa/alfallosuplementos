@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-53dad074-e8c8-4936-9bdb-717221df4f45/styles.css">
+<script src="_ds/nocturne-53dad074-e8c8-4936-9bdb-717221df4f45/_ds_bundle.js"></script>
+</helmet>
+<div style="position:relative;width:390px;height:844px;border-radius:32px;overflow:hidden;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);box-shadow:var(--shadow-md)">
+  <div style="height:100%;overflow-y:auto;scrollbar-width:none">
+    <header style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:14px 16px 12px;background:color-mix(in srgb, var(--color-bg) 90%, transparent);backdrop-filter:blur(12px)">
+      <button class="btn btn-secondary btn-icon" aria-label="Volver" onClick="{{ back }}"><svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path></svg></button>
+      <img src="assets/logo.png" alt="Al Fallo Suplementos" style="height:34px;width:auto;display:block;flex:none;margin-right:auto;margin-left:4px">
+      <div style="display:flex;gap:4px">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+          <sc-if value="{{ s.on }}"><span style="width:22px;height:4px;border-radius:2px;background:var(--color-accent)"></span></sc-if>
+          <sc-if value="{{ s.off }}"><span style="width:22px;height:4px;border-radius:2px;background:var(--color-divider)"></span></sc-if>
+        </sc-for>
+      </div>
+    </header>
+
+    <sc-if value="{{ isCart }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+        <section style="display:flex;flex-direction:column;gap:14px;padding:12px 16px 150px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h1 style="font-family:var(--font-heading);font-weight:400;font-size:34px;line-height:1;text-transform:uppercase;margin:0">Tu carrito</h1>
+            <span style="font-size:14px;color:var(--color-neutral-400)">{{ countLabel }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ items }}" as="it" hint-placeholder-count="2">
+              <div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;padding:10px;border-radius:14px;background:var(--color-surface);box-shadow:var(--shadow-sm)">
+                <div style="width:72px;height:72px;border-radius:10px;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%, #F3F1EC, #D8D6D0 115%)"><img src="{{ it.img }}" alt="{{ it.alt }}" style="width:84%;height:84%;object-fit:contain;mix-blend-mode:multiply"></div>
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <div style="display:flex;align-items:flex-start;gap:6px">
+                    <div style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+                      <span style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-400)">{{ it.brand }}</span>
+                      <span style="font-size:15px;font-weight:500;line-height:1.2">{{ it.name }}</span>
+                    </div>
+                    <button onClick="{{ it.remove }}" aria-label="Eliminar producto" style="width:32px;height:32px;flex:none;display:grid;place-items:center;border:0;border-radius:8px;background:transparent;color:var(--color-neutral-400);cursor:pointer"><svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path></svg></button>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:4px">
+                    <span style="font-size:11.5px;padding:2px 8px;border-radius:6px;border:1px solid var(--color-divider);color:var(--color-neutral-300)">{{ it.size }}</span>
+                    <span style="font-size:11.5px;padding:2px 8px;border-radius:6px;border:1px solid var(--color-divider);color:var(--color-neutral-300)">{{ it.flavor }}</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:baseline">
+                    <span style="font-size:12.5px;color:var(--color-neutral-400)">{{ it.qtyLine }}</span>
+                    <span style="font-size:16px;font-weight:600">{{ it.sub }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" style="flex:1;min-height:44px;font-size:14px">Seguir comprando</button>
+            <button class="btn btn-ghost" onClick="{{ clear }}" style="min-height:44px;font-size:14px;color:var(--color-neutral-400)">Vaciar carrito</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:14px;background:var(--color-surface)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px">Total en efectivo</span><span style="font-size:24px;font-weight:600;letter-spacing:-0.02em;color:var(--color-accent-400)">{{ subtotal }}</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--color-neutral-400)"><span>Con transferencia (+7,5%)</span><span>{{ subtotalT }}</span></div>
+            <span style="font-size:12px;color:var(--color-neutral-500)">Elegís el medio de pago en el próximo paso.</span>
+          </div>
+        </section>
+        <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:12px;padding:12px 16px 22px;background:color-mix(in srgb, var(--color-bg) 94%, transparent);backdrop-filter:blur(12px);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="display:flex;flex-direction:column;line-height:1.15"><span style="font-size:11px;color:var(--color-neutral-400)">Total efectivo</span><span style="font-size:18px;font-weight:600;color:var(--color-accent-400)">{{ subtotal }}</span></div>
+          <button class="btn btn-primary" onClick="{{ toCheckout }}" style="flex:1;min-height:50px;font-size:16px;box-shadow:0 0 24px color-mix(in srgb, var(--color-accent) 28%, transparent)">Finalizar compra<svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg></button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noItems }}">
+        <section style="display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:120px 24px 40px">
+          <div style="width:56px;height:56px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--color-divider);color:var(--color-neutral-400)"><svg width="26" height="26" viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path></svg></div>
+          <h1 style="font-family:var(--font-heading);font-weight:400;font-size:30px;line-height:1;text-transform:uppercase;margin:0">Tu carrito está vacío</h1>
+          <span style="font-size:15px;color:var(--color-neutral-300)">No hay productos en el carrito.</span>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button class="btn btn-primary" style="min-height:46px;font-size:15px">Volver al inicio</button>
+            <button class="btn btn-secondary" onClick="{{ restore }}" style="min-height:46px;font-size:14px">Ver ejemplo con productos</button>
+          </div>
+        </section>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isCheckout }}">
+      <section style="display:flex;flex-direction:column;gap:18px;padding:12px 16px 150px">
+        <h1 style="font-family:var(--font-heading);font-weight:400;font-size:34px;line-height:1;text-transform:uppercase;margin:0">Finalizar compra</h1>
+
+        <div style="display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:14px;background:var(--color-surface)">
+          <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-400)">Tu pedido · {{ countLabel }}</span>
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:40px;height:40px;flex:none;border-radius:8px;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%, #F3F1EC, #D8D6D0 115%)"><img src="{{ it.img }}" alt="" style="width:84%;height:84%;object-fit:contain;mix-blend-mode:multiply"></div>
+              <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:14px;line-height:1.2">{{ it.brand }} {{ it.name }}</span><span style="font-size:12px;color:var(--color-neutral-400)">{{ it.meta }}</span></div>
+              <span style="font-size:14px;font-weight:500">{{ it.subPay }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:var(--font-heading);font-size:20px;text-transform:uppercase">1 · Tus datos</span>
+          <sc-for list="{{ fields }}" as="f" hint-placeholder-count="3">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:13px;color:var(--color-neutral-300)">{{ f.label }}</span>
+              <sc-if value="{{ f.bad }}"><input type="{{ f.type }}" placeholder="{{ f.ph }}" value="{{ f.val }}" onChange="{{ f.set }}" style="min-height:48px;padding:0 14px;border-radius:8px;border:1px solid #F87171;background:#15181B;color:var(--color-text);font:400 16px var(--font-body);outline:none"></sc-if>
+              <sc-if value="{{ f.ok }}"><input type="{{ f.type }}" placeholder="{{ f.ph }}" value="{{ f.val }}" onChange="{{ f.set }}" style="min-height:48px;padding:0 14px;border-radius:8px;border:1px solid var(--color-divider);background:#15181B;color:var(--color-text);font:400 16px var(--font-body);outline:none" style-focus="border-color:var(--color-accent)"></sc-if>
+              <sc-if value="{{ f.bad }}"><span style="font-size:12.5px;color:#FCA5A5">{{ f.err }}</span></sc-if>
+              <sc-if value="{{ f.showHelp }}"><span style="font-size:12.5px;color:var(--color-neutral-500)">{{ f.help }}</span></sc-if>
+            </label>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:13px;color:var(--color-neutral-300)">¿Tenés un código de descuento?</span>
+          <div style="display:flex;gap:8px">
+            <input placeholder="Ingresá tu código" value="{{ code }}" onChange="{{ setCode }}" disabled="{{ codeOk }}" style="flex:1;min-width:0;min-height:46px;padding:0 14px;border-radius:8px;border:1px solid var(--color-divider);background:#15181B;color:var(--color-text);font:500 15px var(--font-body);text-transform:uppercase;letter-spacing:0.06em;outline:none">
+            <sc-if value="{{ codeOk }}"><button class="btn btn-secondary" onClick="{{ clearCode }}" style="min-height:46px;font-size:14px">Quitar</button></sc-if>
+            <sc-if value="{{ codeNotOk }}"><button class="btn btn-secondary" onClick="{{ applyCode }}" style="min-height:46px;font-size:14px">Aplicar</button></sc-if>
+          </div>
+          <sc-if value="{{ codeOk }}"><span style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--color-accent-300)"><svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"></path></svg>10% de descuento aplicado</span></sc-if>
+          <sc-if value="{{ codeBad }}"><span style="font-size:13px;color:#FCA5A5">Código no válido</span></sc-if>
+          <sc-if value="{{ codeHint }}"><span style="font-size:12px;color:var(--color-neutral-500)">Para probar, usá ALFALLO10.</span></sc-if>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-family:var(--font-heading);font-size:20px;text-transform:uppercase">2 · Cómo pagás</span>
+          <sc-for list="{{ pays }}" as="p" hint-placeholder-count="2">
+            <sc-if value="{{ p.on }}">
+              <button onClick="{{ p.pick }}" style="display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:12px;border:1px solid var(--color-accent);background:color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));color:var(--color-text);text-align:left;cursor:pointer;font-family:var(--font-body)">
+                <span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--color-accent);display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--color-accent)"></span></span>
+                <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:500">{{ p.name }}</span><span style="font-size:12.5px;color:var(--color-neutral-400)">{{ p.desc }}</span></span>
+                <span style="font-size:17px;font-weight:600;color:var(--color-accent-400)">{{ p.total }}</span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ p.off }}">
+              <button onClick="{{ p.pick }}" style="display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:12px;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-text);text-align:left;cursor:pointer;font-family:var(--font-body)">
+                <span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--color-neutral-600)"></span>
+                <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:500">{{ p.name }}</span><span style="font-size:12.5px;color:var(--color-neutral-400)">{{ p.desc }}</span></span>
+                <span style="font-size:17px;font-weight:500;color:var(--color-neutral-300)">{{ p.total }}</span>
+              </button>
+            </sc-if>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;background:var(--color-surface)">
+          <span style="font-family:var(--font-heading);font-size:20px;text-transform:uppercase">Resumen</span>
+          <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--color-neutral-300)"><span>Subtotal</span><span>{{ subtotal }}</span></div>
+          <sc-if value="{{ hasSurcharge }}"><div style="display:flex;justify-content:space-between;font-size:14px;color:var(--color-neutral-300)"><span>Recargo por transferencia (7,5%)</span><span>+{{ surcharge }}</span></div></sc-if>
+          <sc-if value="{{ codeOk }}"><div style="display:flex;justify-content:space-between;font-size:14px;color:var(--color-accent-300)"><span>Descuento (ALFALLO10)</span><span>−{{ discount }}</span></div></sc-if>
+          <div style="height:1px;margin:4px 0;background:linear-gradient(to right, transparent, var(--color-divider) 48px, var(--color-divider) calc(100% - 48px), transparent)"></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:16px;font-weight:500">Total</span><span style="font-size:26px;font-weight:600;letter-spacing:-0.02em;color:var(--color-accent-400)">{{ total }}</span></div>
+          <span style="font-size:12.5px;color:var(--color-neutral-500)">{{ totalNote }}</span>
+        </div>
+
+        <div style="display:flex;gap:10px;padding:12px 14px;border-radius:12px;border:1px solid var(--color-divider)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex:none;color:var(--color-accent-400);margin-top:1px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+          <span style="font-size:13.5px;line-height:1.45;color:var(--color-neutral-300)">Al confirmar, te mostramos el resumen y lo mandás por WhatsApp. Ahí coordinamos stock, envío y pago.</span>
+        </div>
+        <sc-if value="{{ showErr }}"><span style="font-size:13px;color:#FCA5A5">Completá todos los campos obligatorios.</span></sc-if>
+        <span style="font-size:12px;color:var(--color-neutral-500)">Al completar aceptás nuestros términos y condiciones.</span>
+      </section>
+      <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:12px;padding:12px 16px 22px;background:color-mix(in srgb, var(--color-bg) 94%, transparent);backdrop-filter:blur(12px);box-shadow:0 -1px 0 var(--color-divider)">
+        <div style="display:flex;flex-direction:column;line-height:1.15"><span style="font-size:11px;color:var(--color-neutral-400)">{{ payShort }}</span><span style="font-size:18px;font-weight:600;color:var(--color-accent-400)">{{ total }}</span></div>
+        <button class="btn btn-primary" onClick="{{ submit }}" style="flex:1;min-height:50px;font-size:16px;box-shadow:0 0 24px color-mix(in srgb, var(--color-accent) 28%, transparent)">Confirmar compra</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDone }}">
+      <section style="display:flex;flex-direction:column;gap:16px;padding:20px 16px 40px">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:20px 16px;border-radius:14px;background:radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent 70%), var(--color-surface)">
+          <span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--color-accent);color:var(--color-accent-400)"><svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"></path></svg></span>
+          <h1 style="font-family:var(--font-heading);font-weight:400;font-size:32px;line-height:1;text-transform:uppercase;margin:0">¡Compra registrada!</h1>
+          <span style="font-size:15px;color:var(--color-neutral-300)">Falta un paso: mandanos el pedido por WhatsApp para confirmarlo.</span>
+          <div style="display:flex;flex-direction:column;gap:2px;margin-top:4px"><span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-400)">N° de orden</span><span style="font-size:17px;font-weight:500;letter-spacing:0.04em">{{ orderId }}</span></div>
+        </div>
+
+        <button class="btn btn-primary" style="min-height:56px;font-size:17px;box-shadow:0 0 28px color-mix(in srgb, var(--color-accent) 32%, transparent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>Confirmar pedido por WhatsApp</button>
+
+        <div style="display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;background:var(--color-surface)">
+          <span style="font-family:var(--font-heading);font-size:20px;text-transform:uppercase">Resumen de tu compra</span>
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="2">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+              <div style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;line-height:1.25">{{ it.brand }} {{ it.name }}</span><span style="font-size:12px;color:var(--color-neutral-400)">{{ it.metaDone }}</span></div>
+              <span style="font-size:14px;font-weight:500">{{ it.subPay }}</span>
+            </div>
+          </sc-for>
+          <div style="height:1px;margin:4px 0;background:linear-gradient(to right, transparent, var(--color-divider) 48px, var(--color-divider) calc(100% - 48px), transparent)"></div>
+          <div style="display:flex;justify-content:space-between;font-size:13.5px;color:var(--color-neutral-300)"><span>Subtotal</span><span>{{ subtotal }}</span></div>
+          <sc-if value="{{ hasSurcharge }}"><div style="display:flex;justify-content:space-between;font-size:13.5px;color:var(--color-neutral-300)"><span>Recargo por transferencia (7,5%)</span><span>+{{ surcharge }}</span></div></sc-if>
+          <sc-if value="{{ codeOk }}"><div style="display:flex;justify-content:space-between;font-size:13.5px;color:var(--color-accent-300)"><span>Descuento (ALFALLO10)</span><span>−{{ discount }}</span></div></sc-if>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:500">Total</span><span style="font-size:22px;font-weight:600;color:var(--color-accent-400)">{{ total }}</span></div>
+          <span style="font-size:12.5px;color:var(--color-neutral-400)">Método de pago: {{ payName }}</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:14px;border:1px solid var(--color-divider)">
+          <span style="font-family:var(--font-heading);font-size:20px;text-transform:uppercase">¿Qué pasa ahora?</span>
+          <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;font-size:14px;color:var(--color-neutral-300)"><span style="font-family:var(--font-heading);color:var(--color-accent-400)">1</span><span>Te contactamos por WhatsApp para confirmar stock.</span></div>
+          <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;font-size:14px;color:var(--color-neutral-300)"><span style="font-family:var(--font-heading);color:var(--color-accent-400)">2</span><span>Coordinamos el método de envío.</span></div>
+          <div style="display:grid;grid-template-columns:24px 1fr;gap:10px;font-size:14px;color:var(--color-neutral-300)"><span style="font-family:var(--font-heading);color:var(--color-accent-400)">3</span><span>Te decimos cómo y cuándo realizar el pago.</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--color-neutral-400);padding:0 2px">
+          <span style="color:var(--color-neutral-300);font-weight:500">¿No se abre WhatsApp?</span>
+          <span>Escribinos al 11 6793-6064 y mencioná tu número de orden.</span>
+        </div>
+        <button class="btn btn-ghost" onClick="{{ restart }}" style="align-self:flex-start;font-size:14px;color:var(--color-neutral-400)">Volver al inicio</button>
+      </section>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;carrito&quot;,&quot;checkout&quot;,&quot;confirmacion&quot;],&quot;default&quot;:&quot;carrito&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;pay&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;efectivo&quot;,&quot;transferencia&quot;],&quot;default&quot;:&quot;efectivo&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = this.fresh(); }
+  fresh() {
+    return { screen: this.props.screen || 'carrito', items: this.seed(), pay: this.props.pay || 'efectivo',
+      code: this.props.screen === 'confirmacion' ? 'ALFALLO10' : '', codeState: this.props.screen === 'confirmacion' ? 'ok' : null,
+      nombre: this.props.screen === 'confirmacion' ? 'Martín Gómez' : '', email: this.props.screen === 'confirmacion' ? 'martin@gmail.com' : '', tel: this.props.screen === 'confirmacion' ? '1123456789' : '', tried: false };
+  }
+  seed() {
+    const R = k => (window.__resources && window.__resources[k]) || 'assets/' + k + '.png';
+    return [
+      { id: 1, brand: 'Gold Nutrition', name: '100% Whey Protein', size: '5 LB', flavor: 'Chocolate', price: 99710, qty: 1, img: R('gold5') },
+      { id: 2, brand: 'Xtrenght', name: 'Advance Whey', size: '2 LB', flavor: 'Vainilla', price: 57850, qty: 2, img: R('xtr') }
+    ];
+  }
+  renderVals() {
+    const f = n => '$' + Math.round(n).toLocaleString('es-AR');
+    const s = this.state, tr = s.pay === 'transferencia';
+    const sub = s.items.reduce((a, i) => a + i.price * i.qty, 0);
+    const sur = tr ? Math.round(sub * 0.075) : 0;
+    const disc = s.codeState === 'ok' ? Math.round(sub * 0.1) : 0;
+    const n = s.items.reduce((a, i) => a + i.qty, 0);
+    const idx = { carrito: 0, checkout: 1, confirmacion: 2 }[s.screen];
+    const val = {
+      nombre: v => /^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/.test(v.trim()) ? '' : 'Ingresá un nombre válido',
+      email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Ingresá un correo electrónico válido',
+      tel: v => /^[0-9]{10,}$/.test(v.trim()) ? '' : 'Ingresá solo números, mínimo 10'
+    };
+    const defs = [
+      { k: 'nombre', label: 'Nombre completo *', ph: 'Ej: María González', type: 'text', help: '' },
+      { k: 'email', label: 'Email *', ph: 'ejemplo@gmail.com', type: 'email', help: '' },
+      { k: 'tel', label: 'WhatsApp *', ph: '11 2345-6789', type: 'tel', help: 'Te contactamos por este número.' }
+    ];
+    const fields = defs.map(d => { const err = s.tried ? val[d.k](s[d.k]) : ''; return { ...d, val: s[d.k], err, bad: !!err, ok: !err, showHelp: !err && !!d.help, set: e => this.setState({ [d.k]: e.target.value }) }; });
+    const pays = [
+      { id: 'efectivo', name: 'Efectivo', desc: 'Pago en efectivo al recibir el producto', total: f(sub - disc) },
+      { id: 'transferencia', name: 'Transferencia bancaria', desc: '7,5% de recargo por costos bancarios', total: f(Math.round(sub * 1.075) - disc) }
+    ].map(p => ({ ...p, on: s.pay === p.id, off: s.pay !== p.id, pick: () => this.setState({ pay: p.id }) }));
+    return {
+      steps: [0, 1, 2].map(i => ({ on: i <= idx, off: i > idx })),
+      isCart: s.screen === 'carrito', isCheckout: s.screen === 'checkout', isDone: s.screen === 'confirmacion',
+      hasItems: s.items.length > 0, noItems: s.items.length === 0,
+      countLabel: n + (n === 1 ? ' producto' : ' productos'),
+      items: s.items.map(i => ({ ...i, alt: i.brand + ' ' + i.name, qtyLine: i.qty + ' × ' + f(i.price), sub: f(i.price * i.qty),
+        subPay: f((tr ? Math.round(i.price * 1.075) : i.price) * i.qty), meta: i.size + ' · ' + i.flavor + ' · x' + i.qty,
+        metaDone: i.size + ' · ' + i.flavor + ' · ' + i.qty + ' u. × ' + f(tr ? Math.round(i.price * 1.075) : i.price),
+        remove: () => this.setState(st => ({ items: st.items.filter(x => x.id !== i.id) })) })),
+      subtotal: f(sub), subtotalT: f(sub * 1.075), surcharge: f(sur), discount: f(disc), total: f(sub + sur - disc),
+      hasSurcharge: tr, payName: tr ? 'Transferencia bancaria' : 'Efectivo', payShort: tr ? 'Total transferencia' : 'Total efectivo',
+      totalNote: tr ? 'Incluye 7,5% de recargo.' : 'Sin recargos adicionales.',
+      fields, pays, code: s.code, setCode: e => this.setState({ code: e.target.value, codeState: null }),
+      codeOk: s.codeState === 'ok', codeNotOk: s.codeState !== 'ok', codeBad: s.codeState === 'bad', codeHint: s.codeState === null,
+      applyCode: () => this.setState({ codeState: s.code.trim().toUpperCase() === 'ALFALLO10' ? 'ok' : 'bad' }),
+      clearCode: () => this.setState({ code: '', codeState: null }),
+      showErr: s.tried && fields.some(x => x.bad),
+      orderId: 'Xk3P9qLm2Va7',
+      clear: () => this.setState({ items: [] }), restore: () => this.setState({ items: this.seed() }),
+      toCheckout: () => this.setState({ screen: 'checkout' }),
+      back: () => this.setState({ screen: s.screen === 'confirmacion' ? 'checkout' : 'carrito' }),
+      submit: () => { const bad = defs.some(d => val[d.k](s[d.k])); this.setState(bad ? { tried: true } : { screen: 'confirmacion' }); },
+      restart: () => this.setState(this.fresh())
+    };
+  }
+}
+</script>
+</body>
+</html>

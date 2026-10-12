@@ -3,6 +3,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { Link } from "react-router-dom";
+import { WHATSAPP_NUMBER } from '../config';
 
 const Footer = () => {
     return (
@@ -76,7 +77,7 @@ const Footer = () => {
 
                                 {/* WhatsApp */}
                                 <a 
-                                    href="https://wa.me/5491167936064" 
+                                    href={`https://wa.me/${WHATSAPP_NUMBER}`} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="text-decoration-none"

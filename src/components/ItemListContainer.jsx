@@ -13,7 +13,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState("nombre");
-    const [priceRange, setPriceRange] = useState([0, 100000]);
+    const [priceRange, setPriceRange] = useState([0, Infinity]);
     const [selectedPresentation, setSelectedPresentation] = useState("");
     const [showFilters, setShowFilters] = useState(false);
     const { id } = useParams();
@@ -238,7 +238,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
 
     const handleClearFilters = () => {
         setSortBy("nombre");
-        setPriceRange([0, 100000]);
+        setPriceRange([0, Infinity]);
         setSelectedPresentation("");
     };
 

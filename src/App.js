@@ -30,6 +30,7 @@ import PersonalizedNutritionPlan from './components/PersonalizedNutritionPlan.js
 import AddEjercicio from './components/FitnessApp/AddEjercicio.jsx';
 import EditEjercicio from './components/FitnessApp/EditEjercicio.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
+import { getAllProducts } from './utils/productsCache';
 
 
 
@@ -37,13 +38,17 @@ import AdminRoute from './components/AdminRoute.jsx';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
 
+  // La pantalla de carga se muestra solo mientras llega el catálogo (lectura compartida y cacheada)
   useEffect(() => {
-    // Simular tiempo de carga de recursos
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2500); // 2.5 segundos
-
-    return () => clearTimeout(timer);
+    let vigente = true;
+    getAllProducts()
+      .catch(() => {})
+      .finally(() => {
+        if (vigente) setIsLoading(false);
+      });
+    return () => {
+      vigente = false;
+    };
   }, []);
 
   return (

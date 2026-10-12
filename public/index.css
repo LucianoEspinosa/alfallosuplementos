@@ -1,66 +1,5 @@
-/* ========== IMPORTACIÓN DE FUENTES ========== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display+SC:wght@400;700&family=League+Spartan:wght@300;400;700&display=swap');
-
-/* ========== APLICAR FUENTES ========== */
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
-  /* ... resto de tus estilos ... */
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.navbar-brand,
-.card-title,
-.item-title {
-  font-family: 'Playfair Display SC', serif !important;
-}
-
-.classPrecio,
-.price-container,
-.final-price {
-  font-family: 'League Spartan', sans-serif !important;
-}
-
-/* Mantener consistencia en botones y inputs */
-button,
-input,
-textarea,
-select {
-  font-family: 'Inter', sans-serif !important;
-}
-
-
-/* ========== TEMA OSCURO - ESTILOS GENERALES ========== */
-:root {
-  --bg-primary: #121212;
-  --bg-secondary: #000000;
-  --bg-card: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #cccccc;
-  --accent-color: #007bff;
-  --border-color: #333333;
-}
-
-body {
-  padding-top: 68px;
-  margin: 0;
-  font-family: 'Playfair Display SC', serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-primary) !important;
-  color: var(--text-primary) !important;
-}
-
-@media (min-width: 576px) {
-  body {
-    padding-top: 112px;
-  }
-}
+/* Estilos de pantallas viejas (admin, fitness app y componentes fuera del rediseño).
+   Tokens, fuentes y estilos base del rediseño: src/styles/af.css */
 
 /* ========== NAVBAR NEGRO INTENSO ========== */
 .cabecera {
@@ -213,7 +152,6 @@ body {
   font-weight: 400;
   
   font-size: 1.3rem;
-  font-family: 'League Spartan';
 }
 
 .card-title {
@@ -281,7 +219,6 @@ body {
 }
 
 .fontImput {
-  font-family: 'League Spartan';
 }
 
 .custom-button {
@@ -696,7 +633,6 @@ body {
   font-weight: 400;
   
   font-size: 1.2rem;
-  font-family: 'League Spartan';
   margin: 0;
 }
 
@@ -997,7 +933,6 @@ body {
 }
 
 .item-title {
-  font-family: 'Playfair Display SC', serif;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 1rem;
@@ -1793,7 +1728,6 @@ body {
     text-align: center;
     animation: fadeIn 0.3s ease-out;
     border: 1px solid #ddd;
-    font-family: 'Inter', sans-serif;
 }
 
 /* Estilos de la etiqueta "Producto Recomendado" */
@@ -1817,7 +1751,6 @@ body {
 
 .recommended-label p {
     margin: 0;
-    font-family: 'Inter', sans-serif;
 }
 
 /* Estilos del botón de cierre que flota fuera del modal */
@@ -1868,9 +1801,8 @@ body {
     gap: 0.4rem;
 }
 
-/* Título del producto con la fuente 'Playfair Display SC' */
+/* Título del producto */
 .product-title-minimal {
-    font-family: 'Playfair Display SC', serif;
     font-size: 1.4rem;
     margin: 0;
     font-weight: 600;
@@ -1878,9 +1810,8 @@ body {
     line-height: 1.3;
 }
 
-/* Precio del producto con la fuente 'League Spartan' */
+/* Precio del producto */
 .product-price-minimal {
-    font-family: 'League Spartan', sans-serif;
     font-size: 1.9rem;
     font-weight: 700;
     color: #28a745;
@@ -1898,7 +1829,6 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.8px;
     font-size: 0.95rem;
-    font-family: 'Inter', sans-serif;
 }
 
 .view-product-button:hover {

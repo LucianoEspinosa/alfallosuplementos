@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { TRANSFER_SURCHARGE } from "../config";
 
 const Item = ({ item }) => {
     // Calcular precio final (con descuento si aplica)
@@ -7,7 +8,7 @@ const Item = ({ item }) => {
         : item.precio;
 
     // Calcular precio con transferencia (7.5% de recargo)
-    const precioConTransferencia = Math.round(precioFinal * 1.075);
+    const precioConTransferencia = Math.round(precioFinal * (1 + TRANSFER_SURCHARGE));
 
     return (
         <div className="col-6 col-sm-6 col-lg-4 col-xl-3 d-flex justify-content-center mb-4">

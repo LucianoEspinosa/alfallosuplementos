@@ -13,7 +13,7 @@ const FilterBar = ({
     totalProducts
 }) => {
     const getPriceLabel = () => {
-        if (priceRange[0] === 0 && priceRange[1] === 100000) {
+        if (priceRange[0] === 0 && priceRange[1] === Infinity) {
             return "Todos los precios";
         }
         if (priceRange[1] === 50000) {
@@ -58,7 +58,7 @@ const FilterBar = ({
                             {getPriceLabel()}
                         </button>
                         <ul className="dropdown-menu" aria-labelledby="priceDropdown">
-                            <li><button className="dropdown-item" onClick={() => onPriceFilter(0, 100000)}>Todos los precios</button></li>
+                            <li><button className="dropdown-item" onClick={() => onPriceFilter(0, Infinity)}>Todos los precios</button></li>
                             <li><button className="dropdown-item" onClick={() => onPriceFilter(0, 5000)}>Hasta $5,000</button></li>
                             <li><button className="dropdown-item" onClick={() => onPriceFilter(5000, 10000)}>$5,000 - $10,000</button></li>
                             <li><button className="dropdown-item" onClick={() => onPriceFilter(10000, 20000)}>$10,000 - $20,000</button></li>

@@ -1,0 +1,149 @@
+/* =====================================================================
+   Al Fallo · Rediseño 3a
+   Tokens y clases base. Los nombres de variables son los mismos que usan
+   los specs de docs/rediseno-3a/spec, así los estilos se trasladan 1:1.
+   ===================================================================== */
+
+:root {
+  /* === color === */
+  --color-bg: #101214;
+  --color-surface: #1B1E22;
+  --color-text: #F3F1EC;
+  --color-divider: #2C3137;
+  --color-neutral-100: #F3F1EC;
+  --color-neutral-200: #E6E4DE;
+  --color-neutral-300: #D8D6D0;
+  --color-neutral-400: #9A9FA5;
+  --color-neutral-500: #6B7076;
+  --color-neutral-600: #555A60;
+  --color-neutral-700: #3A3F45;
+  --color-neutral-800: #2C3137;
+  --color-neutral-900: #15181B;
+  --color-accent: #4ADE80;
+  --color-accent-100: #e6fbee;
+  --color-accent-200: #c9f5d8;
+  --color-accent-300: #a7f0c0;
+  --color-accent-400: #6EE59A;
+  --color-accent-500: #4ADE80;
+  --color-accent-600: #34b866;
+  --color-accent-700: #2a7f4a;
+  --color-accent-800: #1f4a30;
+  --color-accent-900: #16241C;
+  --tile-a: #F3F1EC;
+  --tile-b: #D8D6D0;
+
+  /* === tipografía === */
+  --font-heading: 'Anton', sans-serif;
+  --font-heading-weight: 400;
+  --font-body: 'Oswald', sans-serif;
+  --h-tt: uppercase;
+  --h-track: 0.005em;
+  --h-style: normal;
+
+  /* === radios === */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  /* === sombras === */
+  --shadow-sm: 0 0 0 1px #2C3137;
+  --shadow-md: 0 0 0 1px #2C3137, 0 6px 18px rgba(0,0,0,0.55);
+
+  /* === variables viejas (las usan pantallas fuera de alcance: admin, fitness app) === */
+  --bg-primary: var(--color-bg);
+  --bg-secondary: var(--color-bg);
+  --bg-card: var(--color-surface);
+  --text-primary: var(--color-text);
+  --text-secondary: var(--color-neutral-300);
+  --accent-color: var(--color-accent);
+  --border-color: var(--color-divider);
+}
+
+/* === base === */
+body { margin:0; background:var(--color-bg); color:var(--color-text);
+  font-family:var(--font-body); font-size:15px; line-height:1.55; font-weight:400; }
+h1,h2,h3,h4,h5,h6 { font-family:var(--font-heading); font-weight:400; line-height:1.12;
+  letter-spacing:-0.015em; margin:0; }
+*, *::before, *::after { box-sizing:border-box; }
+img { display:block; max-width:100%; }
+a { color:var(--color-accent); text-underline-offset:3px; }
+a:hover { color:var(--color-text); }
+:focus { outline:none; }
+:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }
+::selection { background:color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* botones */
+.af-btn { display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  cursor:pointer; text-decoration:none; font-family:var(--font-heading); font-weight:400;
+  font-size:14px; line-height:1.2; color:var(--color-text); background:transparent;
+  border:1px solid transparent; padding:5.6px 10.08px; border-radius:8px; }
+.af-btn svg { display:block; }
+.af-btn:disabled { opacity:.45; cursor:not-allowed; }
+.af-btn-primary { color:var(--color-accent); border-color:var(--color-accent); }
+.af-btn-primary:hover { background:color-mix(in srgb, var(--color-accent) 12%, transparent); }
+.af-btn-primary:active { background:color-mix(in srgb, var(--color-accent) 22%, transparent); }
+.af-btn-secondary { border-color:var(--color-divider); }
+.af-btn-secondary:hover { background:color-mix(in srgb, var(--color-text) 7%, transparent); }
+.af-btn-secondary:active { background:color-mix(in srgb, var(--color-text) 14%, transparent); }
+.af-btn-ghost { color:var(--color-accent); padding-inline:2.8px; }
+.af-btn-ghost:hover { background:color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.af-btn-icon { width:36px; height:36px; padding:0; }
+/* los links con aspecto de botón no cambian de color al pasar el mouse */
+a.af-btn-primary:hover { color:var(--color-accent); }
+a.af-btn-secondary:hover, a.af-btn:hover { color:inherit; }
+a.af-btn-secondary, a.af-btn-icon { color:var(--color-text); }
+
+/* inputs */
+.af-input { width:100%; min-height:36px; padding:6px 10px; font:inherit; font-size:14px;
+  color:var(--color-text); caret-color:var(--color-accent); background:var(--color-surface);
+  border:1px solid var(--color-divider); border-radius:8px; }
+.af-input:hover { border-color:color-mix(in srgb, var(--color-text) 45%, transparent); }
+.af-input:focus-visible { border-color:var(--color-accent); outline-offset:0; }
+.af-input::placeholder { color:var(--color-neutral-500); }
+
+/* tags */
+.af-tag { display:inline-flex; align-items:center; font-size:11px; letter-spacing:.02em;
+  padding:3px 10px; border-radius:6px; }
+.af-tag-neutral { background:#2C3137; color:#F3F1EC; }
+.af-tag-outline { border:1px solid var(--color-accent); color:var(--color-accent); }
+
+/* divisor que se desvanece en los bordes */
+.af-hr { height:1px; border:0; margin:0; opacity:1; background:linear-gradient(to right, transparent,
+  var(--color-divider) 48px, var(--color-divider) calc(100% - 48px), transparent); }
+
+/* scroll horizontal sin barra (chips mobile) */
+.af-noscrollbar { scrollbar-width:none; }
+.af-noscrollbar::-webkit-scrollbar { display:none; }
+
+/* utilidades */
+.af-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+.af-mobile-only { display:block; }
+.af-desktop-only { display:none; }
+@media (min-width: 768px) {
+  .af-mobile-only { display:none !important; }
+  .af-desktop-only { display:block; }
+}
+@keyframes af-spin { to { transform: rotate(360deg); } }
+.af-spinner { width:16px; height:16px; border-radius:50%; border:2px solid currentColor;
+  border-right-color:transparent; animation:af-spin .7s linear infinite; flex:none; }
+
+/* recuadro de foto crema (cards, detalle, carrito) */
+.af-tile { position:relative; display:grid; place-items:center;
+  background:radial-gradient(circle at 50% 42%, var(--tile-a, var(--color-neutral-200)), var(--tile-b, var(--color-neutral-400)) 115%); }
+.af-tile > img { object-fit:contain; mix-blend-mode:multiply; }
+
+/* badges del recuadro de foto */
+.af-badge { position:absolute; top:8px; left:8px; font-size:10.5px; font-weight:600; letter-spacing:0.04em;
+  text-transform:uppercase; padding:3px 8px; border-radius:6px; line-height:1.55; }
+.af-badge-top { background:var(--color-neutral-900); color:var(--color-accent-300); }
+.af-badge-nuevo { padding:2px 7px; border:1px solid var(--color-neutral-800); color:var(--color-neutral-900); }
+.af-badge-oferta { background:var(--color-accent); color:var(--color-neutral-900); }
+
+/* estado "foto no disponible" */
+.af-nophoto { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  padding:14px; text-align:center; color:var(--color-neutral-800); }
+.af-nophoto-initial { width:40px; height:40px; border-radius:50%; display:grid; place-items:center;
+  border:1.5px solid var(--color-neutral-600); font-weight:600; font-size:17px; font-style:var(--h-style, normal); }
+.af-nophoto-brand { font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-neutral-700); }
+.af-nophoto-name { font-size:13px; font-weight:500; line-height:1.2; color:var(--color-neutral-900); }
+.af-nophoto-label { display:flex; align-items:center; gap:4px; font-size:10px; color:var(--color-neutral-700); }
