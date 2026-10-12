@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { PiX, PiArrowRight } from 'react-icons/pi';
+import { precioFinalDe, precioTransferencia, formatoPrecio } from '../utils/productos';
 import './RecommendedModal.css';
 
 const RecommendedProductModal = () => {
@@ -66,13 +67,11 @@ const RecommendedProductModal = () => {
         return null;
     }
 
-    const { marca, nombre, presentacion, precio, descuento, img, masVendido } = recommendedProduct;
+    const { marca, nombre, presentacion, descuento, img, masVendido } = recommendedProduct;
 
-    // Precio final (con descuento si aplica) y con transferencia (7.5% de recargo), igual que en el resto del sitio
-    const precioFinal = descuento > 0
-        ? Math.round(precio - (precio * descuento) / 100)
-        : precio;
-    const precioConTransferencia = Math.round(precioFinal * 1.075);
+    // Precio final (con descuento si aplica) y con transferencia, igual que en el resto del sitio
+    const precioFinal = precioFinalDe(recommendedProduct);
+    const precioConTransferencia = precioTransferencia(precioFinal);
 
     const meta = [marca, presentacion].filter(Boolean).join(' · ');
     const showImg = img && !imgError;
@@ -113,10 +112,10 @@ const RecommendedProductModal = () => {
                     {meta && <p className="afm-meta">{meta}</p>}
                     <h2 className="afm-name">{nombre}</h2>
                     <div className="afm-price-row">
-                        <span className="afm-price">${precioFinal?.toLocaleString()}</span>
+                        <span className="afm-price">{formatoPrecio(precioFinal)}</span>
                         <span className="afm-price-label">efectivo</span>
                     </div>
-                    <p className="afm-transfer">${precioConTransferencia?.toLocaleString()} con transferencia</p>
+                    <p className="afm-transfer">{formatoPrecio(precioConTransferencia)} con transferencia</p>
                 </div>
 
                 <div className="afm-actions">
