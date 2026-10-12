@@ -254,14 +254,32 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
         description: categoryContent[currentCategory]?.description || ''
     };
 
-    // Mosaico del hero desktop: 2 productos "Más vendido" con foto (o los 2 primeros con foto)
+    // Mosaico del hero desktop: va alternando creatinas y proteínas de Pitbull y Star Nutrition
+    // (orden aleatorio en cada visita; las fotos que fallan se saltean)
+    const candidatosHero = useMemo(() => {
+        const marcasHero = ["pitbull", "star nutrition"];
+        const lista = allProducts.filter((p) => {
+            const cat = normalizarTexto(p.categoria);
+            return p.img && marcasHero.includes(normalizarTexto(p.marca)) && (cat.startsWith("prote") || cat.includes("creatin"));
+        });
+        for (let i = lista.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [lista[i], lista[j]] = [lista[j], lista[i]];
+        }
+        return lista;
+    }, [allProducts]);
+    const [turnoHero, setTurnoHero] = useState(0);
     const destacados = useMemo(() => {
-        const conFoto = allProducts.filter((p) => p.img);
-        const marcados = conFoto.filter((p) => p.masVendido === true);
-        return [...marcados, ...conFoto.filter((p) => p.masVendido !== true)]
-            .filter((p) => !fotosRotas.includes(p.id))
-            .slice(0, 2);
-    }, [allProducts, fotosRotas]);
+        const sanos = candidatosHero.filter((p) => !fotosRotas.includes(p.id));
+        if (sanos.length <= 2) return sanos;
+        const i = (turnoHero * 2) % sanos.length;
+        return [sanos[i], sanos[(i + 1) % sanos.length]];
+    }, [candidatosHero, fotosRotas, turnoHero]);
+    useEffect(() => {
+        if (!isHomePage || candidatosHero.length <= 2) return undefined;
+        const t = setInterval(() => setTurnoHero((n) => n + 1), 6000);
+        return () => clearInterval(t);
+    }, [isHomePage, candidatosHero.length]);
     const descartarFoto = (pid) => setFotosRotas((prev) => (prev.includes(pid) ? prev : [...prev, pid]));
 
     const contarCategoria = (op) => (op === TODAS ? base.length : base.filter((p) => p.categoria === op).length);
@@ -314,12 +332,12 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                             </div>
                             <div className="af-hero-mosaic" aria-hidden={destacados.length === 0}>
                                 {destacados[0] && (
-                                    <Link to={`/item/${destacados[0].id}`} className="af-tile af-hero-tile af-hero-tile--big">
+                                    <Link key={destacados[0].id} to={`/item/${destacados[0].id}`} className="af-tile af-hero-tile af-hero-tile--big">
                                         <ProductPhoto key={destacados[0].id} img={destacados[0].img} marca={destacados[0].marca} nombre={destacados[0].nombre} pct={84} onFail={() => descartarFoto(destacados[0].id)} />
                                     </Link>
                                 )}
                                 {destacados[1] && (
-                                    <Link to={`/item/${destacados[1].id}`} className="af-tile af-hero-tile">
+                                    <Link key={destacados[1].id} to={`/item/${destacados[1].id}`} className="af-tile af-hero-tile">
                                         <ProductPhoto key={destacados[1].id} img={destacados[1].img} marca={destacados[1].marca} nombre={destacados[1].nombre} pct={82} onFail={() => descartarFoto(destacados[1].id)} />
                                     </Link>
                                 )}

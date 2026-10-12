@@ -13,22 +13,39 @@ import { getAllProducts } from "../utils/productsCache";
 export const esPantallaConBarra = (pathname) =>
     pathname.startsWith("/item/") || pathname === "/cart" || pathname === "/checkout";
 
-const Desplegable = ({ titulo, items, aRuta, abierto, onAbrir, onCerrar }) => (
-    <div className="af-navdrop" onMouseEnter={onAbrir} onMouseLeave={onCerrar}>
-        <button type="button" className="af-navlink" onClick={abierto ? onCerrar : onAbrir} aria-expanded={abierto}>
-            {titulo}<PiCaretDown size={12} />
-        </button>
-        {abierto && items.length > 0 && (
-            <div className="af-navdrop-menu">
-                {items.map((item) => (
-                    <Link key={item} to={aRuta(item)} className="af-navdrop-item" onClick={onCerrar}>
-                        {item}
-                    </Link>
-                ))}
-            </div>
-        )}
-    </div>
-);
+// El menú se abre al pasar el mouse. La separación con el botón está dentro del área del menú
+// (padding) y el cierre espera un instante, así no se cierra al bajar el mouse para elegir.
+const Desplegable = ({ titulo, items, aRuta, abierto, onAbrir, onCerrar }) => {
+    const timer = useRef(null);
+    const abrir = () => {
+        clearTimeout(timer.current);
+        onAbrir();
+    };
+    const cerrarConDemora = () => {
+        clearTimeout(timer.current);
+        timer.current = setTimeout(onCerrar, 180);
+    };
+    useEffect(() => () => clearTimeout(timer.current), []);
+
+    return (
+        <div className="af-navdrop" onMouseEnter={abrir} onMouseLeave={cerrarConDemora}>
+            <button type="button" className="af-navlink" onClick={abierto ? onCerrar : abrir} aria-expanded={abierto}>
+                {titulo}<PiCaretDown size={12} />
+            </button>
+            {abierto && items.length > 0 && (
+                <div className="af-navdrop-menu">
+                    <div className="af-navdrop-panel">
+                        {items.map((item) => (
+                            <Link key={item} to={aRuta(item)} className="af-navdrop-item" onClick={onCerrar}>
+                                {item}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const MenuPanel = ({ categorias, marcas, onCerrar }) => (
     <div className="af-menupanel">
@@ -44,7 +61,6 @@ const MenuPanel = ({ categorias, marcas, onCerrar }) => (
                 <Link key={m} to={`/brand/${encodeURIComponent(m)}`} className="af-menupanel-item" onClick={onCerrar}>{m}</Link>
             ))}
         </div>
-        <Link to="/plan" className="af-menupanel-item af-menupanel-plan" onClick={onCerrar}>Plan de nutrición</Link>
     </div>
 );
 
@@ -134,7 +150,6 @@ const NavBar = () => {
                             onAbrir={() => setAbierto("marcas")}
                             onCerrar={() => setAbierto(null)}
                         />
-                        <Link to="/plan" className="af-navlink">Plan de nutrición</Link>
                     </nav>
                     <span className="af-header-burger">{botonMenu}</span>
                     <CartWidget />
