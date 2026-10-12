@@ -1,6 +1,7 @@
 const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
+const { construirEmailPedido } = require("./emailPedido");
 
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -50,54 +51,14 @@ exports.sendOrderEmail = functions
             }
         }
 
-        // Armar tabla HTML con los campos de la orden
-        let orderDetails = `
-      <table border="1" cellspacing="0" cellpadding="5">
-        <thead>
-          <tr>
-            <th>Campo</th>
-            <th>Valor</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-        const escapeHtml = (s) => String(s)
-            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        const formatValue = (value) => {
-            if (value && typeof value.toDate === "function") {
-                return escapeHtml(value.toDate().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }));
-            }
-            if (value && typeof value === "object") {
-                return `<pre style="margin:0">${escapeHtml(JSON.stringify(value, null, 2))}</pre>`;
-            }
-            return escapeHtml(value);
-        };
-
-        for (const [key, value] of Object.entries(orderData)) {
-            orderDetails += `
-        <tr>
-          <td><b>${escapeHtml(key)}</b></td>
-          <td>${formatValue(value)}</td>
-        </tr>
-      `;
-        }
-
-        orderDetails += `
-        </tbody>
-      </table>
-    `;
+        // Correo legible con cliente, productos y totales
+        const { asunto, html } = construirEmailPedido(orderId, orderData);
 
         const mailOptions = {
             from: "lucianoespinosa04@gmail.com",
             to: "lucianoespinosa04@gmail.com",
-            subject: `Nueva orden recibida - ID ${orderId}`,
-            html: `
-        <h2>📦 Se ha creado una nueva orden</h2>
-        <p><b>ID de orden:</b> ${orderId}</p>
-        <h3>Detalles:</h3>
-        ${orderDetails}
-      `,
+            subject: asunto,
+            html,
         };
 
         try {
