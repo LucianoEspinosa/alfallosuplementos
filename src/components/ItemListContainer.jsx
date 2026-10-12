@@ -63,7 +63,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     const searchTerm = searchParams.get('search');
     const esMarca = location.pathname.includes('/brand/');
 
-    // ✅ CONTENIDO SEO Y DESCRIPTIVO (sin cambios)
+    // Contenido SEO y descriptivo por categoría
     const categoryContent = {
         'proteinas': {
             title: "Las Mejores Proteínas para Aumentar Masa Muscular | Al Fallo",

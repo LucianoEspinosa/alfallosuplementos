@@ -710,3 +710,9 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
 @media (min-width: 1024px) {
   .af-cart, .af-checkout { padding:40px 40px 64px; }
 }
+
+/* Fitness App (fuera del rediseño): sus tarjetas usan var(--card-bg), que no existía. Fondo y texto legibles. */
+:root { --card-bg: var(--color-surface); }
+.card[style*="--card-bg"] { color: var(--color-text); border-color: var(--color-divider); }
+.card[style*="--card-bg"] .card-title { color: var(--color-text) !important; }
+.card[style*="--card-bg"] .text-muted { color: var(--color-neutral-400) !important; }
