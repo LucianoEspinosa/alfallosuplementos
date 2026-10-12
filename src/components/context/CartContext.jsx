@@ -32,8 +32,8 @@ const CartContextProvider = ({ children }) => {
         if (isInCart(itemId)) {
             // Sumar cantidad al MISMO producto y MISMO sabor
             let updatedCart = cart.map((prod) => {
-                const prodId = generateItemId(prod);
-                if (prodId === itemId) {
+                // prod.id ya es el ID único (producto + sabor): no se vuelve a generar
+                if (prod.id === itemId) {
                     return { 
                         ...prod, 
                         cantidad: prod.cantidad + quantity,
