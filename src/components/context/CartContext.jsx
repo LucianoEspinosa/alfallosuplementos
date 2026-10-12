@@ -71,6 +71,14 @@ const CartContextProvider = ({ children }) => {
         localStorage.setItem("cart", JSON.stringify(updatedCart));
     };
 
+    // Cambiar la cantidad de un ítem desde el carrito (mínimo 1; el máximo lo controla el carrito con el stock)
+    const updateQuantity = (id, cantidad) => {
+        if (!Number.isFinite(cantidad) || cantidad < 1) return;
+        const updatedCart = cart.map((prod) => (prod.id === id ? { ...prod, cantidad } : prod));
+        setCart(updatedCart);
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+    };
+
     const clear = () => {
         setCart([]);
         localStorage.removeItem("cart");
@@ -97,7 +105,8 @@ const CartContextProvider = ({ children }) => {
                 precioTotal, 
                 cart, 
                 addItem, 
-                removeItem, 
+                removeItem,
+                updateQuantity,
                 clear,
                 isInCart
             }}

@@ -7,7 +7,7 @@ import ProductPhoto from "./af/ProductPhoto";
 import { formatoPrecio, precioTransferencia, etiquetaCantidad } from "../utils/productos";
 
 const Cart = () => {
-    const { cart, cartTotal, precioTotal, removeItem, clear } = useContext(CartContext);
+    const { cart, cartTotal, precioTotal, removeItem, updateQuantity, clear } = useContext(CartContext);
     const navigate = useNavigate();
 
     const volver = () => {
@@ -66,7 +66,26 @@ const Cart = () => {
                                             {item.saborSeleccionado && <span className="af-cartitem-tag">{item.saborSeleccionado}</span>}
                                         </div>
                                         <div className="af-cartitem-bottom">
-                                            <span className="af-cartitem-qty">{item.cantidad} × {formatoPrecio(item.precioFinal)}</span>
+                                            <div className="af-cartitem-qtywrap">
+                                                <div className="af-qty af-qty--sm">
+                                                    <button
+                                                        type="button"
+                                                        className="af-qty-btn"
+                                                        aria-label="Restar"
+                                                        onClick={() => updateQuantity(item.id, item.cantidad - 1)}
+                                                        disabled={item.cantidad <= 1}
+                                                    >−</button>
+                                                    <span className="af-qty-value" aria-live="polite">{item.cantidad}</span>
+                                                    <button
+                                                        type="button"
+                                                        className="af-qty-btn"
+                                                        aria-label="Sumar"
+                                                        onClick={() => updateQuantity(item.id, item.cantidad + 1)}
+                                                        disabled={Number.isFinite(item.stock) && item.cantidad >= item.stock}
+                                                    >+</button>
+                                                </div>
+                                                <span className="af-cartitem-qty">× {formatoPrecio(item.precioFinal)}</span>
+                                            </div>
                                             <span className="af-cartitem-sub">{formatoPrecio(subtotal)}</span>
                                         </div>
                                     </div>

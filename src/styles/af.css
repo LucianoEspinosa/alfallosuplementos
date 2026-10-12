@@ -737,3 +737,10 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
 .af-app { min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
 .af-main { flex:1 0 auto; }
 .af-footer { flex-shrink:0; }
+
+/* carrito: selector de cantidad compacto */
+.af-cartitem-bottom { align-items:center; }
+.af-cartitem-qtywrap { display:flex; align-items:center; gap:8px; }
+.af-qty--sm .af-qty-btn { width:32px; height:32px; font-size:17px; }
+.af-qty--sm .af-qty-value { min-width:20px; font-size:14px; }
+.af-qty-btn:disabled { color:var(--color-neutral-600); cursor:not-allowed; }
