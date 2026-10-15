@@ -38,6 +38,22 @@ const ItemDetail = ({ producto }) => {
         }
     }, [producto]);
 
+    // Mobile: la barra de compra es fija abajo y tapaba la confirmación "Producto agregado".
+    // Al agregar, se baja lo justo para que el mensaje quede a la vista arriba de la barra.
+    // En desktop (>= 768px) la barra no es fija, así que no hace nada.
+    useEffect(() => {
+        if (!addedToCart || !window.matchMedia("(max-width: 767px)").matches) return undefined;
+        const frame = requestAnimationFrame(() => {
+            const aviso = document.querySelector(".af-added");
+            const barra = document.querySelector(".af-buybar");
+            if (!aviso) return;
+            const limite = window.innerHeight - (barra ? barra.offsetHeight : 0) - 16;
+            const sobra = aviso.getBoundingClientRect().bottom - limite;
+            if (sobra > 0) window.scrollBy({ top: sobra, behavior: "smooth" });
+        });
+        return () => cancelAnimationFrame(frame);
+    }, [addedToCart]);
+
     useEffect(() => {
         if (addedToCart) {
             setAddedToCart(false);
