@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { PiArrowLeft, PiCheck, PiShoppingBagOpen } from "react-icons/pi";
+import { PiArrowLeft, PiCheck, PiShoppingCart } from "react-icons/pi";
 import ItemCount from "./ItemCount";
 import CartWidget from "./CartWidget";
 import ProductPhoto from "./af/ProductPhoto";
@@ -289,7 +289,7 @@ const ItemDetail = ({ producto }) => {
                         <div className="af-buybar af-buybar--added">
                             <Link to="/" className="af-btn af-btn-secondary af-buybar-keep">Seguir comprando</Link>
                             <Link to="/cart" className="af-btn af-btn-primary af-buybar-btn">
-                                <PiShoppingBagOpen size={18} />
+                                <PiShoppingCart size={18} />
                                 Ver carrito ({cartTotal()})
                             </Link>
                         </div>
@@ -305,7 +305,7 @@ const ItemDetail = ({ producto }) => {
                                 onClick={agregarAlCarrito}
                                 disabled={sinStock}
                             >
-                                <PiShoppingBagOpen size={18} />
+                                <PiShoppingCart size={18} />
                                 Agregar al carrito
                             </button>
                         </div>

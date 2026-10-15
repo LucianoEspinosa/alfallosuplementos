@@ -1,14 +1,17 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 
 export const CartContext = createContext();
 
 const CartContextProvider = ({ children }) => {
-    let [cart, setCart] = useState([]);
-
-    useEffect(() => {
-        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-        setCart(storedCart);
-    }, []);
+    // El carrito guardado se lee al iniciar (no en un efecto), así el contador ya arranca con
+    // el valor correcto y el ícono no "rebota" al abrir la página.
+    let [cart, setCart] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("cart")) || [];
+        } catch {
+            return [];
+        }
+    });
 
     // FUNCIÓN CLAVE: Generar ID único con sabor
     const generateItemId = (item) => {
