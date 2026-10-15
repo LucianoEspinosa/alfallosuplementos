@@ -101,6 +101,8 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('search');
     const esMarca = location.pathname.includes('/brand/');
+    // En /category/:id la categoría ya está elegida por la URL: solo se filtra por marca
+    const esCategoria = !!id && !esMarca;
 
     // Contenido SEO y descriptivo por categoría
     const categoryContent = {
@@ -217,6 +219,10 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
 
     // Conjunto base de la página: búsqueda, ofertas o más vendidos (los chips filtran dentro de este conjunto)
     const base = useMemo(() => {
+        if (esCategoria) {
+            const desdeUrl = normalizarTexto(decodeURIComponent(id));
+            return allProducts.filter((item) => normalizarTexto(item.categoria) === desdeUrl);
+        }
         if (searchTerm) return allProducts.filter((item) => coincideBusqueda(item, searchTerm));
         if (oferta) return allProducts.filter((item) => item.descuento > 0);
         if (top) {
@@ -224,7 +230,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
             return marcados.length > 0 ? marcados : allProducts.filter((item) => item.stock < 15);
         }
         return allProducts;
-    }, [allProducts, searchTerm, oferta, top]);
+    }, [allProducts, searchTerm, oferta, top, esCategoria, id]);
 
     const categorias = useMemo(
         () => [...new Set(base.map((p) => p.categoria).filter(Boolean))]
@@ -409,7 +415,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                 <div className="af-products-head">
                     <TituloProductos className="af-products-title af-reveal">{getUserVisibleTitle()}</TituloProductos>
                     {id && seoData.description && <p className="af-products-desc">{seoData.description}</p>}
-                    <Chips tipo="cat" opciones={categorias} activa={categoria} onPick={setCategoria} />
+                    {!esCategoria && <Chips tipo="cat" opciones={categorias} activa={categoria} onPick={setCategoria} />}
                     <Chips tipo="brand" opciones={marcas} activa={marca} onPick={setMarca} />
                     <div className="af-products-bar">
                         {conteo}
@@ -420,7 +426,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                 <div className="af-products-layout">
                     {/* Desktop: barra lateral fija con contadores */}
                     <aside className="af-side">
-                        <ListaLateral titulo="Categoría" opciones={categorias} activa={categoria} onPick={setCategoria} contar={contarCategoria} limite={5} />
+                        {!esCategoria && <ListaLateral titulo="Categoría" opciones={categorias} activa={categoria} onPick={setCategoria} contar={contarCategoria} limite={5} />}
                         <ListaLateral titulo="Marca" opciones={marcas} activa={marca} onPick={setMarca} contar={contarMarca} />
                     </aside>
 
