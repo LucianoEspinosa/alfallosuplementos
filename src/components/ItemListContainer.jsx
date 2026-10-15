@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, Link, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
 import { PiX, PiCaretDown } from "react-icons/pi";
@@ -12,8 +12,21 @@ import ProductPhoto from "./af/ProductPhoto";
 import { getAllProducts } from "../utils/productsCache";
 import { normalizarTexto, coincideBusqueda, fechaAlta, etiquetaCantidad } from "../utils/productos";
 import { whatsappUrl } from "../config";
+import { useReveal, useHeroParallax } from "../hooks/useScrollFx";
 
 const TODAS = "Todas";
+
+// Cinta de marcas en movimiento (mobile y tablet): la lista va duplicada para que el loop no tenga corte
+const MARCAS_CINTA = ["ENA", "Gentech", "Gold Nutrition", "Star Nutrition", "Xtrenght", "Pitbull"];
+const CintaMarcas = () => (
+    <div className="af-marquee" aria-hidden="true">
+        <div className="af-marquee-track">
+            {[...MARCAS_CINTA, ...MARCAS_CINTA].map((m, i) => (
+                <span key={i} className="af-marquee-item">{m}</span>
+            ))}
+        </div>
+    </div>
+);
 
 const Chips = ({ opciones, activa, onPick, tipo }) => (
     <div className={`af-chips af-chips--${tipo} af-noscrollbar`}>
@@ -312,6 +325,12 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
         const t = setInterval(() => setTurnoHero((n) => n + 1), 6000);
         return () => clearInterval(t);
     }, [isHomePage, candidatosHero.length]);
+    // Efectos de scroll: parallax del hero y aparición de bloques y cards al entrar en pantalla
+    const mainRef = useRef(null);
+    const heroRef = useRef(null);
+    useHeroParallax(heroRef, isHomePage);
+    useReveal(mainRef, [loading, filteredAndSortedItems, isHomePage]);
+
     const descartarFoto = (pid) => setFotosRotas((prev) => (prev.includes(pid) ? prev : [...prev, pid]));
 
     const contarCategoria = (op) => (op === TODAS ? base.length : base.filter((p) => p.categoria === op).length);
@@ -336,7 +355,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     );
 
     return (
-        <main className="af-home">
+        <main className="af-home" ref={mainRef}>
             {id && seoData.title && (
                 <Helmet>
                     <title>{seoData.title}</title>
@@ -349,7 +368,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
 
             {isHomePage && (
                 <>
-                    <section className="af-hero">
+                    <section className="af-hero" ref={heroRef}>
                         <div className="af-hero-inner">
                             <div className="af-hero-copy">
                                 <span className="af-tag af-tag-outline af-hero-tag">Suplementos 100% originales</span>
@@ -380,6 +399,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                             </div>
                         </div>
                     </section>
+                    <CintaMarcas />
                     <TrustStrip />
                 </>
             )}
@@ -387,7 +407,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
             <section id="productos" className="af-products">
                 {/* Mobile y tablet: título, chips en dos filas y conteo */}
                 <div className="af-products-head">
-                    <TituloProductos className="af-products-title">{getUserVisibleTitle()}</TituloProductos>
+                    <TituloProductos className="af-products-title af-reveal">{getUserVisibleTitle()}</TituloProductos>
                     {id && seoData.description && <p className="af-products-desc">{seoData.description}</p>}
                     <Chips tipo="cat" opciones={categorias} activa={categoria} onPick={setCategoria} />
                     <Chips tipo="brand" opciones={marcas} activa={marca} onPick={setMarca} />

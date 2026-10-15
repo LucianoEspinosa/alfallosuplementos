@@ -11,7 +11,7 @@ const ITEMS = [
 const TrustStrip = () => (
     <section className="af-trust" aria-label="Por qué comprar en Al Fallo">
         {ITEMS.map(({ Icono, m, d, titulo, sub }) => (
-            <div key={titulo} className="af-trust-item">
+            <div key={titulo} className="af-trust-item af-reveal">
                 <Icono size={m} className="af-trust-icon af-trust-icon-m" />
                 <Icono size={d} className="af-trust-icon af-trust-icon-d" />
                 <div className="af-trust-text">

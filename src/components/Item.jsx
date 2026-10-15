@@ -11,7 +11,7 @@ const Item = ({ item }) => {
     const badge = badgeDe(item);
 
     return (
-        <Link to={"/item/" + item.id} className="af-card">
+        <Link to={"/item/" + item.id} className="af-card af-reveal">
             <div className="af-tile af-card-tile">
                 <ProductPhoto img={item.img} marca={item.marca} nombre={item.nombre} pct={84} />
                 {badge && <span className={`af-badge af-badge-${badge.tipo}`}>{badge.texto}</span>}
