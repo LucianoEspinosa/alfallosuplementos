@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PiArrowRight, PiShoppingBagOpen, PiTrash } from "react-icons/pi";
+import { PiArrowRight, PiShoppingCart, PiTrash } from "react-icons/pi";
 import { CartContext } from "./context/CartContext";
 import CompraHeader from "./af/CompraHeader";
 import ProductPhoto from "./af/ProductPhoto";
@@ -20,7 +20,7 @@ const Cart = () => {
             <div className="af-compra">
                 <CompraHeader paso={0} onBack={volver} />
                 <section className="af-cart-empty">
-                    <div className="af-cart-empty-icon"><PiShoppingBagOpen size={26} /></div>
+                    <div className="af-cart-empty-icon"><PiShoppingCart size={26} /></div>
                     <h1 className="af-compra-title af-compra-title--empty">Tu carrito está vacío</h1>
                     <span className="af-cart-empty-text">No hay productos en el carrito.</span>
                     <div className="af-cart-empty-actions">

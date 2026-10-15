@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import RecomendadoModal from './af/RecomendadoModal';
 
 
 const CategoryModal = ({ category }) => {
@@ -47,48 +46,16 @@ const CategoryModal = ({ category }) => {
         fetchRecommendedProduct();
     }, [category]);
 
-    useEffect(() => {
-        if (showModal) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [showModal]);
-
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setShowModal(false);
-    };
+    }, []);
 
     if (!showModal || !recommendedProduct) {
         return null;
     }
 
-    return (
-        <div className="modal-overlay">
-            <div className="recommended-label">
-                <p>Producto Recomendado</p>
-            </div>
-            <div className="modal-content-minimal">
-                <button className="close-button-outside" onClick={handleClose}>
-                    <FontAwesomeIcon icon={faTimes} />
-                </button>
-                <div className="product-info-minimal">
-                    <img src={recommendedProduct.img} alt={recommendedProduct.nombre} className="product-image-minimal" />
-                    <div className="product-details-minimal">
-                        <h2 className="product-title-minimal">{recommendedProduct.marca} {recommendedProduct.nombre}</h2>
-                        <p className="product-price-minimal">${recommendedProduct.precio?.toLocaleString()}</p>
-                        <a href={`/item/${recommendedProduct.id}`} className="view-product-button" onClick={handleClose}>
-                            Ver Producto
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+    // Mismo diseño que el modal de bienvenida
+    return <RecomendadoModal product={recommendedProduct} onClose={handleClose} />;
 };
 
 export default CategoryModal;

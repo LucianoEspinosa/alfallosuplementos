@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, Link, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
 import { PiX, PiCaretDown } from "react-icons/pi";
@@ -12,8 +12,21 @@ import ProductPhoto from "./af/ProductPhoto";
 import { getAllProducts } from "../utils/productsCache";
 import { normalizarTexto, coincideBusqueda, fechaAlta, etiquetaCantidad } from "../utils/productos";
 import { whatsappUrl } from "../config";
+import { useReveal, useHeroParallax } from "../hooks/useScrollFx";
 
 const TODAS = "Todas";
+
+// Cinta de marcas en movimiento (mobile y tablet): la lista va duplicada para que el loop no tenga corte
+const MARCAS_CINTA = ["ENA", "Gentech", "Gold Nutrition", "Star Nutrition", "Xtrenght", "Pitbull"];
+const CintaMarcas = () => (
+    <div className="af-marquee" aria-hidden="true">
+        <div className="af-marquee-track">
+            {[...MARCAS_CINTA, ...MARCAS_CINTA].map((m, i) => (
+                <span key={i} className="af-marquee-item">{m}</span>
+            ))}
+        </div>
+    </div>
+);
 
 const Chips = ({ opciones, activa, onPick, tipo }) => (
     <div className={`af-chips af-chips--${tipo} af-noscrollbar`}>
@@ -88,6 +101,8 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('search');
     const esMarca = location.pathname.includes('/brand/');
+    // En /category/:id la categoría ya está elegida por la URL: solo se filtra por marca
+    const esCategoria = !!id && !esMarca;
 
     // Contenido SEO y descriptivo por categoría
     const categoryContent = {
@@ -204,6 +219,10 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
 
     // Conjunto base de la página: búsqueda, ofertas o más vendidos (los chips filtran dentro de este conjunto)
     const base = useMemo(() => {
+        if (esCategoria) {
+            const desdeUrl = normalizarTexto(decodeURIComponent(id));
+            return allProducts.filter((item) => normalizarTexto(item.categoria) === desdeUrl);
+        }
         if (searchTerm) return allProducts.filter((item) => coincideBusqueda(item, searchTerm));
         if (oferta) return allProducts.filter((item) => item.descuento > 0);
         if (top) {
@@ -211,7 +230,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
             return marcados.length > 0 ? marcados : allProducts.filter((item) => item.stock < 15);
         }
         return allProducts;
-    }, [allProducts, searchTerm, oferta, top]);
+    }, [allProducts, searchTerm, oferta, top, esCategoria, id]);
 
     const categorias = useMemo(
         () => [...new Set(base.map((p) => p.categoria).filter(Boolean))]
@@ -312,6 +331,12 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
         const t = setInterval(() => setTurnoHero((n) => n + 1), 6000);
         return () => clearInterval(t);
     }, [isHomePage, candidatosHero.length]);
+    // Efectos de scroll: parallax del hero y aparición de bloques y cards al entrar en pantalla
+    const mainRef = useRef(null);
+    const heroRef = useRef(null);
+    useHeroParallax(heroRef, isHomePage);
+    useReveal(mainRef, [loading, filteredAndSortedItems, isHomePage]);
+
     const descartarFoto = (pid) => setFotosRotas((prev) => (prev.includes(pid) ? prev : [...prev, pid]));
 
     const contarCategoria = (op) => (op === TODAS ? base.length : base.filter((p) => p.categoria === op).length);
@@ -336,7 +361,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
     );
 
     return (
-        <main className="af-home">
+        <main className="af-home" ref={mainRef}>
             {id && seoData.title && (
                 <Helmet>
                     <title>{seoData.title}</title>
@@ -349,7 +374,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
 
             {isHomePage && (
                 <>
-                    <section className="af-hero">
+                    <section className="af-hero" ref={heroRef}>
                         <div className="af-hero-inner">
                             <div className="af-hero-copy">
                                 <span className="af-tag af-tag-outline af-hero-tag">Suplementos 100% originales</span>
@@ -380,6 +405,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                             </div>
                         </div>
                     </section>
+                    <CintaMarcas />
                     <TrustStrip />
                 </>
             )}
@@ -387,9 +413,9 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
             <section id="productos" className="af-products">
                 {/* Mobile y tablet: título, chips en dos filas y conteo */}
                 <div className="af-products-head">
-                    <TituloProductos className="af-products-title">{getUserVisibleTitle()}</TituloProductos>
+                    <TituloProductos className="af-products-title af-reveal">{getUserVisibleTitle()}</TituloProductos>
                     {id && seoData.description && <p className="af-products-desc">{seoData.description}</p>}
-                    <Chips tipo="cat" opciones={categorias} activa={categoria} onPick={setCategoria} />
+                    {!esCategoria && <Chips tipo="cat" opciones={categorias} activa={categoria} onPick={setCategoria} />}
                     <Chips tipo="brand" opciones={marcas} activa={marca} onPick={setMarca} />
                     <div className="af-products-bar">
                         {conteo}
@@ -400,7 +426,7 @@ const ItemListContainer = ({ top, oferta, titulo }) => {
                 <div className="af-products-layout">
                     {/* Desktop: barra lateral fija con contadores */}
                     <aside className="af-side">
-                        <ListaLateral titulo="Categoría" opciones={categorias} activa={categoria} onPick={setCategoria} contar={contarCategoria} limite={5} />
+                        {!esCategoria && <ListaLateral titulo="Categoría" opciones={categorias} activa={categoria} onPick={setCategoria} contar={contarCategoria} limite={5} />}
                         <ListaLateral titulo="Marca" opciones={marcas} activa={marca} onPick={setMarca} contar={contarMarca} />
                     </aside>
 

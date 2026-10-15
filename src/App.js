@@ -21,7 +21,8 @@ import BulkSaborManager from './components/BulkSaborManager';
 import DiscountCodeManager from './components/DiscountCodeManager';
 import ExcelManager from './components/ExcelManager.jsx';
 import RecommendedProductSelector from './components/RecommendedProductSelector.jsx';
-import RecommendedProductModal from './components/RecommendedProductModal.jsx';
+// Modal de producto recomendado al entrar: desactivado provisoriamente (para reactivarlo, descomentar esta línea y la de abajo)
+// import RecommendedProductModal from './components/RecommendedProductModal.jsx';
 import FitnessApp from './components/FitnessApp/FitnessApp.jsx';
 import ExcelToJsonConverter from './components/ExcelToJsonConverter.jsx';
 import AdminExercises from './components/FitnessApp/AdminExercises.jsx';
@@ -56,7 +57,7 @@ function App() {
     <div>
       <CartContextProvider>
         {/* Renderiza el modal aquí, fuera del BrowserRouter */}
-        <RecommendedProductModal />
+        {/* <RecommendedProductModal /> */}
 
         <BrowserRouter>
           {/* Pantalla de carga */}

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { PiArrowLeft, PiCheck, PiShoppingBagOpen } from "react-icons/pi";
+import { PiArrowLeft, PiCheck, PiShoppingCart } from "react-icons/pi";
 import ItemCount from "./ItemCount";
 import CartWidget from "./CartWidget";
 import ProductPhoto from "./af/ProductPhoto";
@@ -37,6 +37,22 @@ const ItemDetail = ({ producto }) => {
             }
         }
     }, [producto]);
+
+    // Mobile: la barra de compra es fija abajo y tapaba la confirmación "Producto agregado".
+    // Al agregar, se baja lo justo para que el mensaje quede a la vista arriba de la barra.
+    // En desktop (>= 768px) la barra no es fija, así que no hace nada.
+    useEffect(() => {
+        if (!addedToCart || !window.matchMedia("(max-width: 767px)").matches) return undefined;
+        const frame = requestAnimationFrame(() => {
+            const aviso = document.querySelector(".af-added");
+            const barra = document.querySelector(".af-buybar");
+            if (!aviso) return;
+            const limite = window.innerHeight - (barra ? barra.offsetHeight : 0) - 16;
+            const sobra = aviso.getBoundingClientRect().bottom - limite;
+            if (sobra > 0) window.scrollBy({ top: sobra, behavior: "smooth" });
+        });
+        return () => cancelAnimationFrame(frame);
+    }, [addedToCart]);
 
     useEffect(() => {
         if (addedToCart) {
@@ -273,7 +289,7 @@ const ItemDetail = ({ producto }) => {
                         <div className="af-buybar af-buybar--added">
                             <Link to="/" className="af-btn af-btn-secondary af-buybar-keep">Seguir comprando</Link>
                             <Link to="/cart" className="af-btn af-btn-primary af-buybar-btn">
-                                <PiShoppingBagOpen size={18} />
+                                <PiShoppingCart size={18} />
                                 Ver carrito ({cartTotal()})
                             </Link>
                         </div>
@@ -289,7 +305,7 @@ const ItemDetail = ({ producto }) => {
                                 onClick={agregarAlCarrito}
                                 disabled={sinStock}
                             >
-                                <PiShoppingBagOpen size={18} />
+                                <PiShoppingCart size={18} />
                                 Agregar al carrito
                             </button>
                         </div>
