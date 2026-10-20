@@ -81,7 +81,7 @@ const DESCRIPCIONES = {
 
 // Productos nuevos: filas de NUEVOS_CARGA con "publicado" en TRUE. Se crean con un ID fijo
 // (derivado de marca+nombre+presentación) para que nunca se creen dos veces.
-async function crearNuevos(db, resumen, dryRun) {
+async function crearNuevos(db, resumen, dryRun, idsEnImportar = new Set()) {
   resumen.nuevos = [];
   const filas = await leerRango("NUEVOS_CARGA!A2:M");
   const crypto = require("crypto");
@@ -109,6 +109,9 @@ async function crearNuevos(db, resumen, dryRun) {
       const ref = db.collection(COLECCION).doc(id);
       const existente = await ref.get();
       if (existente.exists) {
+        // Si ya está en IMPORTAR, su costo lo maneja la lista del proveedor: no se pisa con el costo
+        // (fijo) que se cargó en NUEVOS_CARGA el día que se creó.
+        if (idsEnImportar.has(id)) continue;
         // Ya fue creado antes: se mantienen costo, margen y precio al día con la planilla y las reglas de margen.
         if (existente.get("precio_costo") !== costoNum || existente.get("ganancia") !== gan || existente.get("precio") !== precio) {
           resumen.nuevosActualizados = (resumen.nuevosActualizados || 0) + 1;
@@ -229,7 +232,7 @@ async function correr({ dryRun = false } = {}) {
   }
 
   try {
-    await crearNuevos(db, resumen, dryRun);
+    await crearNuevos(db, resumen, dryRun, new Set(filas.map((f) => String(f[0] || "")).filter(Boolean)));
   } catch (e) {
     resumen.errores.push(`NUEVOS_CARGA: ${e.message}`);
   }
