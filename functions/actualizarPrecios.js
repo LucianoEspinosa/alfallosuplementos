@@ -20,21 +20,47 @@ async function leerRango(range) {
 
 const leerImportar = () => leerRango("IMPORTAR!A2:L");
 
-// Margen de ganancia: proteínas y ganadores de peso x1,3; Pitbull (no proteína) x1,45;
-// todo lo demás x1,4.
-function margenPara(categoria, marca) {
-  const c = String(categoria || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  if (/^prote|ganador|^mass|gainer/.test(c)) return 1.3;
-  if (/pitbull/i.test(String(marca || ""))) return 1.45;
-  return 1.4;
+const sinAcentos = (v) => String(v || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+
+// Tabla de márgenes editable en la planilla: hoja "MARGENES" con columnas  marca | categoria | margen
+// ("*" = cualquiera). Gana la regla más específica: marca+categoría > marca > categoría > todo.
+// Si la hoja no existe o está vacía, se usan las reglas por defecto de margenPara.
+let tablaMargenes = [];
+async function cargarTablaMargenes() {
+  tablaMargenes = [];
+  try {
+    const filas = await leerRango("MARGENES!A2:C");
+    for (const [marca, categoria, margen] of filas) {
+      const valor = Number(String(margen).replace(",", "."));
+      if (!Number.isFinite(valor) || valor < 1) continue; // un margen menor a 1 vendería bajo costo
+      tablaMargenes.push({ marca: sinAcentos(marca) || "*", categoria: sinAcentos(categoria) || "*", margen: valor });
+    }
+  } catch (e) {
+    console.log("Hoja MARGENES no disponible, se usan los márgenes por defecto:", e.message);
+  }
+  return tablaMargenes.length;
+}
+function margenDeTabla(categoria, marca) {
+  const c = sinAcentos(categoria);
+  const m = sinAcentos(marca);
+  let mejor = null;
+  let puntaje = -1;
+  for (const r of tablaMargenes) {
+    if ((r.marca !== "*" && r.marca !== m) || (r.categoria !== "*" && r.categoria !== c)) continue;
+    const p = (r.marca !== "*" ? 2 : 0) + (r.categoria !== "*" ? 1 : 0);
+    if (p > puntaje) { mejor = r; puntaje = p; }
+  }
+  return mejor ? mejor.margen : null;
 }
 
-// Margen para un producto que ya está en la tienda: se respeta el que tiene guardado
-// (así un margen puesto a mano no se pisa); si no tiene uno válido, se usa la regla general.
-function margenDe(doc) {
-  const guardado = Number(doc.get("ganancia"));
-  if (Number.isFinite(guardado) && guardado >= 1.05 && guardado <= 3) return guardado;
-  return margenPara(doc.get("categoria"), doc.get("marca"));
+// Margen de ganancia por defecto: proteínas y ganadores de peso x1,3; Pitbull (salvo proteínas) x1,45; todo lo demás x1,4.
+function margenPara(categoria, marca) {
+  const delaTabla = margenDeTabla(categoria, marca);
+  if (delaTabla !== null) return delaTabla;
+  const c = sinAcentos(categoria);
+  const esProteina = /^prote/.test(c);
+  if (sinAcentos(marca) === "pitbull" && !esProteina) return 1.45;
+  return esProteina || /ganador|^mass|gainer/.test(c) ? 1.3 : 1.4;
 }
 
 // Descripciones por defecto para productos nuevos que llegan sin descripción en la planilla.
@@ -80,10 +106,21 @@ async function crearNuevos(db, resumen, dryRun) {
       stock: Number.isFinite(Number(stock)) ? Number(stock) : 0,
     };
     try {
-      if (!dryRun) {
-        await db.collection(COLECCION).doc(id).create({ ...producto, creado_el: admin.firestore.FieldValue.serverTimestamp() });
-      } else if ((await db.collection(COLECCION).doc(id).get()).exists) {
+      const ref = db.collection(COLECCION).doc(id);
+      const existente = await ref.get();
+      if (existente.exists) {
+        // Ya fue creado antes: se mantienen costo, margen y precio al día con la planilla y las reglas de margen.
+        if (existente.get("precio_costo") !== costoNum || existente.get("ganancia") !== gan || existente.get("precio") !== precio) {
+          resumen.nuevosActualizados = (resumen.nuevosActualizados || 0) + 1;
+          if (!dryRun) {
+            resumen.respaldo.push({ id, producto: etiqueta, precio_costo: existente.get("precio_costo") ?? null, precio: existente.get("precio") ?? null, motivo: "producto nuevo: costo o margen" });
+            await ref.update({ precio_costo: costoNum, ganancia: gan, precio, ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp() });
+          }
+        }
         continue;
+      }
+      if (!dryRun) {
+        await ref.create({ ...producto, creado_el: admin.firestore.FieldValue.serverTimestamp() });
       }
       const avisos = [!producto.img && "sin imagen", !producto.descripcion && "sin descripción", !producto.categoria && "sin categoría"].filter(Boolean);
       resumen.nuevos.push(`${etiqueta} (${producto.presentacion || "s/presentación"}) precio ${precio}${avisos.length ? " [" + avisos.join(", ") + "]" : ""}`);
@@ -96,15 +133,38 @@ async function crearNuevos(db, resumen, dryRun) {
 
 async function correr({ dryRun = false } = {}) {
   const filas = await leerImportar();
+  const reglasMargen = await cargarTablaMargenes();
   const db = admin.firestore();
-  const resumen = { actualizados: 0, sinCambio: 0, paraRevisar: [], errores: [], respaldo: [] };
+  const resumen = { actualizados: 0, sinCambio: 0, paraRevisar: [], errores: [], respaldo: [], reglasMargen };
 
   const aEliminar = [];
 
   for (const f of filas) {
     const [id, nombre, marca, costoActual, , , , costoNuevo, , , precioNuevo, accion] = f;
     if (!id) continue;
-    if (accion === "SIN CAMBIO") { resumen.sinCambio++; continue; }
+    if (accion === "SIN CAMBIO") {
+      // El costo no cambió, pero el precio puede estar desactualizado respecto al margen vigente: se corrige.
+      try {
+        const ref = db.collection(COLECCION).doc(String(id));
+        const doc = await ref.get();
+        const costo = Number(doc.exists ? doc.get("precio_costo") : 0);
+        if (doc.exists && Number.isFinite(costo) && costo > 0) {
+          const margen = margenPara(doc.get("categoria"), doc.get("marca") || marca);
+          const precioEsperado = Math.round(costo * margen);
+          if (doc.get("precio") !== precioEsperado || doc.get("ganancia") !== margen) {
+            resumen.repreciados = (resumen.repreciados || 0) + 1;
+            if (!dryRun) {
+              resumen.respaldo.push({ id: String(id), producto: `${marca} - ${nombre}`, precio_costo: costo, precio: doc.get("precio") ?? null, motivo: "cambio de margen" });
+              await ref.update({ precio: precioEsperado, ganancia: margen, ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp() });
+            }
+          }
+        }
+      } catch (e) {
+        resumen.errores.push(`${marca} - ${nombre}: ${e.message}`);
+      }
+      resumen.sinCambio++;
+      continue;
+    }
     if (accion === "SIN DATO") { aEliminar.push({ id: String(id), nombre, marca }); continue; }
     const esCambioGrande = typeof accion === "string" &&
       (accion.startsWith("REVISAR (cambio grande") || accion.startsWith("REVISAR (costo actual 0"));
@@ -120,7 +180,7 @@ async function correr({ dryRun = false } = {}) {
       const ref = db.collection(COLECCION).doc(String(id));
       const antes = await ref.get();
       if (!antes.exists) throw new Error("no existe el documento " + id);
-      const margen = margenDe(antes);
+      const margen = margenPara(antes.get("categoria"), antes.get("marca") || marca);
       const precioFinal = Math.round(costoNuevo * margen);
       if (!dryRun) {
         resumen.respaldo.push({ id: String(id), producto: `${marca} - ${nombre}`, precio_costo: antes.get("precio_costo") ?? null, precio: antes.get("precio") ?? null, cambioGrande: esCambioGrande });
