@@ -20,10 +20,21 @@ async function leerRango(range) {
 
 const leerImportar = () => leerRango("IMPORTAR!A2:L");
 
-// Margen de ganancia: proteínas y ganadores de peso x1,3; todo lo demás x1,4.
-function margenPara(categoria) {
+// Margen de ganancia: proteínas y ganadores de peso x1,3; Pitbull (no proteína) x1,45;
+// todo lo demás x1,4.
+function margenPara(categoria, marca) {
   const c = String(categoria || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  return /^prote|ganador|^mass|gainer/.test(c) ? 1.3 : 1.4;
+  if (/^prote|ganador|^mass|gainer/.test(c)) return 1.3;
+  if (/pitbull/i.test(String(marca || ""))) return 1.45;
+  return 1.4;
+}
+
+// Margen para un producto que ya está en la tienda: se respeta el que tiene guardado
+// (así un margen puesto a mano no se pisa); si no tiene uno válido, se usa la regla general.
+function margenDe(doc) {
+  const guardado = Number(doc.get("ganancia"));
+  if (Number.isFinite(guardado) && guardado >= 1.05 && guardado <= 3) return guardado;
+  return margenPara(doc.get("categoria"), doc.get("marca"));
 }
 
 // Descripciones por defecto para productos nuevos que llegan sin descripción en la planilla.
@@ -58,7 +69,7 @@ async function crearNuevos(db, resumen, dryRun) {
       resumen.errores.push(`${etiqueta}: falta nombre, marca o costo (no se creó)`);
       continue;
     }
-    const gan = margenPara(categoria);
+    const gan = margenPara(categoria, marca);
     const precio = Math.round(costoNum * gan);
     const clave = [marca, nombre, presentacion].map((x) => texto(x).toLowerCase()).join("|");
     const id = "nuevo_" + crypto.createHash("sha1").update(clave).digest("hex").slice(0, 20);
@@ -109,7 +120,7 @@ async function correr({ dryRun = false } = {}) {
       const ref = db.collection(COLECCION).doc(String(id));
       const antes = await ref.get();
       if (!antes.exists) throw new Error("no existe el documento " + id);
-      const margen = margenPara(antes.get("categoria"));
+      const margen = margenDe(antes);
       const precioFinal = Math.round(costoNuevo * margen);
       if (!dryRun) {
         resumen.respaldo.push({ id: String(id), producto: `${marca} - ${nombre}`, precio_costo: antes.get("precio_costo") ?? null, precio: antes.get("precio") ?? null, cambioGrande: esCambioGrande });
