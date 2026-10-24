@@ -140,7 +140,7 @@ const ConsultaVoz = () => {
                 </p>
 
                 <form
-                    className="d-flex gap-2 align-items-center"
+                    className="d-flex flex-nowrap gap-2 align-items-center"
                     onSubmit={(e) => {
                         e.preventDefault();
                         consultar(texto);
@@ -171,14 +171,14 @@ const ConsultaVoz = () => {
                         onChange={(e) => setTexto(e.target.value)}
                         placeholder={escuchando ? "Te escucho…" : "Tocá el micrófono o escribí tu consulta"}
                         maxLength={500}
-                        style={{ background: "var(--bg-secondary)", color: "var(--text-primary)", borderColor: "var(--border-color)" }}
+                        style={{ flex: "1 1 auto", minWidth: 0, width: "auto", margin: 0, background: "var(--bg-secondary)", color: "var(--text-primary)", borderColor: "var(--border-color)" }}
                     />
                     <button
                         type="submit"
                         className="btn btn-outline-secondary flex-shrink-0"
                         disabled={cargando || !texto.trim()}
                         aria-label="Consultar"
-                        style={{ borderColor: "var(--border-color)", color: "var(--text-primary)" }}
+                        style={{ width: "auto", margin: 0, borderColor: "var(--border-color)", color: "var(--text-primary)" }}
                     >
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
