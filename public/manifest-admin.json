@@ -1,0 +1,14 @@
+{
+  "id": "/admin",
+  "short_name": "Al Fallo Admin",
+  "name": "Al Fallo Admin",
+  "start_url": "/admin",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#101214",
+  "background_color": "#101214",
+  "icons": [
+    { "src": "/icon-admin-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-admin-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

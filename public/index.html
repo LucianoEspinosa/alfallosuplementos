@@ -8,7 +8,11 @@
   <meta name="theme-color" content="#101214">
   <meta name="description" content="Al Fallo Suplementos: la mejor selección de suplementos deportivos. Encuentra proteínas, creatina, pre-entrenos y más para llevar tu entrenamiento al siguiente nivel. ¡Envío rápido!" />
 
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link id="af-manifest" rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <script>
+    // Desde /admin se instala una app aparte ("Al Fallo Admin") que abre directo el panel
+    if (location.pathname.indexOf('/admin') === 0) document.getElementById('af-manifest').href = '/manifest-admin.json';
+  </script>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

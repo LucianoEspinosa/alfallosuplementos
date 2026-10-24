@@ -57,6 +57,15 @@ const Administrator = () => {
             .finally(() => setCargado(true));
     }, []);
 
+    // Si se llega al panel navegando dentro de la página, se ofrece instalar la app de administrador
+    useEffect(() => {
+        const link = document.getElementById('af-manifest');
+        if (!link) return undefined;
+        const anterior = link.getAttribute('href');
+        link.setAttribute('href', '/manifest-admin.json');
+        return () => link.setAttribute('href', anterior);
+    }, []);
+
     useEffect(() => { guardar('adminFilters', filtros); }, [filtros]);
     useEffect(() => { guardar('showFilters', mostrarFiltros); }, [mostrarFiltros]);
 
