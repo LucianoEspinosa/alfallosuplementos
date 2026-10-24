@@ -120,121 +120,88 @@ const ConsultaVoz = () => {
     };
 
     return (
-        <div className="card mb-4" style={{ background: "var(--bg-card)", borderColor: "var(--border-color)", color: "var(--text-primary)" }}>
-            <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h2 className="h5 mb-0">Preguntale a tu tienda</h2>
-                    <button
-                        type="button"
-                        className="btn btn-sm border-0 bg-transparent"
-                        onClick={() => setHablar((v) => !v)}
-                        title={hablar ? "Respuesta en voz alta: activada" : "Respuesta en voz alta: desactivada"}
-                        aria-label={hablar ? "Desactivar respuesta en voz alta" : "Activar respuesta en voz alta"}
-                        style={{ color: "var(--text-secondary)" }}
-                    >
-                        <FontAwesomeIcon icon={hablar ? faVolumeHigh : faVolumeXmark} />
-                    </button>
-                </div>
-                <p className="small mb-3" style={{ color: "var(--text-secondary)" }}>
-                    Ej.: "¿Cuánto me sale la whey Star Nutrition de 2 libras?" · "¿A cuánto vendo la creatina Pitbull y cuánto gano?"
-                </p>
-
-                <form
-                    className="d-flex flex-nowrap gap-2 align-items-center"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        consultar(texto);
-                    }}
+        <section className="adm-card">
+            <div className="adm-card-head">
+                <h2 className="adm-h2">Preguntale a tu tienda</h2>
+                <button
+                    type="button"
+                    className="adm-iconbtn"
+                    onClick={() => setHablar((v) => !v)}
+                    title={hablar ? "Respuesta en voz alta: activada" : "Respuesta en voz alta: desactivada"}
+                    aria-label={hablar ? "Desactivar respuesta en voz alta" : "Activar respuesta en voz alta"}
                 >
-                    <button
-                        type="button"
-                        onClick={escuchando ? frenar : empezarAEscuchar}
-                        disabled={cargando}
-                        className="btn rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                        style={{
-                            width: 52,
-                            height: 52,
-                            background: escuchando ? "#dc3545" : "var(--accent-color)",
-                            borderColor: escuchando ? "#dc3545" : "var(--accent-color)",
-                            color: "white",
-                            boxShadow: escuchando ? "0 0 0 6px rgba(220,53,69,0.25)" : "none",
-                            transition: "box-shadow .2s, background .2s",
-                        }}
-                        aria-label={escuchando ? "Dejar de escuchar" : "Hablar"}
-                    >
-                        <FontAwesomeIcon icon={escuchando ? faStop : faMicrophone} size="lg" />
-                    </button>
+                    <FontAwesomeIcon icon={hablar ? faVolumeHigh : faVolumeXmark} />
+                </button>
+            </div>
+            <div className="adm-muted">Costo, precio de venta y ganancia de cualquier producto.</div>
+
+            <form
+                className="adm-ask"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    consultar(texto);
+                }}
+            >
+                <button
+                    type="button"
+                    onClick={escuchando ? frenar : empezarAEscuchar}
+                    disabled={cargando}
+                    className={`adm-mic ${escuchando ? "is-on" : ""}`}
+                    aria-label={escuchando ? "Dejar de escuchar" : "Hablar"}
+                >
+                    <FontAwesomeIcon icon={escuchando ? faStop : faMicrophone} />
+                </button>
+                <div className="adm-askfield">
                     <input
                         type="text"
-                        className="form-control"
                         value={texto}
                         onChange={(e) => setTexto(e.target.value)}
-                        placeholder={escuchando ? "Te escucho…" : "Tocá el micrófono o escribí tu consulta"}
+                        placeholder={escuchando ? "Te escucho…" : "Ej.: ¿cuánto gano con la creatina Pitbull?"}
                         maxLength={500}
-                        style={{ flex: "1 1 auto", minWidth: 0, width: "auto", margin: 0, background: "var(--bg-secondary)", color: "var(--text-primary)", borderColor: "var(--border-color)" }}
+                        enterKeyHint="send"
                     />
-                    <button
-                        type="submit"
-                        className="btn btn-outline-secondary flex-shrink-0"
-                        disabled={cargando || !texto.trim()}
-                        aria-label="Consultar"
-                        style={{ width: "auto", margin: 0, borderColor: "var(--border-color)", color: "var(--text-primary)" }}
-                    >
+                    <button type="submit" className="adm-send" disabled={cargando || !texto.trim()} aria-label="Consultar">
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
-                </form>
+                </div>
+            </form>
 
-                {cargando && <p className="small mt-3 mb-0" style={{ color: "var(--text-secondary)" }}>Buscando…</p>}
-                {error && <div className="alert alert-warning py-2 mt-3 mb-0 small">{error}</div>}
+            {cargando && <p className="adm-status">Buscando…</p>}
+            {error && <div className="adm-alert">{error}</div>}
 
-                {resultado && (
-                    <div className="mt-3">
-                        <p className="mb-2 fw-semibold">{resultado.respuesta}</p>
-                        {resultado.productos && resultado.productos.length > 0 && (
-                            <div className="table-responsive">
-                                <table className="table table-sm mb-0 align-middle" style={{ color: "var(--text-primary)" }}>
-                                    <thead>
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th className="text-end">Costo</th>
-                                            <th className="text-end">Venta</th>
-                                            <th className="text-end">Ganancia</th>
-                                            <th className="text-end">%</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {resultado.productos.map((p) => (
-                                            <tr key={p.id}>
-                                                <td className="small">
-                                                    <span className="fw-bold">{p.marca}</span> {p.nombre}
-                                                    {p.presentacion ? ` (${p.presentacion})` : ""}
-                                                    <div style={{ color: "var(--text-secondary)" }}>
-                                                        Stock {p.stock}
-                                                        {p.descuento > 0 ? ` · ${p.descuento}% off (lista ${formatoPrecio(p.precioLista)})` : ""}
-                                                        {p.precioTransferencia ? ` · Transf. ${formatoPrecio(p.precioTransferencia)}` : ""}
-                                                    </div>
-                                                </td>
-                                                <td className="text-end">{plata(p.costo)}</td>
-                                                <td className="text-end">{plata(p.precioVenta)}</td>
-                                                <td className="text-end fw-bold" style={{ color: p.ganancia < 0 ? "#dc3545" : undefined }}>
-                                                    {p.ganancia === null ? "-" : formatoPrecio(p.ganancia)}
-                                                </td>
-                                                <td className="text-end small">
-                                                    {pct(p.gananciaPctCosto)}
-                                                    <div style={{ color: "var(--text-secondary)" }} title="Porcentaje sobre el precio de venta">
-                                                        {p.gananciaPctVenta === null ? "" : `${pct(p.gananciaPctVenta)} s/venta`}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div>
-        </div>
+            {resultado && (
+                <>
+                    <p className="adm-answer">{resultado.respuesta}</p>
+                    {resultado.productos && resultado.productos.length > 0 && (
+                        <div className="adm-results">
+                            {resultado.productos.map((p) => (
+                                <div className="adm-result" key={p.id}>
+                                    <div className="adm-result-name">
+                                        <b>{p.marca}</b>{p.nombre}{p.presentacion ? ` (${p.presentacion})` : ""}
+                                    </div>
+                                    <div className="adm-result-meta">
+                                        Stock {p.stock}
+                                        {p.descuento > 0 ? ` · ${p.descuento}% off (lista ${formatoPrecio(p.precioLista)})` : ""}
+                                        {p.precioTransferencia ? ` · Transferencia ${formatoPrecio(p.precioTransferencia)}` : ""}
+                                    </div>
+                                    <div className="adm-stats">
+                                        <div className="adm-stat"><span>Costo</span><strong>{plata(p.costo)}</strong></div>
+                                        <div className="adm-stat"><span>Venta</span><strong>{plata(p.precioVenta)}</strong></div>
+                                        <div className={`adm-stat ${p.ganancia < 0 ? "adm-stat--loss" : "adm-stat--gain"}`}>
+                                            <span>Ganancia</span><strong>{p.ganancia === null ? "-" : formatoPrecio(p.ganancia)}</strong>
+                                        </div>
+                                        <div className={`adm-stat ${p.ganancia < 0 ? "adm-stat--loss" : "adm-stat--gain"}`}>
+                                            <span>% s/costo</span>
+                                            <strong>{pct(p.gananciaPctCosto)}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
+        </section>
     );
 };
 

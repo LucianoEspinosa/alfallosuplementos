@@ -10,6 +10,11 @@ import { getAllProducts } from "../utils/productsCache";
 
 // En mobile, el detalle, el carrito y el checkout tienen su propio encabezado y su barra fija abajo:
 // ahí no se muestran el header general, la lupa flotante ni el botón de WhatsApp.
+// Pantallas del administrador: sin lupa flotante ni botón de WhatsApp
+const RUTAS_ADMIN = ["/admin", "/add-product", "/edit/", "/upload-products", "/normalizar-categorias", "/orders", "/sabores",
+    "/discount", "/excel", "/recomendado", "/convert", "/admin-ejercicios", "/agregar-ejercicio", "/editar-ejercicio/"];
+const esPantallaAdmin = (pathname) => RUTAS_ADMIN.some((r) => pathname === r || (r.endsWith("/") && pathname.startsWith(r)));
+
 export const esPantallaConBarra = (pathname) =>
     pathname.startsWith("/item/") || pathname === "/cart" || pathname === "/checkout";
 
@@ -72,6 +77,7 @@ const NavBar = () => {
     const navRef = useRef(null);
     const { pathname } = useLocation();
     const conBarra = esPantallaConBarra(pathname);
+    const esAdmin = esPantallaAdmin(pathname);
 
     // Obtener categorías y marcas
     useEffect(() => {
@@ -159,8 +165,8 @@ const NavBar = () => {
             </header>
 
             {/* Lupa flotante (solo mobile) y botón de WhatsApp */}
-            {!conBarra && <FloatingSearchIcon isNavOpen={isNavOpen} />}
-            <WhatsAppIcon ocultarEnMobile={conBarra} />
+            {!conBarra && !esAdmin && <FloatingSearchIcon isNavOpen={isNavOpen} />}
+            {!esAdmin && <WhatsAppIcon ocultarEnMobile={conBarra} />}
         </>
     );
 };
