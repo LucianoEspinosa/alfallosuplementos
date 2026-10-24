@@ -61,6 +61,7 @@ import React from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, writeBatch } from 'firebase/firestore';
 import productos from './json/gold.json';
+import { separarCosto, COLECCION_COSTOS } from '../utils/costos';
 
 const UploadProducts = () => {
     // Configuración de Firebase (debes usar la misma que en tu index.js)
@@ -86,14 +87,16 @@ const UploadProducts = () => {
             productos.suplementos.forEach(product => {
                 // Usar doc() para crear una referencia a un nuevo documento
                 const docRef = doc(productsCollection);
+                // costo y margen van a la colección privada "costos"
+                const { publico, costo } = separarCosto({ ...product, precio_costo: Number(product.precio_costo) });
                 batch.set(docRef, {
-                    ...product,
+                    ...publico,
                     precio: Number(product.precio),
-                    precio_costo: Number(product.precio_costo),
                     stock: Number(product.stock),
                     descuento: Number(product.descuento),
                     createdAt: new Date() // Agrega marca de tiempo
                 });
+                batch.set(doc(db, COLECCION_COSTOS, docRef.id), costo);
             });
 
             await batch.commit();

@@ -17,6 +17,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Costo y margen de cada producto (mismo id que en "fragancias"): solo el administrador
+    match /costos/{productId} {
+      allow read, write: if isAdmin();
+    }
+
     // Órdenes: cualquier cliente puede crear una (con la forma esperada); solo el administrador
     // puede leerlas, cambiar su estado o borrarlas. Los clientes no pueden listarlas ni leerlas.
     match /orders/{orderId} {

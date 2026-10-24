@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
-import { getDoc, doc, updateDoc, getFirestore } from "firebase/firestore";
+import { getDoc, doc, updateDoc, getFirestore, deleteField } from "firebase/firestore";
+import { getCosto, guardarCosto, separarCosto } from "../utils/costos";
 
 const EditProduct = () => {
     const { id } = useParams();
@@ -12,14 +13,16 @@ const EditProduct = () => {
     useEffect(() => {
         const db = getFirestore();
         const producto = doc(db, "fragancias", id);
-        getDoc(producto).then(resultado => {
+        Promise.all([getDoc(producto), getCosto(id).catch(() => ({}))]).then(([resultado, costo]) => {
             if (resultado.exists()) {
                 const data = resultado.data();
                 setItem({
                     id: resultado.id,
-                    ganancia: data.ganancia || 1.25,
                     sabores: data.sabores || [], // Asegurar que sabores sea un array
-                    ...data
+                    ...data,
+                    // costo y margen vienen de la colección privada "costos"
+                    precio_costo: costo.precio_costo ?? data.precio_costo,
+                    ganancia: costo.ganancia ?? data.ganancia ?? 1.25,
                 });
             }
         });
@@ -74,7 +77,10 @@ const EditProduct = () => {
     const actualizarProducto = () => {
         const db = getFirestore();
         const productoRef = doc(db, "fragancias", id);
-        updateDoc(productoRef, item)
+        const { publico, costo } = separarCosto(item);
+        // Costo y margen se guardan aparte (privados); la ficha pública no los lleva
+        guardarCosto(id, costo)
+            .then(() => updateDoc(productoRef, { ...publico, precio_costo: deleteField(), ganancia: deleteField() }))
             .then(() => setUpdated(true))
             .catch(console.error);
     };

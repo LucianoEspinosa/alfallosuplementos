@@ -124,8 +124,15 @@ exports.consultaAdmin = functions
       throw new functions.https.HttpsError("failed-precondition", "Falta configurar la clave de Gemini (GEMINI_API_KEY).");
     }
 
-    const snap = await admin.firestore().collection("fragancias").get();
-    const productos = snap.docs.map((d) => datosDe(d.id, d.data()));
+    const db = admin.firestore();
+    const [snap, costosSnap] = await Promise.all([db.collection("fragancias").get(), db.collection("costos").get()]);
+    // Costo y margen están en la colección privada "costos"
+    const costos = new Map(costosSnap.docs.map((d) => [d.id, d.data()]));
+    const productos = snap.docs.map((d) => {
+      const p = d.data();
+      const c = costos.get(d.id) || {};
+      return datosDe(d.id, { ...p, precio_costo: c.precio_costo ?? p.precio_costo });
+    });
     const porId = new Map(productos.map((p) => [p.id, p]));
 
     const prompt = `Sos el asistente del dueño de "Al Fallo Suplementos", una tienda online de suplementos deportivos en Argentina.

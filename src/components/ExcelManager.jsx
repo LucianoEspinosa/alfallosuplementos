@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { getFirestore, collection, doc, setDoc, updateDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, updateDoc, getDocs, deleteField } from "firebase/firestore";
+import { getCostos, conCostos, guardarCosto, separarCosto } from "../utils/costos";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileExcel, faDownload, faSpinner, faCheckCircle, faExclamationTriangle, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from "xlsx";
@@ -25,10 +26,11 @@ const ExcelManager = () => {
             const productsCollection = collection(db, "fragancias");
             const productsSnapshot = await getDocs(productsCollection);
             
-            const productsData = productsSnapshot.docs.map(doc => ({
+            // costo y margen vienen de la colección privada "costos"
+            const productsData = conCostos(productsSnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
-            }));
+            })), await getCostos());
 
             // Crear workbook y worksheet
             const wb = XLSX.utils.book_new();
@@ -144,8 +146,9 @@ const ExcelManager = () => {
             const existingProductsSnapshot = await getDocs(productsCollection);
             const existingProducts = {};
             
+            const costos = await getCostos();
             existingProductsSnapshot.forEach(doc => {
-                existingProducts[doc.id] = { id: doc.id, ...doc.data() };
+                existingProducts[doc.id] = { id: doc.id, ...doc.data(), ...(costos.get(doc.id) || {}) };
             });
 
             console.log("Productos existentes:", Object.keys(existingProducts).length);
@@ -215,7 +218,10 @@ const ExcelManager = () => {
                         };
                         
                         const productRef = doc(productsCollection, productId);
-                        await updateDoc(productRef, updateData);
+                        // costo y margen: a "costos" (privado); se borran de la ficha pública
+                        const { publico, costo } = separarCosto(updateData);
+                        await guardarCosto(productId, costo);
+                        await updateDoc(productRef, { ...publico, precio_costo: deleteField(), ganancia: deleteField() });
                         updatedProductsCount++;
                         
                         const imgMessage = row.img ? `Imagen actualizada: ${row.img}` : `Imagen mantiene: ${productToUpdate.img}`;
@@ -240,7 +246,9 @@ const ExcelManager = () => {
                             img: row.img || "/img/default-product.png" // ← IMAGEN NUEVA
                         };
                         
-                        await setDoc(newProductRef, newProductData);
+                        const nuevo = separarCosto(newProductData);
+                        await setDoc(newProductRef, nuevo.publico);
+                        await guardarCosto(newProductRef.id, nuevo.costo);
                         newProductsCount++;
                         
                         const imgMessage = row.img ? `Imagen: ${row.img}` : `Imagen por defecto`;

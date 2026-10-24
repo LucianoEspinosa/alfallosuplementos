@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getFirestore, collection, addDoc, Timestamp } from 'firebase/firestore';
+import { guardarCosto, separarCosto } from '../utils/costos';
 import { Link, Navigate } from 'react-router-dom';
 
 const AddProduct = () => {
@@ -62,7 +63,10 @@ const AddProduct = () => {
                 productoParaGuardar.precio = Math.round(productoParaGuardar.precio_costo * (productoParaGuardar.ganancia || 1.25));
             }
 
-            await addDoc(fraganciasCollection, productoParaGuardar);
+            // Costo y margen van a la colección privada "costos", no a la ficha pública
+            const { publico, costo } = separarCosto(productoParaGuardar);
+            const ref = await addDoc(fraganciasCollection, publico);
+            await guardarCosto(ref.id, costo);
             console.log('Nuevo producto agregado a Firestore');
             setAdded(true);
             

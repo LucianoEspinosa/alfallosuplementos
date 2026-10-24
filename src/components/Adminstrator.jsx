@@ -13,6 +13,7 @@ import {
 import { Link } from "react-router-dom";
 import ConsultaVoz from "./ConsultaVoz";
 import { formatoPrecio } from "../utils/productos";
+import { migrarCostos } from "../utils/costos";
 import "../styles/admin.css";
 
 const leerGuardado = (clave, porDefecto) => {
@@ -50,6 +51,10 @@ const Administrator = () => {
             .then(resultado => {
                 const productos = resultado.docs.map(producto => ({ id: producto.id, ...producto.data() }));
                 setItems(productos);
+                // Mueve el costo y el margen que queden en las fichas públicas a la colección privada
+                migrarCostos(productos)
+                    .then(n => { if (n) console.log(`Costos movidos a la colección privada: ${n}`); })
+                    .catch(e => console.error("No se pudieron mover los costos", e));
                 setMarcas([...new Set(productos.map(item => item.marca))].filter(Boolean).sort());
                 setCategorias([...new Set(productos.map(item => item.categoria))].filter(Boolean).sort());
             })

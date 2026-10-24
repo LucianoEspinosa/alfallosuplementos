@@ -3,6 +3,45 @@ const admin = require("firebase-admin");
 
 const SPREADSHEET_ID = "14PG8ZzledMuscAeaQwKSv5tkmjfEmXJJqWb9jcqtYL8";
 const COLECCION = "fragancias";
+// Costo (precio_costo) y margen (ganancia) van en "costos", que solo lee el administrador.
+// La ficha pública de "fragancias" no los lleva.
+const COSTOS = "costos";
+const BORRAR_COSTO = () => ({ precio_costo: admin.firestore.FieldValue.delete(), ganancia: admin.firestore.FieldValue.delete() });
+
+async function leerCosto(db, id, docProducto) {
+  const c = await db.collection(COSTOS).doc(String(id)).get();
+  const d = c.exists ? c.data() : {};
+  const viejo = docProducto && docProducto.exists ? docProducto.data() : {};
+  return { precio_costo: d.precio_costo ?? viejo.precio_costo, ganancia: d.ganancia ?? viejo.ganancia };
+}
+
+// Guarda costo/margen en "costos" y precio en "fragancias" (y limpia campos viejos de la ficha pública).
+async function guardarPrecio(db, id, { precio_costo, ganancia, precio }) {
+  const batch = db.batch();
+  batch.set(db.collection(COSTOS).doc(String(id)), { precio_costo, ganancia }, { merge: true });
+  batch.update(db.collection(COLECCION).doc(String(id)), {
+    precio, ...BORRAR_COSTO(), ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp(),
+  });
+  await batch.commit();
+}
+
+// Productos que todavía tienen costo o margen en la ficha pública: se mueven a "costos".
+async function migrarCostos(db) {
+  const snap = await db.collection(COLECCION).get();
+  const pendientes = snap.docs.filter((d) => d.get("precio_costo") !== undefined || d.get("ganancia") !== undefined);
+  for (let i = 0; i < pendientes.length; i += 200) {
+    const batch = db.batch();
+    for (const d of pendientes.slice(i, i + 200)) {
+      const ref = db.collection(COSTOS).doc(d.id);
+      const actual = await ref.get();
+      const a = actual.exists ? actual.data() : {};
+      batch.set(ref, { precio_costo: a.precio_costo ?? d.get("precio_costo") ?? 0, ganancia: a.ganancia ?? d.get("ganancia") ?? null }, { merge: true });
+      batch.update(d.ref, BORRAR_COSTO());
+    }
+    await batch.commit();
+  }
+  return pendientes.length;
+}
 
 async function leerRango(range) {
   const { google } = require("googleapis"); // carga diferida: el paquete es pesado
@@ -102,28 +141,30 @@ async function crearNuevos(db, resumen, dryRun, idsEnImportar = new Set()) {
     const producto = {
       marca: texto(marca), nombre: texto(nombre), presentacion: texto(presentacion), categoria: texto(categoria),
       descripcion: texto(descripcion) || DESCRIPCIONES[normalizar(marca) + "|" + normalizar(nombre)] || "", img: texto(img), descuento: 0,
-      precio_costo: costoNum, ganancia: gan, precio,
+      precio,
       stock: Number.isFinite(Number(stock)) ? Number(stock) : 0,
     };
     try {
       const ref = db.collection(COLECCION).doc(id);
       const existente = await ref.get();
       if (existente.exists) {
+        const costoGuardado = await leerCosto(db, id, existente);
         // Si ya está en IMPORTAR, su costo lo maneja la lista del proveedor: no se pisa con el costo
         // (fijo) que se cargó en NUEVOS_CARGA el día que se creó.
         if (idsEnImportar.has(id)) continue;
         // Ya fue creado antes: se mantienen costo, margen y precio al día con la planilla y las reglas de margen.
-        if (existente.get("precio_costo") !== costoNum || existente.get("ganancia") !== gan || existente.get("precio") !== precio) {
+        if (costoGuardado.precio_costo !== costoNum || costoGuardado.ganancia !== gan || existente.get("precio") !== precio) {
           resumen.nuevosActualizados = (resumen.nuevosActualizados || 0) + 1;
           if (!dryRun) {
-            resumen.respaldo.push({ id, producto: etiqueta, precio_costo: existente.get("precio_costo") ?? null, precio: existente.get("precio") ?? null, motivo: "producto nuevo: costo o margen" });
-            await ref.update({ precio_costo: costoNum, ganancia: gan, precio, ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp() });
+            resumen.respaldo.push({ id, producto: etiqueta, precio_costo: costoGuardado.precio_costo ?? null, precio: existente.get("precio") ?? null, motivo: "producto nuevo: costo o margen" });
+            await guardarPrecio(db, id, { precio_costo: costoNum, ganancia: gan, precio });
           }
         }
         continue;
       }
       if (!dryRun) {
         await ref.create({ ...producto, creado_el: admin.firestore.FieldValue.serverTimestamp() });
+        await db.collection(COSTOS).doc(id).set({ precio_costo: costoNum, ganancia: gan });
       }
       const avisos = [!producto.img && "sin imagen", !producto.descripcion && "sin descripción", !producto.categoria && "sin categoría"].filter(Boolean);
       resumen.nuevos.push(`${etiqueta} (${producto.presentacion || "s/presentación"}) precio ${precio}${avisos.length ? " [" + avisos.join(", ") + "]" : ""}`);
@@ -139,6 +180,13 @@ async function correr({ dryRun = false } = {}) {
   const reglasMargen = await cargarTablaMargenes();
   const db = admin.firestore();
   const resumen = { actualizados: 0, sinCambio: 0, paraRevisar: [], errores: [], respaldo: [], reglasMargen };
+  if (!dryRun) {
+    try {
+      resumen.costosMigrados = await migrarCostos(db);
+    } catch (e) {
+      resumen.errores.push(`Migración de costos: ${e.message}`);
+    }
+  }
 
   const aEliminar = [];
 
@@ -150,15 +198,16 @@ async function correr({ dryRun = false } = {}) {
       try {
         const ref = db.collection(COLECCION).doc(String(id));
         const doc = await ref.get();
-        const costo = Number(doc.exists ? doc.get("precio_costo") : 0);
+        const guardado = doc.exists ? await leerCosto(db, id, doc) : {};
+        const costo = Number(doc.exists ? guardado.precio_costo : 0);
         if (doc.exists && Number.isFinite(costo) && costo > 0) {
           const margen = margenPara(doc.get("categoria"), doc.get("marca") || marca);
           const precioEsperado = Math.round(costo * margen);
-          if (doc.get("precio") !== precioEsperado || doc.get("ganancia") !== margen) {
+          if (doc.get("precio") !== precioEsperado || guardado.ganancia !== margen) {
             resumen.repreciados = (resumen.repreciados || 0) + 1;
             if (!dryRun) {
               resumen.respaldo.push({ id: String(id), producto: `${marca} - ${nombre}`, precio_costo: costo, precio: doc.get("precio") ?? null, motivo: "cambio de margen" });
-              await ref.update({ precio: precioEsperado, ganancia: margen, ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp() });
+              await guardarPrecio(db, id, { precio_costo: costo, ganancia: margen, precio: precioEsperado });
             }
           }
         }
@@ -186,18 +235,15 @@ async function correr({ dryRun = false } = {}) {
       const margen = margenPara(antes.get("categoria"), antes.get("marca") || marca);
       const precioFinal = Math.round(costoNuevo * margen);
       if (!dryRun) {
-        resumen.respaldo.push({ id: String(id), producto: `${marca} - ${nombre}`, precio_costo: antes.get("precio_costo") ?? null, precio: antes.get("precio") ?? null, cambioGrande: esCambioGrande });
-        await ref.update({
-          precio_costo: costoNuevo,
-          precio: precioFinal,
-          ganancia: margen,
-          ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp(),
-        });
+        const costoAntes = await leerCosto(db, id, antes);
+        resumen.respaldo.push({ id: String(id), producto: `${marca} - ${nombre}`, precio_costo: costoAntes.precio_costo ?? null, precio: antes.get("precio") ?? null, cambioGrande: esCambioGrande });
+        await guardarPrecio(db, id, { precio_costo: costoNuevo, ganancia: margen, precio: precioFinal });
       }
       resumen.actualizados++;
       if (dryRun) {
         resumen.detalle = resumen.detalle || [];
-        resumen.detalle.push({ id, producto: `${marca} - ${nombre}`, costoPlanilla: costoActual, costoNuevo, precioNuevo: precioFinal, margen, categoria: antes.get("categoria") ?? null });
+        // Sin costos ni margen: este resumen lo devuelve un link público (actualizarPreciosPrueba)
+        resumen.detalle.push({ id, producto: `${marca} - ${nombre}`, precioNuevo: precioFinal, categoria: antes.get("categoria") ?? null });
       }
     } catch (e) {
       resumen.errores.push(`${marca} - ${nombre}: ${e.message}`);
@@ -220,6 +266,7 @@ async function correr({ dryRun = false } = {}) {
         if (!dryRun) {
           await db.collection("productos_eliminados").doc(p.id).set({
             ...snap.data(),
+            ...(await leerCosto(db, p.id, snap)),
             eliminado_el: admin.firestore.FieldValue.serverTimestamp(),
             motivo: "no está en la lista del proveedor",
           });
