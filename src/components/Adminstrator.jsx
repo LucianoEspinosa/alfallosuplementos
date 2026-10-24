@@ -13,6 +13,7 @@ import {
     faFileExcel  // ÍCONO NUEVO AÑADIDO
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
+import ConsultaVoz from "./ConsultaVoz";
 
 const Administrator = () => {
     const [items, setItems] = useState([]);
@@ -164,6 +165,9 @@ const Administrator = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Consultas por voz: costo, precio de venta y ganancia */}
+            <ConsultaVoz />
 
             {/* Filtros */}
             <div className="row mt-4">

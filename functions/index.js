@@ -72,6 +72,7 @@ exports.sendOrderEmail = functions
 
 
 Object.assign(exports, require("./actualizarPrecios"));
+Object.assign(exports, require("./consultaAdmin"));
 
 // Verifica en el servidor si un email ya compró (descuento de primera compra).
 // Reemplaza la consulta directa a "orders" desde el navegador, para poder cerrar esa colección.
