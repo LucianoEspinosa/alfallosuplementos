@@ -20,7 +20,7 @@ async function guardarPrecio(db, id, { precio_costo, ganancia, precio }) {
   const batch = db.batch();
   batch.set(db.collection(COSTOS).doc(String(id)), { precio_costo, ganancia }, { merge: true });
   batch.update(db.collection(COLECCION).doc(String(id)), {
-    precio, ...BORRAR_COSTO(), ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp(),
+    precio, ...BORRAR_COSTO(), sin_lista_desde: admin.firestore.FieldValue.delete(), ultima_actualizacion: admin.firestore.FieldValue.serverTimestamp(),
   });
   await batch.commit();
 }
@@ -198,6 +198,10 @@ async function correr({ dryRun = false } = {}) {
       try {
         const ref = db.collection(COLECCION).doc(String(id));
         const doc = await ref.get();
+        // Volvió a la lista del proveedor: se quita la marca de "sin lista" (el stock lo cargás vos)
+        if (doc.exists && doc.get("sin_lista_desde") !== undefined && !dryRun) {
+          await ref.update({ sin_lista_desde: admin.firestore.FieldValue.delete() });
+        }
         const guardado = doc.exists ? await leerCosto(db, id, doc) : {};
         const costo = Number(doc.exists ? guardado.precio_costo : 0);
         if (doc.exists && Number.isFinite(costo) && costo > 0) {
@@ -250,27 +254,22 @@ async function correr({ dryRun = false } = {}) {
     }
   }
 
-  // Productos que no están en la lista del proveedor ("SIN DATO"): se borran de la tienda.
-  // Protección: si la planilla está rota (casi todo "SIN DATO" o casi nada actualizado) no se borra nada.
-  resumen.eliminados = [];
+  // Productos que no están en la lista del proveedor ("SIN DATO"): quedan en la tienda sin stock (no se borran).
+  // Se ponen en 0 una sola vez (marca sin_lista_desde): si después cargás stock a mano, no se vuelve a pisar.
+  // Protección: si la planilla está rota (casi todo "SIN DATO" o casi nada actualizado) no se toca nada.
+  resumen.sinStock = [];
   const planillaSana = resumen.actualizados + resumen.sinCambio >= 50 && aEliminar.length <= 15;
   if (aEliminar.length && !planillaSana) {
-    resumen.errores.push(`No se eliminó nada: ${aEliminar.length} filas SIN DATO y ${resumen.actualizados} actualizadas (planilla sospechosa)`);
+    resumen.errores.push(`No se tocó el stock: ${aEliminar.length} filas SIN DATO y ${resumen.actualizados} actualizadas (planilla sospechosa)`);
   } else {
     for (const p of aEliminar) {
       try {
         const ref = db.collection(COLECCION).doc(p.id);
         const snap = await ref.get();
-        if (!snap.exists) continue; // ya eliminado en una corrida anterior
-        resumen.eliminados.push(`${p.marca} - ${p.nombre}`);
+        if (!snap.exists || snap.get("sin_lista_desde") !== undefined) continue; // no existe o ya se puso sin stock antes
+        resumen.sinStock.push(`${p.marca} - ${p.nombre}`);
         if (!dryRun) {
-          await db.collection("productos_eliminados").doc(p.id).set({
-            ...snap.data(),
-            ...(await leerCosto(db, p.id, snap)),
-            eliminado_el: admin.firestore.FieldValue.serverTimestamp(),
-            motivo: "no está en la lista del proveedor",
-          });
-          await ref.delete();
+          await ref.update({ stock: 0, sin_lista_desde: admin.firestore.FieldValue.serverTimestamp() });
         }
       } catch (e) {
         resumen.errores.push(`${p.marca} - ${p.nombre}: ${e.message}`);
