@@ -1,9 +1,9 @@
 // Llamada a Gemini (Google) por su API REST, plan gratuito de Google AI Studio.
 // Variables de entorno:
 //   GEMINI_API_KEY  clave de Google AI Studio (https://aistudio.google.com/apikey)
-//   GEMINI_MODEL    opcional, modelo a usar (por defecto gemini-3.8-flash)
+//   GEMINI_MODEL    opcional, modelo a usar (por defecto gemini-3.5-flash-lite)
 
-const modelo = () => process.env.GEMINI_MODEL || "gemini-3.8-flash";
+const modelo = () => process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
 // contents: historial en formato Gemini [{ role: "user"|"model", parts: [...] }]
 // herramientas: [{ name, description, parameters }]

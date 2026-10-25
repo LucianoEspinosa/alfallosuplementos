@@ -60,7 +60,7 @@ En https://vercel.com → proyecto de la tienda → **Settings** → **Environme
 | `META_APP_SECRET` | Paso 4 |
 | `BOT_TEST_KEY` | Inventá otra palabra secreta, para probar el bot sin Instagram |
 
-Opcional: `GEMINI_MODEL` (por defecto `gemini-3.8-flash`).
+Opcional: `GEMINI_MODEL` (por defecto `gemini-3.5-flash-lite`).
 
 ## Paso 6 — Publicar y probar
 
