@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "api/instagram-webhook.js": { "maxDuration": 30 },
+    "api/bot-prueba.js": { "maxDuration": 30 }
+  }
+}

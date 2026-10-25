@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ConsultaVoz from "./ConsultaVoz";
+import AvisosPush from "./AvisosPush";
 import { formatoPrecio } from "../utils/productos";
 import { migrarCostos } from "../utils/costos";
 import "../styles/admin.css";
@@ -121,6 +122,9 @@ const Administrator = () => {
                     </Link>
                 </nav>
             </div>
+
+            {/* Avisos push de pedidos del bot de Instagram */}
+            <AvisosPush />
 
             {/* Consultas por voz: costo, precio de venta y ganancia */}
             <ConsultaVoz />

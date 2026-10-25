@@ -1,0 +1,39 @@
+// Llamada a Gemini (Google) por su API REST, plan gratuito de Google AI Studio.
+// Variables de entorno:
+//   GEMINI_API_KEY  clave de Google AI Studio (https://aistudio.google.com/apikey)
+//   GEMINI_MODEL    opcional, modelo a usar (por defecto gemini-2.5-flash)
+
+const modelo = () => process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
+// contents: historial en formato Gemini [{ role: "user"|"model", parts: [...] }]
+// herramientas: [{ name, description, parameters }]
+// Devuelve { contenido, texto, llamadas: [{ name, args }] }
+async function generar({ instrucciones, contents, herramientas = [] }) {
+  const body = {
+    systemInstruction: { parts: [{ text: instrucciones }] },
+    contents,
+    generationConfig: { temperature: 0.4, maxOutputTokens: 1024 },
+  };
+  if (herramientas.length) body.tools = [{ functionDeclarations: herramientas }];
+
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo()}:generateContent`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY || "" },
+    body: JSON.stringify(body),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(`Gemini ${res.status}: ${(json.error && json.error.message) || ""}`);
+    err.status = res.status; // 429 = se agotó el cupo gratuito del minuto o del día
+    throw err;
+  }
+  const contenido = (json.candidates && json.candidates[0] && json.candidates[0].content) || { role: "model", parts: [] };
+  const partes = contenido.parts || [];
+  return {
+    contenido: { role: "model", parts: partes },
+    texto: partes.filter((p) => p.text && !p.thought).map((p) => p.text).join("").trim(),
+    llamadas: partes.filter((p) => p.functionCall).map((p) => ({ name: p.functionCall.name, args: p.functionCall.args || {} })),
+  };
+}
+
+module.exports = { generar, modelo };
