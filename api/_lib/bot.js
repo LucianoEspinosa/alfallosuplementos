@@ -46,8 +46,33 @@ function cuandoConfirmamos(fecha = new Date()) {
   return "a la brevedad";
 }
 
+// Recomendados por defecto, buscados en el catálogo por marca y nombre (solo los que tienen stock).
+// Así el bot muestra siempre los mismos productos que recomendaría Luciano.
+const RECOMENDADOS = {
+  proteina: [
+    [/pitbull/i, /whey/i, /doy\s*pack/i],
+    [/star/i, /whey protein/i, /doy\s*pack/i],
+    [/xtrenght/i, /best whey/i, /^(?!.*big)/i],
+    [/gold/i, /100% whey/i, /2\s*lb/i],
+  ],
+  creatina: [
+    [/pitbull/i, /creatin/i, /doy\s*pack/i],
+    [/star/i, /creatina doypack/i],
+    [/pitbull/i, /creatin/i, /1\s*kg/i],
+  ],
+};
+
+function recomendados(catalogo, tipo) {
+  return RECOMENDADOS[tipo]
+    .map((patrones) => catalogo.find((p) => p.availability === "in stock" && patrones.every((r) => r.test(`${p.name} ${p.size}`))))
+    .filter(Boolean)
+    .map((p) => p.id);
+}
+
 function instrucciones(catalogo) {
   const cuando = cuandoConfirmamos();
+  const recProteina = recomendados(catalogo, "proteina").slice(0, 3);
+  const recCreatina = recomendados(catalogo, "creatina");
   return `Sos el vendedor de Al Fallo Suplementos, una tienda de suplementos deportivos 100% originales en Buenos Aires (tienda online: https://alfallo.vercel.app). Respondés los mensajes directos de Instagram de @alfallo.suplementos. Ahora es ${ahoraTexto()}.
 
 CÓMO ESCRIBIR
@@ -68,9 +93,9 @@ PRODUCTOS Y PRECIOS
 - Si piden algo genérico ("barritas", "creatina", "proteína"), ofrecé 2 o 3 opciones y preguntá sabor o presupuesto.
 
 QUÉ RECOMENDAR (si el cliente no pide algo puntual)
-- Proteína: ofrecé whey protein. Marcas preferidas, en este orden: Pitbull, Xtrenght, Star Nutrition y Gold Nutrition. Dá por hecho que busca 2 lb (no preguntes el tamaño) y mostrá 2 o 3 opciones de distintas marcas, primero las más económicas (las doypack).
+- Proteína: ofrecé whey protein de 2 lb (no preguntes el tamaño). Si piden proteína sin más detalle, mostrá exactamente estas: MOSTRAR: ${recProteina.join(", ")}. Marcas preferidas: Pitbull, Xtrenght, Star Nutrition y Gold Nutrition.
 - Proteína vegana o sin lactosa: solo si el cliente lo pide. Ahí ofrecé las vegetales (por ejemplo Just Plant) o las isolatadas.
-- Creatina: dá por hecho que busca 300 g (no preguntes el tamaño). Mostrá las doypack de 300 g de Pitbull y Star Nutrition (las más económicas) y sumá también la Pitbull Micronized de 1 kg, que está a muy buen precio. Si no hay alguna, usá Gold Nutrition.
+- Creatina: no preguntes el tamaño. Si piden creatina sin más detalle, mostrá exactamente estas (doypack de 300 g y la Pitbull de 1 kg, que está a muy buen precio): MOSTRAR: ${recCreatina.join(", ")}. Si piden otra marca o tamaño, buscalo en el catálogo.
 - Si el cliente pregunta por otra marca o producto que está en el catálogo, ofrecéselo sin problema.
 - Los productos marcados SIN STOCK no se pueden pedir por ahora: ofrecé una alternativa parecida.
 - No des consejos médicos. Si preguntan por dosis, embarazo, medicación o problemas de salud, sugerí consultar con un profesional.
