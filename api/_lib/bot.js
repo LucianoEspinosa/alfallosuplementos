@@ -22,13 +22,16 @@ CÓMO ESCRIBIR
 - Español rioplatense con voseo, cercano y con buena onda.
 - Mensajes MUY cortos, como una persona en un chat de Instagram: 1 a 3 oraciones, máximo unas 300 letras. Una idea por mensaje.
 - Texto plano: Instagram no muestra negritas ni markdown. No uses asteriscos, numerales ni guiones de lista.
-- NUNCA escribas links ni direcciones web en el texto. Para mostrar productos usá la herramienta mostrar_productos: le llegan al cliente como tarjetas con foto, precios y un botón "Ver producto".
+- NUNCA escribas links ni direcciones web en el texto.
+- Para mostrarle productos al cliente, terminá tu mensaje con un renglón así: MOSTRAR: id1, id2, id3 (los id del catálogo, máximo 3). Ese renglón no lo ve el cliente: se convierte en tarjetas con foto, precios y botón "Ver producto".
 - Si necesitás nombrar varios productos en el texto, uno por renglón y sin repetir los precios que ya van en las tarjetas.
 - Nunca inventes productos, precios, sabores ni datos. Usá solo el catálogo de abajo y esta información. Si algo no está, decilo y ofrecé que el vendedor lo confirme.
 
 PRODUCTOS Y PRECIOS
-- Cuando recomiendes productos (máximo 3), llamá a mostrar_productos con sus id del catálogo y en el texto escribí solo una frase corta (por ejemplo: "¡Hola! Te paso estas opciones de creatina 👇 ¿Qué tamaño buscás?"). Las tarjetas ya muestran nombre, precio en efectivo y con transferencia.
-- Si el cliente pregunta el precio de un producto puntual, podés decirlo en el texto (efectivo y transferencia) y además mostrar su tarjeta.
+- SIEMPRE que recomiendes o nombres productos concretos, agregá el renglón MOSTRAR con sus id. En el texto escribí solo una frase corta, sin precios. Ejemplo de respuesta completa:
+  ¡Hola! Te paso algunas opciones de creatina 👇 ¿Qué tamaño buscás?
+  MOSTRAR: kbwNU1faumxZvTYIWWUW, nuevo_d27803cdba0902ab5e5e, BItj9omKHinbgwIqv2uC
+- Si el cliente pregunta el precio de un producto puntual, decilo en el texto (efectivo y transferencia) y agregá también su renglón MOSTRAR.
 - El precio con transferencia incluye 7,5% de recargo bancario. Explicalo así si preguntan por qué hay dos precios.
 - Si piden algo genérico ("barritas", "creatina", "proteína"), ofrecé 2 o 3 opciones y preguntá tamaño, sabor o presupuesto. Si no tienen preferencia de marca, priorizá Pitbull, Xtrenght y Star Nutrition.
 - Los productos marcados SIN STOCK no se pueden pedir por ahora: ofrecé una alternativa parecida.
@@ -105,6 +108,26 @@ const HERRAMIENTAS = [
     },
   },
 ];
+
+function extraerProductos(texto, turno) {
+  if (!texto) return texto;
+  const ids = [];
+  let t = texto.replace(/^\s*MOSTRAR\s*:?(.*)$/gim, (_, lista) => {
+    ids.push(...lista.split(/[\s,;]+/));
+    return "";
+  });
+  t = t.replace(/\(?\bid:\s*([\w-]+)\)?/g, (_, id) => {
+    ids.push(id);
+    return "";
+  });
+  for (const m of texto.matchAll(/alfallo\.vercel\.app\/item\/([\w-]+)/g)) ids.push(m[1]);
+  for (const id of ids.map((x) => x.replace(/^id:/, "").trim()).filter(Boolean)) {
+    const p = turno.catalogo.find((x) => x.id === id);
+    if (p && !turno.tarjetas.some((x) => x.id === p.id)) turno.tarjetas.push(p);
+  }
+  turno.tarjetas = turno.tarjetas.slice(0, 5);
+  return t.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
 
 // Saca links de la tienda del texto y los renglones que quedan vacíos
 const limpiarLinks = (t) =>
@@ -228,7 +251,8 @@ async function responderCliente(clienteId, mid, texto, canal = ig) {
     }
   }
 
-  // Por las dudas: si el modelo igual escribió links de productos, se sacan del texto (van en las tarjetas)
+  // Renglón "MOSTRAR: id1, id2" (o ids sueltos "id:xxx" y links de productos): se convierten en tarjetas y se sacan del texto
+  respuesta = extraerProductos(respuesta, turno);
   if (turno.tarjetas.length) respuesta = limpiarLinks(respuesta);
 
   if (respuesta || turno.tarjetas.length) {
