@@ -16,7 +16,10 @@ module.exports = async (req, res) => {
   // 1) Verificación: Meta comprueba la dirección una sola vez al configurarla
   if (req.method === "GET") {
     const q = req.query || {};
-    if (q["hub.mode"] === "subscribe" && q["hub.verify_token"] && q["hub.verify_token"] === process.env.IG_VERIFY_TOKEN) {
+    // Se ignoran espacios o saltos de línea que se cuelan al copiar y pegar
+    const esperado = (process.env.IG_VERIFY_TOKEN || "").trim();
+    const recibido = String(q["hub.verify_token"] || "").trim();
+    if (q["hub.mode"] === "subscribe" && esperado && recibido === esperado) {
       return res.status(200).send(q["hub.challenge"]);
     }
     return res.status(403).send("Token de verificación incorrecto");

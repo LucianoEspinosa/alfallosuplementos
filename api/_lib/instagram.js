@@ -11,7 +11,7 @@ const version = () => process.env.GRAPH_VERSION || "v23.0";
 
 // Comprueba la firma X-Hub-Signature-256 que Meta pone en cada aviso
 function firmaValida(cuerpoCrudo, firma) {
-  const secreto = process.env.META_APP_SECRET;
+  const secreto = (process.env.META_APP_SECRET || "").trim();
   if (!secreto || !firma || !firma.startsWith("sha256=")) return false;
   const esperado = crypto.createHmac("sha256", secreto).update(cuerpoCrudo).digest("hex");
   const a = Buffer.from(firma.slice(7), "hex");
@@ -43,11 +43,11 @@ function partir(texto, max = 950) {
 // Envía un texto a un usuario. Devuelve los ids de los mensajes enviados.
 async function enviarTexto(destinatario, texto) {
   const ids = [];
-  const cuenta = process.env.IG_USER_ID || "me";
+  const cuenta = (process.env.IG_USER_ID || "").trim() || "me";
   for (const parte of partir(texto)) {
     const res = await fetch(`https://graph.instagram.com/${version()}/${cuenta}/messages`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${process.env.IG_ACCESS_TOKEN}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${(process.env.IG_ACCESS_TOKEN || "").trim()}`, "Content-Type": "application/json" },
       body: JSON.stringify({ recipient: { id: destinatario }, message: { text: parte } }),
     });
     const json = await res.json().catch(() => ({}));
@@ -61,7 +61,7 @@ async function enviarTexto(destinatario, texto) {
 async function usuarioDe(id) {
   try {
     const res = await fetch(
-      `https://graph.instagram.com/${version()}/${id}?fields=username,name&access_token=${encodeURIComponent(process.env.IG_ACCESS_TOKEN || "")}`
+      `https://graph.instagram.com/${version()}/${id}?fields=username,name&access_token=${encodeURIComponent((process.env.IG_ACCESS_TOKEN || "").trim())}`
     );
     const json = await res.json();
     return json.username ? `@${json.username}` : json.name || "";
