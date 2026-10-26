@@ -303,6 +303,7 @@ async function responderCliente(clienteId, mid, texto, canal = ig) {
       const r = await generar({ instrucciones: instrucciones(catalogo), contents, herramientas: HERRAMIENTAS });
       if (!r.llamadas.length) {
         respuesta = r.texto;
+        if (!respuesta && !turno.tarjetas.length) throw new Error(`Gemini devolvió una respuesta vacía (${r.motivo || "sin motivo"})`);
         break;
       }
       contents.push(r.contenido);
