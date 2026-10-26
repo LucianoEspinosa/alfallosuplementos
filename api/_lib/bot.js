@@ -189,7 +189,7 @@ async function responderCliente(clienteId, mid, texto, canal = ig) {
   }
 
   let respuesta = "";
-  const turno = { catalogo: [], tarjetas: [] };
+  const turno = { catalogo: [], tarjetas: [], llamadas: [] };
   try {
     const catalogo = await leerCatalogo();
     turno.catalogo = catalogo;
@@ -213,6 +213,7 @@ async function responderCliente(clienteId, mid, texto, canal = ig) {
       contents.push(r.contenido);
       const resultados = [];
       for (const ll of r.llamadas) {
+        turno.llamadas.push({ name: ll.name, args: ll.args });
         resultados.push({ functionResponse: { name: ll.name, response: await ejecutar(ll, clienteId, conv, turno) } });
       }
       contents.push({ role: "user", parts: resultados });
@@ -253,7 +254,7 @@ async function responderCliente(clienteId, mid, texto, canal = ig) {
   conv.enviandoHasta = "";
   await guardarConversacion(clienteId, conv);
   return respuesta || turno.tarjetas.length
-    ? { estado: "respondido", respuesta, tarjetas: turno.tarjetas.map((p) => ({ nombre: p.name, efectivo: p.price_cash, transferencia: p.price_transfer, url: p.url, foto: p.image_link })) }
+    ? { estado: "respondido", respuesta, herramientas: turno.llamadas, tarjetas: turno.tarjetas.map((p) => ({ nombre: p.name, efectivo: p.price_cash, transferencia: p.price_transfer, url: p.url, foto: p.image_link })) }
     : { estado: "sin respuesta" };
 }
 
