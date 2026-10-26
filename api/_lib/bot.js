@@ -19,12 +19,16 @@ function instrucciones(catalogo) {
   return `Sos el vendedor de Al Fallo Suplementos, una tienda de suplementos deportivos 100% originales en Buenos Aires (tienda online: https://alfallo.vercel.app). Respondés los mensajes directos de Instagram de @alfallo.suplementos. Ahora es ${ahoraTexto()}.
 
 CÓMO ESCRIBIR
-- Español rioplatense con voseo, cercano y con buena onda. Mensajes cortos, como en un chat de Instagram (máximo unas 6 líneas). Emojis con moderación.
-- Texto plano: Instagram no muestra negritas ni markdown. No uses asteriscos ni numerales para dar formato.
+- Español rioplatense con voseo, cercano y con buena onda.
+- Mensajes MUY cortos, como una persona en un chat de Instagram: 1 a 3 oraciones, máximo unas 300 letras. Una idea por mensaje.
+- Texto plano: Instagram no muestra negritas ni markdown. No uses asteriscos, numerales ni guiones de lista.
+- NUNCA escribas links ni direcciones web en el texto. Para mostrar productos usá la herramienta mostrar_productos: le llegan al cliente como tarjetas con foto, precios y un botón "Ver producto".
+- Si necesitás nombrar varios productos en el texto, uno por renglón y sin repetir los precios que ya van en las tarjetas.
 - Nunca inventes productos, precios, sabores ni datos. Usá solo el catálogo de abajo y esta información. Si algo no está, decilo y ofrecé que el vendedor lo confirme.
 
 PRODUCTOS Y PRECIOS
-- Cuando recomiendes un producto, decí marca, tamaño, precio en efectivo, precio con transferencia y pasá el link.
+- Cuando recomiendes productos (máximo 3), llamá a mostrar_productos con sus id del catálogo y en el texto escribí solo una frase corta (por ejemplo: "¡Hola! Te paso estas opciones de creatina 👇 ¿Qué tamaño buscás?"). Las tarjetas ya muestran nombre, precio en efectivo y con transferencia.
+- Si el cliente pregunta el precio de un producto puntual, podés decirlo en el texto (efectivo y transferencia) y además mostrar su tarjeta.
 - El precio con transferencia incluye 7,5% de recargo bancario. Explicalo así si preguntan por qué hay dos precios.
 - Si piden algo genérico ("barritas", "creatina", "proteína"), ofrecé 2 o 3 opciones y preguntá tamaño, sabor o presupuesto. Si no tienen preferencia de marca, priorizá Pitbull, Xtrenght y Star Nutrition.
 - Los productos marcados SIN STOCK no se pueden pedir por ahora: ofrecé una alternativa parecida.
@@ -47,11 +51,22 @@ PEDIDOS
 - Si tiene un reclamo, una consulta que no podés resolver o pide hablar con una persona, usá avisar_al_vendedor y decile que en breve le responde.
 - Nunca pidas datos de tarjetas ni contraseñas.
 
-CATÁLOGO ACTUAL (marca nombre presentación | categoría | precios | sabores | link)
+CATÁLOGO ACTUAL (marca nombre presentación | categoría | precios | sabores | id para mostrar_productos)
 ${catalogo.map(lineaParaBot).join("\n")}`;
 }
 
 const HERRAMIENTAS = [
+  {
+    name: "mostrar_productos",
+    description: "Le muestra al cliente tarjetas de producto con foto, precios y botón para ver el producto en la web. Usala siempre que recomiendes o nombres productos concretos (máximo 3).",
+    parameters: {
+      type: "object",
+      properties: {
+        ids: { type: "array", items: { type: "string" }, description: "Los id del catálogo (lo que va después de 'id:')" },
+      },
+      required: ["ids"],
+    },
+  },
   {
     name: "registrar_pedido",
     description: "Registra un pedido del cliente cuando ya tenés todos los datos. Le avisa al vendedor para que confirme.",
@@ -91,6 +106,14 @@ const HERRAMIENTAS = [
   },
 ];
 
+// Saca links de la tienda del texto y los renglones que quedan vacíos
+const limpiarLinks = (t) =>
+  (t || "")
+    .replace(/\(?\s*https?:\/\/alfallo\.vercel\.app\/item\/\S+\s*\)?/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
 const pesos = (n) => "$" + Math.round(Number(n) || 0).toLocaleString("es-AR");
 const recortar = (lista, n) => lista.slice(Math.max(0, lista.length - n));
 
@@ -108,8 +131,17 @@ const guardarConversacion = (clienteId, conv) => {
 };
 
 // Ejecuta una herramienta que pidió el modelo y devuelve la respuesta para él
-async function ejecutar(llamada, clienteId, conv) {
+async function ejecutar(llamada, clienteId, conv, turno) {
   const quien = conv.usuario || `cliente ${clienteId}`;
+  if (llamada.name === "mostrar_productos") {
+    const pedidos = (llamada.args.ids || []).map((x) => String(x).replace(/^id:/, "").trim());
+    const elegidos = pedidos.map((id) => turno.catalogo.find((p) => p.id === id)).filter(Boolean);
+    for (const p of elegidos) if (!turno.tarjetas.some((t) => t.id === p.id)) turno.tarjetas.push(p);
+    turno.tarjetas = turno.tarjetas.slice(0, 5);
+    return elegidos.length
+      ? { ok: true, mostrados: elegidos.map((p) => p.name), nota: "No repitas los links ni los precios de las tarjetas en el texto." }
+      : { ok: false, error: "Ningún id coincide con el catálogo" };
+  }
   if (llamada.name === "registrar_pedido") {
     const a = llamada.args;
     const productos = (a.productos || []).map((p) => `${p.cantidad || 1}x ${p.producto}${p.sabor ? ` (${p.sabor})` : ""}`);
@@ -142,11 +174,12 @@ async function ejecutar(llamada, clienteId, conv) {
 }
 
 // Mensaje de un cliente: arma la respuesta y la manda
-async function responderCliente(clienteId, mid, texto, enviar = ig.enviarTexto) {
+// canal: cómo se mandan los mensajes (Instagram de verdad, o uno de mentira para /api/bot-prueba)
+async function responderCliente(clienteId, mid, texto, canal = ig) {
   const conv = await leerConversacion(clienteId);
   if (mid && conv.procesados.includes(mid)) return "repetido"; // Meta a veces reenvía el mismo aviso
   conv.procesados = recortar([...conv.procesados, mid].filter(Boolean), 50);
-  if (!conv.usuario && enviar === ig.enviarTexto) conv.usuario = await ig.usuarioDe(clienteId);
+  if (!conv.usuario && canal === ig) conv.usuario = await ig.usuarioDe(clienteId);
   conv.historial = recortar([...conv.historial, { rol: "cliente", texto, t: new Date().toISOString() }], 40);
 
   // Luciano está atendiendo este chat a mano: el bot no responde, solo guarda el mensaje
@@ -156,8 +189,10 @@ async function responderCliente(clienteId, mid, texto, enviar = ig.enviarTexto) 
   }
 
   let respuesta = "";
+  const turno = { catalogo: [], tarjetas: [] };
   try {
     const catalogo = await leerCatalogo();
+    turno.catalogo = catalogo;
     // Mensajes seguidos del mismo lado (por ejemplo, varios del cliente) van juntos en un solo turno
     const contents = [];
     for (const m of recortar(conv.historial, MAX_HISTORIAL)) {
@@ -178,7 +213,7 @@ async function responderCliente(clienteId, mid, texto, enviar = ig.enviarTexto) 
       contents.push(r.contenido);
       const resultados = [];
       for (const ll of r.llamadas) {
-        resultados.push({ functionResponse: { name: ll.name, response: await ejecutar(ll, clienteId, conv) } });
+        resultados.push({ functionResponse: { name: ll.name, response: await ejecutar(ll, clienteId, conv, turno) } });
       }
       contents.push({ role: "user", parts: resultados });
     }
@@ -192,17 +227,34 @@ async function responderCliente(clienteId, mid, texto, enviar = ig.enviarTexto) 
     }
   }
 
-  if (respuesta) {
+  // Por las dudas: si el modelo igual escribió links de productos, se sacan del texto (van en las tarjetas)
+  if (turno.tarjetas.length) respuesta = limpiarLinks(respuesta);
+
+  if (respuesta || turno.tarjetas.length) {
     // Mientras se envía, los ecos de Instagram son del bot (no de Luciano escribiendo a mano)
-    conv.enviandoHasta = new Date(Date.now() + 30 * 1000).toISOString();
+    conv.enviandoHasta = new Date(Date.now() + 60 * 1000).toISOString();
     await guardarConversacion(clienteId, conv);
-    const ids = await enviar(clienteId, respuesta);
+    let ids = [];
+    if (respuesta) ids = ids.concat(await canal.enviarTexto(clienteId, respuesta));
+    if (turno.tarjetas.length) {
+      try {
+        ids = ids.concat(await canal.enviarTarjetas(clienteId, turno.tarjetas));
+      } catch (e) {
+        // Si Instagram no acepta las tarjetas, se mandan como texto: un producto por renglón y el link aparte
+        console.error(e.message);
+        const lista = turno.tarjetas.map((p) => `${p.name}\nEfectivo ${p.price_cash} · Transferencia ${p.price_transfer}\n${p.url}`).join("\n\n");
+        ids = ids.concat(await canal.enviarTexto(clienteId, lista));
+      }
+    }
     conv.idsBot = recortar([...conv.idsBot, ...ids], 50);
-    conv.historial = recortar([...conv.historial, { rol: "bot", texto: respuesta, t: new Date().toISOString() }], 40);
+    const registro = [respuesta, turno.tarjetas.length ? `[Tarjetas mostradas: ${turno.tarjetas.map((p) => p.name).join(", ")}]` : ""].filter(Boolean).join("\n");
+    conv.historial = recortar([...conv.historial, { rol: "bot", texto: registro, t: new Date().toISOString() }], 40);
   }
   conv.enviandoHasta = "";
   await guardarConversacion(clienteId, conv);
-  return respuesta ? { estado: "respondido", respuesta } : { estado: "sin respuesta" };
+  return respuesta || turno.tarjetas.length
+    ? { estado: "respondido", respuesta, tarjetas: turno.tarjetas.map((p) => ({ nombre: p.name, efectivo: p.price_cash, transferencia: p.price_transfer, url: p.url, foto: p.image_link })) }
+    : { estado: "sin respuesta" };
 }
 
 // Eco: un mensaje que salió de la cuenta de la tienda. Si no lo mandó el bot, lo escribió Luciano a mano.

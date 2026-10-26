@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
   try {
     if (body.reiniciar) await fs.borrar(`igConversaciones/${chat}`);
     if (!body.texto) return res.status(200).json({ ok: true, chat, mensaje: "Conversación reiniciada" });
-    const r = await responderCliente(chat, `${chat}-${Date.now()}`, String(body.texto), async () => []);
+    const r = await responderCliente(chat, `${chat}-${Date.now()}`, String(body.texto), { enviarTexto: async () => [], enviarTarjetas: async () => [] });
     return res.status(200).json({ chat, ...(typeof r === "string" ? { estado: r } : r) });
   } catch (e) {
     return res.status(500).json({ error: e.message });

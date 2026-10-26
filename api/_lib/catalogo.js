@@ -119,7 +119,7 @@ const lineaParaBot = (i) =>
     i.discount_percent ? `oferta -${i.discount_percent}%` : "",
     i.flavors.length ? `sabores: ${i.flavors.join(", ")}` : "",
     i.availability === "in stock" ? "" : "SIN STOCK",
-    i.url,
+    `id:${i.id}`,
   ].filter(Boolean).join(" | ");
 
 module.exports = { leerCatalogo, lineaParaBot, pesos };

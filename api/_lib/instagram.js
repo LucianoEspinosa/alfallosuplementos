@@ -57,6 +57,33 @@ async function enviarTexto(destinatario, texto) {
   return ids;
 }
 
+// Tarjetas de producto deslizables (foto, nombre, precios y botón "Ver producto"). Hasta 10 por mensaje.
+// productos: [{ name, price_cash, price_transfer, url, image_link }]
+async function enviarTarjetas(destinatario, productos) {
+  const cuenta = (process.env.IG_USER_ID || "").trim() || "me";
+  const elementos = productos.slice(0, 10).map((p) => {
+    const e = {
+      title: p.name.slice(0, 80),
+      subtitle: `Efectivo ${p.price_cash} · Transferencia ${p.price_transfer}`.slice(0, 80),
+      default_action: { type: "web_url", url: p.url },
+      buttons: [{ type: "web_url", url: p.url, title: "Ver producto" }],
+    };
+    if (p.image_link) e.image_url = p.image_link;
+    return e;
+  });
+  const res = await fetch(`https://graph.instagram.com/${version()}/${cuenta}/messages`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${(process.env.IG_ACCESS_TOKEN || "").trim()}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      recipient: { id: destinatario },
+      message: { attachment: { type: "template", payload: { template_type: "generic", elements: elementos } } },
+    }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`Instagram tarjetas ${res.status}: ${(json.error && json.error.message) || ""}`);
+  return json.message_id ? [json.message_id] : [];
+}
+
 // Nombre de usuario de quien escribe (para los avisos). Si falla, devuelve "".
 async function usuarioDe(id) {
   try {
@@ -70,4 +97,4 @@ async function usuarioDe(id) {
   }
 }
 
-module.exports = { firmaValida, partir, enviarTexto, usuarioDe };
+module.exports = { firmaValida, partir, enviarTexto, enviarTarjetas, usuarioDe };
