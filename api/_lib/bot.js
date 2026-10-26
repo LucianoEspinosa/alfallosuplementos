@@ -11,6 +11,8 @@ const { enviarPush } = require("./push");
 const MAX_HISTORIAL = 20; // mensajes que se le pasan al modelo
 const PAUSA_MS = 12 * 60 * 60 * 1000; // si Luciano responde a mano, el bot se calla 12 horas en ese chat
 const ZONA = "America/Argentina/Buenos_Aires";
+// Una pausa de 12 h creada después de que se desconectó MyChatBot (22:01 del 25/10/2026) dura como mínimo hasta acá
+const PAUSAS_VALIDAS_HASTA_MINIMO = "2026-10-26T13:01:00Z";
 
 const ahoraTexto = () =>
   new Date().toLocaleString("es-AR", { timeZone: ZONA, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
@@ -272,7 +274,10 @@ async function responderCliente(clienteId, mid, texto, canal = ig) {
   conv.historial = recortar([...conv.historial, { rol: "cliente", texto, t: new Date().toISOString() }], 40);
 
   // Luciano está atendiendo este chat a mano: el bot no responde, solo guarda el mensaje
+  // Pausas creadas antes de las 22:01 del 25/10/2026 vienen de las respuestas de MyChatBot (no de Luciano): se ignoran
+  if (conv.pausadoHasta && Date.parse(conv.pausadoHasta) < Date.parse(PAUSAS_VALIDAS_HASTA_MINIMO)) conv.pausadoHasta = "";
   if (conv.pausadoHasta && Date.now() < Date.parse(conv.pausadoHasta)) {
+    console.log(`Chat en pausa (respondió Luciano): ${conv.usuario || clienteId} hasta ${conv.pausadoHasta}`);
     await guardarConversacion(clienteId, conv);
     return "pausado";
   }
