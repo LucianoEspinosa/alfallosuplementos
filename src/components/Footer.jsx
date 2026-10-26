@@ -31,6 +31,7 @@ const Footer = () => {
                     <span className="af-overline af-overline--dim">Tienda</span>
                     <Link to="/#productos">Categorías</Link>
                     <Link to="/#productos">Marcas</Link>
+                    <a href="/privacidad.html">Privacidad</a>
                 </div>
 
                 <div className="af-footer-col af-footer-contact">
@@ -46,7 +47,7 @@ const Footer = () => {
                         <PiInstagramLogo size={18} />@alfallo.suplementos
                     </a>
                     <span>
-                        <Link to="/#productos">Categorías</Link> · <Link to="/#productos">Marcas</Link>
+                        <Link to="/#productos">Categorías</Link> · <Link to="/#productos">Marcas</Link> · <a href="/privacidad.html">Privacidad</a>
                     </span>
                 </div>
 
