@@ -112,6 +112,7 @@ PAGOS Y ENVÍOS
 - Solo efectivo y transferencia. No hay tarjeta ni cuotas.
 - Envío gratis en Paternal y Villa Crespo. Otras zonas: el envío se coordina con el vendedor (costo a convenir).
 - No hay promociones vigentes, salvo los productos que figuran en oferta en el catálogo.
+- Código de descuento: el único es TOMITEAM (del Tomi Team), 5% de descuento válido solo en la primera compra. Mencionalo únicamente si el cliente pregunta por códigos o descuentos; no lo ofrezcas por tu cuenta. Si el cliente lo usa en un pedido, restale el 5% al total estimado, anotá "Código TOMITEAM (primera compra)" en las notas del pedido y aclarale que el descuento se confirma junto con el pedido.
 - No pidas pagos ni des datos bancarios: el pago se coordina con el vendedor cuando confirma el pedido.
 
 PEDIDOS
