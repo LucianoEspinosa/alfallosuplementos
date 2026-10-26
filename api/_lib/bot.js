@@ -15,7 +15,39 @@ const ZONA = "America/Argentina/Buenos_Aires";
 const ahoraTexto = () =>
   new Date().toLocaleString("es-AR", { timeZone: ZONA, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
 
+// Horario en que se puede confirmar disponibilidad: lunes a viernes de 10 a 19, sábados de 10 a 17, domingos no.
+const HORARIO = { 1: [10, 19], 2: [10, 19], 3: [10, 19], 4: [10, 19], 5: [10, 19], 6: [10, 17] };
+const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+
+// Fecha y hora actuales en Buenos Aires (para no depender de la zona del servidor)
+function ahoraBA(fecha = new Date()) {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", { timeZone: ZONA, weekday: "short", hour: "numeric", minute: "numeric", hourCycle: "h23" })
+      .formatToParts(fecha)
+      .map((x) => [x.type, x.value])
+  );
+  const dia = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday);
+  return { dia, minutos: Number(p.hour) * 60 + Number(p.minute) };
+}
+
+// Frase para decirle al cliente cuándo se le confirma el pedido
+function cuandoConfirmamos(fecha = new Date()) {
+  const { dia, minutos } = ahoraBA(fecha);
+  const hoy = HORARIO[dia];
+  // Dentro del horario (con al menos media hora de margen antes del cierre)
+  if (hoy && minutos >= hoy[0] * 60 && minutos <= hoy[1] * 60 - 30) return "en un rato";
+  // Antes de abrir hoy
+  if (hoy && minutos < hoy[0] * 60) return `hoy a partir de las ${hoy[0]}`;
+  // Próximo día con horario
+  for (let i = 1; i <= 7; i++) {
+    const d = (dia + i) % 7;
+    if (HORARIO[d]) return `${i === 1 ? "mañana" : `el ${DIAS[d]}`} a partir de las ${HORARIO[d][0]}`;
+  }
+  return "a la brevedad";
+}
+
 function instrucciones(catalogo) {
+  const cuando = cuandoConfirmamos();
   return `Sos el vendedor de Al Fallo Suplementos, una tienda de suplementos deportivos 100% originales en Buenos Aires (tienda online: https://alfallo.vercel.app). Respondés los mensajes directos de Instagram de @alfallo.suplementos. Ahora es ${ahoraTexto()}.
 
 CÓMO ESCRIBIR
@@ -38,9 +70,10 @@ PRODUCTOS Y PRECIOS
 - No des consejos médicos. Si preguntan por dosis, embarazo, medicación o problemas de salud, sugerí consultar con un profesional.
 
 DISPONIBILIDAD
-- Nunca afirmes que un producto está en stock ni prometas fecha de entrega.
+- La disponibilidad y los sabores de cada pedido se confirman a mano. Nunca afirmes que un producto está en stock, que hay un sabor, ni prometas fecha de entrega.
 - Nunca menciones proveedores ni de dónde salen los productos.
-- Si preguntan por stock o sabores, decí que el vendedor le confirma la disponibilidad y los sabores a la brevedad.
+- Las confirmaciones se hacen de lunes a viernes de 10 a 19 y sábados de 10 a 17 (domingos no). Ahora mismo, si el cliente hace un pedido, se le confirma ${cuando}. Usá exactamente esa referencia de tiempo cuando hables de la confirmación.
+- Si preguntan por stock o sabores: los sabores del catálogo son los que suele haber, pero la disponibilidad se confirma ${cuando}.
 
 PAGOS Y ENVÍOS
 - Solo efectivo y transferencia. No hay tarjeta ni cuotas.
@@ -50,7 +83,9 @@ PAGOS Y ENVÍOS
 
 PEDIDOS
 - Cuando el cliente quiera comprar, pedile lo que falte: productos, cantidad, sabor (si el producto tiene sabores), nombre, teléfono, barrio o dirección de entrega y si paga en efectivo o transferencia.
-- Con todos esos datos, usá la herramienta registrar_pedido. Después pasale un resumen con el total estimado según el medio de pago y decile que el vendedor le escribe a la brevedad para confirmar el pedido y coordinar pago y entrega.
+- Con todos esos datos, usá la herramienta registrar_pedido. El pedido queda A CONFIRMAR, no está cerrado.
+- Después pasale un resumen corto con el total estimado según el medio de pago y decile que le confirmamos disponibilidad y sabor ${cuando} por este chat, y recién ahí coordinamos pago y entrega.
+- NUNCA digas "listo", "confirmado", "te quedó", "ya es tuyo" ni "gracias por tu compra": la compra todavía no está confirmada. Decí, por ejemplo: "Te anoto el pedido 🙌 Te confirmo disponibilidad ${cuando} y ahí coordinamos pago y entrega."
 - Si tiene un reclamo, una consulta que no podés resolver o pide hablar con una persona, usá avisar_al_vendedor y decile que en breve le responde.
 - Nunca pidas datos de tarjetas ni contraseñas.
 
@@ -178,15 +213,15 @@ async function ejecutar(llamada, clienteId, conv, turno) {
       medioPago: a.medio_pago || "",
       totalEstimado: Number(a.total_estimado) || 0,
       notas: a.notas || "",
-      estado: "pendiente",
+      estado: "a confirmar",
       creado: new Date(),
     });
     await enviarPush(
-      `🛒 Pedido nuevo de ${a.nombre || quien}`,
+      `🛒 Pedido a confirmar de ${a.nombre || quien}`,
       `${productos.join(", ")}\n${a.zona_o_direccion || ""} · ${a.medio_pago || ""} · ${pesos(a.total_estimado)}\nTel: ${a.telefono || "-"} · ${quien}`,
       "https://www.instagram.com/direct/inbox/"
     );
-    return { ok: true, pedido: id };
+    return { ok: true, pedido: id, estado: "a confirmar", confirmacion: cuandoConfirmamos() };
   }
   if (llamada.name === "avisar_al_vendedor") {
     await enviarPush(`🙋 ${quien} necesita que le respondas`, llamada.args.motivo || "Consulta en Instagram", "https://www.instagram.com/direct/inbox/");
@@ -322,4 +357,4 @@ async function procesarAviso(aviso) {
   return resultados;
 }
 
-module.exports = { procesarAviso, responderCliente, registrarEco, instrucciones, HERRAMIENTAS };
+module.exports = { cuandoConfirmamos, procesarAviso, responderCliente, registrarEco, instrucciones, HERRAMIENTAS };
