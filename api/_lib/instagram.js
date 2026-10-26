@@ -6,6 +6,38 @@
 //   GRAPH_VERSION    opcional, versión de la API (por defecto v23.0)
 
 const crypto = require("crypto");
+const fs = require("./firestore");
+
+// Token de Instagram: primero el renovado automáticamente (Firestore "config/instagram"),
+// si no hay, el de la variable de entorno IG_ACCESS_TOKEN. Se guarda en memoria 10 minutos.
+let tokenCache = { valor: "", t: 0 };
+async function token() {
+  if (tokenCache.valor && Date.now() - tokenCache.t < 10 * 60 * 1000) return tokenCache.valor;
+  let valor = "";
+  try {
+    const doc = await fs.leer("config/instagram");
+    valor = (doc && doc.token) || "";
+  } catch (e) {
+    console.error("No se pudo leer el token guardado:", e.message);
+  }
+  valor = valor || (process.env.IG_ACCESS_TOKEN || "").trim();
+  tokenCache = { valor, t: Date.now() };
+  return valor;
+}
+
+// Renueva el token por 60 días más y lo guarda en Firestore. Devuelve los días de validez.
+async function renovarToken() {
+  const actual = await token();
+  const res = await fetch(
+    `https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${encodeURIComponent(actual)}`
+  );
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json.access_token) throw new Error(`Instagram no renovó el token: ${(json.error && json.error.message) || res.status}`);
+  const vence = new Date(Date.now() + (json.expires_in || 0) * 1000);
+  await fs.guardar("config/instagram", { token: json.access_token, renovado: new Date(), vence });
+  tokenCache = { valor: json.access_token, t: Date.now() };
+  return Math.round((json.expires_in || 0) / 86400);
+}
 
 const version = () => process.env.GRAPH_VERSION || "v23.0";
 
@@ -47,7 +79,7 @@ async function enviarTexto(destinatario, texto) {
   for (const parte of partir(texto)) {
     const res = await fetch(`https://graph.instagram.com/${version()}/${cuenta}/messages`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${(process.env.IG_ACCESS_TOKEN || "").trim()}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${await token()}`, "Content-Type": "application/json" },
       body: JSON.stringify({ recipient: { id: destinatario }, message: { text: parte } }),
     });
     const json = await res.json().catch(() => ({}));
@@ -73,7 +105,7 @@ async function enviarTarjetas(destinatario, productos) {
   });
   const res = await fetch(`https://graph.instagram.com/${version()}/${cuenta}/messages`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${(process.env.IG_ACCESS_TOKEN || "").trim()}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${await token()}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       recipient: { id: destinatario },
       message: { attachment: { type: "template", payload: { template_type: "generic", elements: elementos } } },
@@ -88,7 +120,7 @@ async function enviarTarjetas(destinatario, productos) {
 async function usuarioDe(id) {
   try {
     const res = await fetch(
-      `https://graph.instagram.com/${version()}/${id}?fields=username,name&access_token=${encodeURIComponent((process.env.IG_ACCESS_TOKEN || "").trim())}`
+      `https://graph.instagram.com/${version()}/${id}?fields=username,name&access_token=${encodeURIComponent(await token())}`
     );
     const json = await res.json();
     return json.username ? `@${json.username}` : json.name || "";
@@ -97,4 +129,4 @@ async function usuarioDe(id) {
   }
 }
 
-module.exports = { firmaValida, partir, enviarTexto, enviarTarjetas, usuarioDe };
+module.exports = { firmaValida, partir, enviarTexto, enviarTarjetas, usuarioDe, renovarToken };

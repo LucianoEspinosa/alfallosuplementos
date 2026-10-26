@@ -1,6 +1,16 @@
 {
   "functions": {
-    "api/instagram-webhook.js": { "maxDuration": 30 },
-    "api/bot-prueba.js": { "maxDuration": 30 }
-  }
+    "api/instagram-webhook.js": {
+      "maxDuration": 30
+    },
+    "api/bot-prueba.js": {
+      "maxDuration": 30
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/renovar-token",
+      "schedule": "0 13 1,15 * *"
+    }
+  ]
 }
