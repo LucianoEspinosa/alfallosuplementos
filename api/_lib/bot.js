@@ -385,8 +385,11 @@ async function procesarAviso(aviso) {
         continue;
       }
       let texto = (m.text || "").trim();
-      if (!texto && m.attachments && m.attachments.length) {
-        texto = `[El cliente mandó un archivo (${m.attachments.map((x) => x.type).join(", ")}) que no podés ver. Pedile que te lo escriba.]`;
+      // Menciones o historias, publicaciones y reels compartidos NO son mensajes del cliente: se ignoran.
+      // Solo se pide que lo escriban si mandó una foto, audio, video o archivo.
+      const archivos = ((!texto && m.attachments) || []).filter((x) => ["image", "audio", "video", "file"].includes(x.type));
+      if (archivos.length) {
+        texto = `[El cliente mandó un archivo (${archivos.map((x) => x.type).join(", ")}) que no podés ver. Pedile que te lo escriba.]`;
       }
       if (!texto) continue;
       resultados.push(await responderCliente(ev.sender.id, m.mid, texto));
