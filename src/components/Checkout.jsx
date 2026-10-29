@@ -12,7 +12,8 @@ import PaymentMethodSelector from "./PaymentMethodSelector";
 import CompraHeader from "./af/CompraHeader";
 import ProductPhoto from "./af/ProductPhoto";
 import { etiquetaCantidad } from "../utils/productos";
-import { TRANSFER_SURCHARGE } from "../config";
+import { TRANSFER_SURCHARGE, DESCUENTOS_POR_CATEGORIA } from "../config";
+import { normalizarTexto } from "../utils/productos";
 import { leerCupon, borrarCupon } from "../utils/cuponLink";
 
 // Montos con el mismo formato que se mostraba antes (sin redondear)
@@ -234,7 +235,17 @@ const Checkout = () => {
       }
 
       // Aplicar el descuento
-      if (discountData.discountType === "percentage") {
+      const reglaCategoria = DESCUENTOS_POR_CATEGORIA[codigoDescuento.trim().toUpperCase()];
+      if (reglaCategoria) {
+        // Porcentaje distinto para proteínas y para el resto de la tienda
+        const descuento = Math.round(cart.reduce((suma, item) => {
+          const esProteina = /^prote/.test(normalizarTexto(item.categoria));
+          const porcentaje = esProteina ? reglaCategoria.proteinas : reglaCategoria.resto;
+          return suma + (item.precioFinal * item.cantidad * porcentaje) / 100;
+        }, 0));
+        setDescuentoAplicado(descuento);
+        setInfoDescuento(`${reglaCategoria.proteinas}% en proteínas y ${reglaCategoria.resto}% en el resto aplicado`);
+      } else if (discountData.discountType === "percentage") {
         const descuento = (subtotal * discountData.value) / 100;
         setDescuentoAplicado(descuento);
         setInfoDescuento(`${discountData.value}% de descuento aplicado`);
@@ -355,7 +366,9 @@ const Checkout = () => {
         amount: descuentoAplicado,
         type: discountData?.discountType || "percentage",
         percentage: discountData?.value || 0,
-        description: discountData?.description || "",
+        description: DESCUENTOS_POR_CATEGORIA[codigoDescuento.trim().toUpperCase()]
+          ? `${DESCUENTOS_POR_CATEGORIA[codigoDescuento.trim().toUpperCase()].proteinas}% proteínas / ${DESCUENTOS_POR_CATEGORIA[codigoDescuento.trim().toUpperCase()].resto}% resto`
+          : discountData?.description || "",
         firstPurchaseOnly: discountData?.firstPurchaseOnly || false
       };
 
