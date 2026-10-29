@@ -9,6 +9,7 @@ import CartContextProvider from './components/context/CartContext';
 import Checkout from './components/Checkout';
 import ThankYou from './components/ThankYou';
 import ScrollToTop from './components/ScrollToTop';
+import CuponDesdeLink from './components/CuponDesdeLink';
 import NavBar from './components/NavBar';
 import Administrator from './components/Adminstrator';
 import AddProduct from './components/AddProduct';
@@ -68,6 +69,7 @@ function App() {
           <div className="af-app" style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
             <NavBar />
             <ScrollToTop />
+            <CuponDesdeLink />
             <div className="af-main">
             <Routes>
               <Route path={"/"} element={<ItemListContainer />} />

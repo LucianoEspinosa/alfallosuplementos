@@ -13,6 +13,7 @@ import CompraHeader from "./af/CompraHeader";
 import ProductPhoto from "./af/ProductPhoto";
 import { etiquetaCantidad } from "../utils/productos";
 import { TRANSFER_SURCHARGE } from "../config";
+import { leerCupon, borrarCupon } from "../utils/cuponLink";
 
 // Montos con el mismo formato que se mostraba antes (sin redondear)
 const formatoMonto = (n) => "$" + Number(n || 0).toLocaleString("es-AR");
@@ -30,7 +31,10 @@ const Checkout = () => {
   const [itemsConRecargo, setItemsConRecargo] = useState([]);
 
   // Estados para el descuento
-  const [codigoDescuento, setCodigoDescuento] = useState("");
+  // Si el cliente entró con un link con código (?cupon=XXX), viene precargado
+  const [codigoDescuento, setCodigoDescuento] = useState(() => leerCupon());
+  const [cuponDelLink] = useState(() => leerCupon());
+  const [emailAutoProbado, setEmailAutoProbado] = useState("");
   const [descuentoAplicado, setDescuentoAplicado] = useState(0);
   const [codigoValido, setCodigoValido] = useState(null);
   const [loadingDescuento, setLoadingDescuento] = useState(false);
@@ -199,8 +203,9 @@ const Checkout = () => {
         const email = emailField ? emailField.value.trim() : '';
         
         if (!email) {
-          setCodigoValido(false);
-          setInfoDescuento("Completa tu email para validar este código de primera compra");
+          // Queda pendiente (no es un error): se aplica solo cuando el cliente completa el email
+          setCodigoValido(null);
+          setInfoDescuento("Completá tu email para aplicar este código de primera compra");
           setLoadingDescuento(false);
           return;
         }
@@ -254,7 +259,27 @@ const Checkout = () => {
     }
   };
 
+  // Código que vino por link: intentar aplicarlo apenas se abre el checkout
+  useEffect(() => {
+    if (cuponDelLink && cart.length > 0) aplicarDescuento();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Si es de primera compra, se aplica solo cuando el cliente termina de escribir un email válido
+  useEffect(() => {
+    if (!cuponDelLink || descuentoAplicado > 0 || loadingDescuento) return;
+    if (codigoDescuento.trim().toUpperCase() !== cuponDelLink) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailActual) || emailActual === emailAutoProbado) return;
+    const timer = setTimeout(() => {
+      setEmailAutoProbado(emailActual);
+      aplicarDescuento();
+    }, 900);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [emailActual]);
+
   const limpiarDescuento = () => {
+    borrarCupon();
     setCodigoDescuento("");
     setDescuentoAplicado(0);
     setCodigoValido(null);
@@ -371,6 +396,7 @@ const Checkout = () => {
 
       // El stock se descuenta en el servidor (Cloud Function sendOrderEmail al crearse la orden)
       clearCart();
+      borrarCupon();
 
     } catch (error) {
       console.error("Error completo en la compra:", error);

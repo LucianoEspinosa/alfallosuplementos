@@ -867,3 +867,20 @@ input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webki
 @media (prefers-reduced-motion: reduce) {
   .af-cartbtn.is-bump, .af-cartbtn.is-bump .af-cartbtn-icon, .af-cartbtn.is-bump .af-cartbtn-count { animation:none; }
 }
+
+/* Aviso: código de descuento cargado desde un link (?cupon=XXX) */
+.af-cupon-aviso {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+  z-index: 1050; display: flex; align-items: center; gap: 12px;
+  max-width: calc(100vw - 32px); padding: 12px 14px 12px 18px;
+  background: var(--color-accent-900); color: var(--color-text);
+  border: 1px solid var(--color-accent-700); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); font-family: var(--font-body); font-size: 14px;
+  animation: af-cupon-in .3s ease;
+}
+.af-cupon-aviso strong { color: var(--color-accent); letter-spacing: .04em; }
+.af-cupon-aviso-cerrar {
+  background: none; border: 0; color: var(--color-neutral-400);
+  font-size: 20px; line-height: 1; padding: 0 4px; cursor: pointer;
+}
+@keyframes af-cupon-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
