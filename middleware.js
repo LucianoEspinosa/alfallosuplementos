@@ -31,10 +31,11 @@ const reemplazarMeta = (html, atributo, nombre, valor) => {
 export default async function middleware(request) {
   try {
     const url = new URL(request.url);
-    let codigo = "";
+    const LINKS_CORTOS = { "/tomiteam": "TOMITEAM" };
+    let codigo = LINKS_CORTOS[url.pathname.toLowerCase().replace(/\/+$/, "")] || "";
     for (const p of PARAMETROS) {
       const v = (url.searchParams.get(p) || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "");
-      if (v) {
+      if (v && !codigo) {
         codigo = v;
         break;
       }

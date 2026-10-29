@@ -8,6 +8,17 @@ const PARAMETROS = ["cupon", "codigo", "code", "descuento"];
 
 const limpiar = (valor) => String(valor || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "");
 
+// Links cortos: alfallo.vercel.app/tomiteam  →  código TOMITEAM
+export const LINKS_CORTOS = { "/tomiteam": "TOMITEAM" };
+
+export const guardarCupon = (codigo) => {
+  try {
+    localStorage.setItem(CLAVE, JSON.stringify({ codigo: limpiar(codigo), guardado: Date.now() }));
+  } catch (e) {
+    // nada
+  }
+};
+
 // Lee el código de la URL (si viene) y lo guarda. Devuelve el código o null.
 export const capturarCuponDeUrl = (search) => {
   try {

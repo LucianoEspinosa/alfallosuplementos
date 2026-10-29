@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { capturarCuponDeUrl } from "../utils/cuponLink";
+import { capturarCuponDeUrl, LINKS_CORTOS, guardarCupon } from "../utils/cuponLink";
 
 // Detecta ?cupon=CODIGO en cualquier página, lo guarda y avisa al cliente
 // que el descuento ya quedó cargado para cuando finalice la compra.
@@ -10,6 +10,15 @@ const CuponDesdeLink = () => {
   const [codigo, setCodigo] = useState(null);
 
   useEffect(() => {
+    // Link corto (ej: /tomiteam): guarda el código y lleva al inicio de la tienda
+    const corto = LINKS_CORTOS[location.pathname.toLowerCase().replace(/\/+$/, "")];
+    if (corto) {
+      guardarCupon(corto);
+      setCodigo(corto);
+      navigate({ pathname: "/", search: location.search }, { replace: true });
+      return;
+    }
+
     const encontrado = capturarCuponDeUrl(location.search);
     if (!encontrado) return;
 
