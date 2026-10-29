@@ -11,7 +11,7 @@ export const config = {
 // Imagen y textos propios por código. Si un código no está acá, se usa la imagen general.
 const CUPONES = {
   TOMITEAM: {
-    imagen: "/og/cupon-TOMITEAM-2.jpg",
+    imagen: "/og/cupon-TOMITEAM-3.jpg",
     titulo: "10% OFF en tu primera compra (5% en proteínas) | Al Fallo Suplementos",
     descripcion:
       "Beneficio Tomi Team: entrá con el código TOMITEAM ya cargado. 10% en toda la tienda y 5% en proteínas, en tu primera compra.",
