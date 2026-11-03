@@ -191,8 +191,21 @@ async function correr({ dryRun = false } = {}) {
   const aEliminar = [];
 
   for (const f of filas) {
-    const [id, nombre, marca, costoActual, , , , costoNuevo, , , precioNuevo, accion] = f;
+    const [id, nombre, marca, costoActual, , , , costoNuevo, , , precioNuevo, accionHoja] = f;
     if (!id) continue;
+    let accion = accionHoja;
+    // Desde que el costo es privado (colección "costos"), la hoja TIENDA ya no trae precio_costo ni ganancia:
+    // la planilla marca todo "REVISAR (costo actual 0)" con precio nuevo 0. Se decide acá con el costo guardado.
+    if (typeof accion === "string" && accion.startsWith("REVISAR (costo actual 0")) {
+      try {
+        const doc = await db.collection(COLECCION).doc(String(id)).get();
+        const guardado = doc.exists ? await leerCosto(db, id, doc) : {};
+        if (Number(guardado.precio_costo) > 0 && Number(guardado.precio_costo) === Number(costoNuevo)) accion = "SIN CAMBIO";
+      } catch (e) {
+        resumen.errores.push(`${marca} - ${nombre}: ${e.message}`);
+        continue;
+      }
+    }
     if (accion === "SIN CAMBIO") {
       // El costo no cambió, pero el precio puede estar desactualizado respecto al margen vigente: se corrige.
       try {
@@ -228,7 +241,8 @@ async function correr({ dryRun = false } = {}) {
       resumen.paraRevisar.push(`${marca} - ${nombre}: ${accion}`);
       continue;
     }
-    if (!Number.isFinite(costoNuevo) || costoNuevo <= 0 || !Number.isFinite(precioNuevo) || precioNuevo <= 0) {
+    // El precio final lo calcula la función con margenPara; de la planilla solo hace falta el costo nuevo.
+    if (!Number.isFinite(costoNuevo) || costoNuevo <= 0) {
       resumen.errores.push(`${marca} - ${nombre}: valores inválidos`);
       continue;
     }
