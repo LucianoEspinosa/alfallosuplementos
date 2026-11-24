@@ -92,8 +92,15 @@ function margenDeTabla(categoria, marca) {
   return mejor ? mejor.margen : null;
 }
 
+// Márgenes fijos para productos puntuales (por ID de Firestore). Le gana a la hoja MARGENES y a los márgenes por defecto.
+const MARGEN_POR_PRODUCTO = {
+  // Pitbull Creatina Micronized 1kg: 65% para que deje por kilo lo mismo que la doypack de 300 g
+  nuevo_d27803cdba0902ab5e5e: 1.65,
+};
+
 // Margen de ganancia por defecto: proteínas y ganadores de peso x1,3; Pitbull (salvo proteínas) x1,45; todo lo demás x1,4.
-function margenPara(categoria, marca) {
+function margenPara(categoria, marca, id) {
+  if (id !== undefined && MARGEN_POR_PRODUCTO[String(id)] !== undefined) return MARGEN_POR_PRODUCTO[String(id)];
   const delaTabla = margenDeTabla(categoria, marca);
   if (delaTabla !== null) return delaTabla;
   const c = sinAcentos(categoria);
@@ -134,10 +141,10 @@ async function crearNuevos(db, resumen, dryRun, idsEnImportar = new Set()) {
       resumen.errores.push(`${etiqueta}: falta nombre, marca o costo (no se creó)`);
       continue;
     }
-    const gan = margenPara(categoria, marca);
-    const precio = Math.round(costoNum * gan);
     const clave = [marca, nombre, presentacion].map((x) => texto(x).toLowerCase()).join("|");
     const id = "nuevo_" + crypto.createHash("sha1").update(clave).digest("hex").slice(0, 20);
+    const gan = margenPara(categoria, marca, id);
+    const precio = Math.round(costoNum * gan);
     const producto = {
       marca: texto(marca), nombre: texto(nombre), presentacion: texto(presentacion), categoria: texto(categoria),
       descripcion: texto(descripcion) || DESCRIPCIONES[normalizar(marca) + "|" + normalizar(nombre)] || "", img: texto(img), descuento: 0,
@@ -218,7 +225,7 @@ async function correr({ dryRun = false } = {}) {
         const guardado = doc.exists ? await leerCosto(db, id, doc) : {};
         const costo = Number(doc.exists ? guardado.precio_costo : 0);
         if (doc.exists && Number.isFinite(costo) && costo > 0) {
-          const margen = margenPara(doc.get("categoria"), doc.get("marca") || marca);
+          const margen = margenPara(doc.get("categoria"), doc.get("marca") || marca, id);
           const precioEsperado = Math.round(costo * margen);
           if (doc.get("precio") !== precioEsperado || guardado.ganancia !== margen) {
             resumen.repreciados = (resumen.repreciados || 0) + 1;
@@ -250,7 +257,7 @@ async function correr({ dryRun = false } = {}) {
       const ref = db.collection(COLECCION).doc(String(id));
       const antes = await ref.get();
       if (!antes.exists) throw new Error("no existe el documento " + id);
-      const margen = margenPara(antes.get("categoria"), antes.get("marca") || marca);
+      const margen = margenPara(antes.get("categoria"), antes.get("marca") || marca, id);
       const precioFinal = Math.round(costoNuevo * margen);
       if (!dryRun) {
         const costoAntes = await leerCosto(db, id, antes);
